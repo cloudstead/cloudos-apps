@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+# If the .first_time_setup file is not found, performs first time setup: creates the file and
+# sends the welcome email indicating that the cloudos instance is up and ready to be unlocked
+#
+# Runs as root (to use command-line sendmail).
+# SMTP relay should be properly configured at this point.
+#
+
+
+<%
+email = @app[:databag][:init]['recovery_email']
+hash = @app[:databag][:init]['admin_initial_pass']
+key = @app[:rand][0][0..24]
+%>
+
+FT_SETUP=$(cd ~cloudos && pwd)/.first_time_setup
+FQDN="$(hostname)"
+
+if [ ! -f ${FT_SETUP} ] ; then
+  # file does not exist, create it
+  echo "{
+    \"secret\": \"<%=key%>\",
+    \"email\": \"<%=email%>\",
+    \"passwordHash\": \""'<%=hash%>'"\"
+  }
+  " > ${FT_SETUP} && chown <%=@app[:run_as]%> ${FT_SETUP} && chmod 600 ${FT_SETUP}
+
+  # and send welcome email
+  sendmail -oi -t 1> ${FT_SETUP}.sendmail.out 2> ${FT_SETUP}.sendmail.err <<EOF
+From: do-not-reply@${FQDN}
+To: <%=email%>
+Subject: Your CloudOS is ready!
+Please continue setting up your CloudOS: https://${FQDN}/setup.html?key=<%=key%>
+EOF
+chmod 600 ${FT_SETUP}.*
+
+fi

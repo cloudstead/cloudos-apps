@@ -1,0 +1,74 @@
+{
+    "name": "cloudos",
+    "version": "0.1.0",
+    "style": "java_webapp",
+    "publisher": {
+        "maintainer": "Jonathan Cobb",
+        "maintainer_email": "jonathan@cloudstead.io",
+        "license": "https://www.gnu.org/licenses/agpl-3.0.txt",
+        "code_copyright": "Copyright 2014 Cloudstead, Inc.",
+        "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+    },
+
+    "databags": [
+        {
+            "name": "base",
+            "items": [ "hostname", "parent_domain", "ssl_cert_name" ]
+        }, {
+            "name": "init",
+            "items": [
+                "server_tarball", "server_port",
+                "admin_initial_pass", "recovery_email",
+                "aws_access_key", "aws_secret_key", "cloudos.aws_iam_user", "cloudos.s3_bucket",
+                "authy.user", "authy.base_uri",
+                "dns.user", "dns.password", "dns.base_uri"
+            ]
+        }
+    ],
+
+    "users": [ { "user": "cloudos_system_mailer", "kerberos": true } ],
+
+    "groups": [ { "group": "rooty", "members": [ "@run_as", "@chef_user", "root" ] } ],
+
+    "passwords": [ "kerberos", "backup_key", "rooty", "rooty_queue" ],
+
+    "packages": [ "memcached", "redis-server" ],
+
+    "tarball": { "url": "@databag[init][server_tarball]" },
+
+    "database": { "type": "postgresql", "here_schema": "cloudos.sql" },
+
+    "web": { "type": "apache", "mode": "proxy_root", "ssl_cert_name": "@databag[base][ssl_cert_name]" },
+
+    "templates": {
+        ".cloudos.env": "dot-cloudos.env",
+        "/usr/sbin/dns-admin.sh": "_",
+        "first_time_setup.sh": "_",
+        "/etc/rooty.yml": "_",
+        "@chef_home/chef.rooty.yml": "chef.yml"
+    },
+
+    "perms": {
+        "@home": { "chgrp": "@group[rooty]", "perms": "770" },
+        "@name": { "chgrp": "@group[rooty]", "perms": "770" },
+        "@name/logs": { "chgrp": "@group[rooty]", "perms": "770" },
+        "@name/logs/cloudos-RootyMain-chef.log": { "chown": "@chef_user.@group[rooty]", "perms": "600" },
+        "/etc/chef-user": { "chgrp": "@group[rooty]", "perms": "640" },
+        "/etc/rooty.yml": { "chown": "root.root", "perms": "600" },
+        "/usr/sbin/dns-admin.sh": { "chown": "root.root", "perms": "700" },
+        "@chef_home/chef.rooty.yml": { "chown": "@chef_user", "perms": "600" }
+    },
+
+    "post_install": [
+        { "exec": "/usr/sbin/dns-admin.sh --operation add --record a  --fqdn @hostname    --value @ipaddress   --ttl 14400" },
+        { "exec": "/usr/sbin/dns-admin.sh --operation add --record a  --fqdn mx.@hostname --value @ipaddress   --ttl 14400" },
+        { "exec": "/usr/sbin/dns-admin.sh --operation add --record mx --fqdn @hostname    --value mx.@hostname --ttl 14400 --options rank=1" },
+        { "exec": "@home/first_time_setup.sh" }
+    ],
+
+    "sysinit": [
+        "jrun",
+        "jrun:rooty.RootyMain:/etc/rooty.yml:root",
+        "jrun:rooty.RootyMain:@chef_home/chef.rooty.yml:@chef_user"
+    ]
+}

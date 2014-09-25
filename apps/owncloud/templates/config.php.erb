@@ -1,0 +1,30 @@
+<?php
+$CONFIG = array (
+  'instanceid' => '<%=@app[:uniq][0]%>',
+  'passwordsalt' => '<%=@app[:uniq][1]%>',
+  'trusted_domains' =>
+  array (
+    0 => '<%=@app[:hostname]%>',
+  ),
+  'datadirectory' => '<%=@app[:doc_root]%>/data',
+  'dbtype' => 'pgsql',
+  'version' => '7.0.1.1',
+  'dbname' => '<%=@app[:dbname]%>',
+  'dbhost' => '127.0.0.1',
+  'dbtableprefix' => 'oc_',
+  'dbuser' => '<%=@app[:dbuser]%>',
+  'dbpassword' => '<%=@app[:dbpass]%>',
+  'installed' => true,
+
+  'user_backends' => array (
+    0 => array (
+        "class"     => "OC_User_IMAP",
+        "arguments" => array (
+            0 => '{<%=@app[:hostname]%>:993/imap/ssl/novalidate-cert}INBOX'
+        ),
+    ),
+  ),
+
+  'theme' => '',
+  'maintenance' => false,
+);

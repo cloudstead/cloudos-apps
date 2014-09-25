@@ -1,0 +1,57 @@
+{
+    "version": "0.1.0",
+    "name": "roundcube",
+    "style": "php",
+
+    "publisher": {
+        "maintainer": "Jonathan Cobb",
+        "maintainer_email": "jonathan@cloudstead.io",
+        "license": "https://raw.githubusercontent.com/roundcube/roundcubemail/master/LICENSE",
+        "code_copyright": "Copyright 2014 Roundcube.net, all rights reserved.",
+        "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+    },
+
+    "packages" : [ "php5-imap", "php5-gd", "php5-json", "php5-curl",
+                   "php5-intl", "php5-mcrypt", "php5-imagick" ],
+
+    "database": {
+        "type": "postgresql",
+        "schema": "@doc_root/SQL/postgres.initial.sql"
+    },
+
+    "tarball": {
+        "url": "http://kyuss.org/tmp2/roundcubemail-1.0.2.tar.gz",
+        "shasum": "1c1560a7a56e6884b45c49f52961dbbb3f6bacbc7e7c755440750a1ab027171c"
+    },
+
+    "web": {
+        "type": "apache",
+        "mode": "service",
+        "apache": {
+            "php_set": [ { "name": "extension", "value": "pdo_pgsql.so" } ]
+        }
+    },
+
+    "dirs": [
+        "@doc_root/temp",
+        "@doc_root/logs"
+    ],
+
+    "templates": { "@doc_root/config/config.inc.php": "config.inc.php" },
+
+    "auth": {
+        "login_fields": {
+            "email": "{{account.name}}@{{email_domain}}",
+            "password": "{{account.password}}",
+            "authenticity_token": "pass"
+        },
+        "login_path": "/session",
+        "login_page_markers": [
+            "user_email",
+            "authenticity_token",
+            "type=\"password\"",
+            "value=\"Login\""
+        ]
+    }
+
+}

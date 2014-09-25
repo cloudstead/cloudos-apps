@@ -1,0 +1,27 @@
+#
+# Cookbook Name:: email
+# Recipe:: restore
+#
+# Copyright 2014, cloudstead
+#
+# All rights reserved - Do Not Redistribute
+#
+
+bash "restore dovecot / postfix config files & database" do
+user "root"
+cwd "<%=@backup_dir%>"
+code <<-EOF
+echo "restoring files from backup at <%=@backup_dir%>"
+
+cp -rf etc/* /etc
+
+service postfix stop
+service dovecot stop
+# (if we stay with the file-copy approach) should we empty out any existing
+# mailbox data before doing the copy?
+cp -rf var/* /var
+service dovecot start
+service postfix start
+
+EOF
+end

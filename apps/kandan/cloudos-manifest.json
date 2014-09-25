@@ -1,0 +1,26 @@
+{
+    "version": "0.1.0",
+    "name": "kandan",
+    "style": "rails",
+
+    "publisher": {
+        "maintainer": "Jonathan Cobb",
+        "maintainer_email": "jonathan@cloudstead.io",
+        "license": "https://raw.githubusercontent.com/kandanapp/kandan/master/LICENSE",
+        "code_copyright": "Copyright 2014 https://github.com/kandanapp/kandan#credits",
+        "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+    },
+
+    "packages": [ "g++", "libsqlite3-dev", "libkrb5-dev" ],
+
+    "repo": {
+        "url": "https://github.com/cobbzilla/kandan.git",
+        "branch": "cloudstead"
+    },
+
+    "database": { "type": "postgresql" },
+
+    "web": { "type": "apache", "mode": "proxy" },
+
+    "auth": {}
+}

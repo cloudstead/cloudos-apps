@@ -1,0 +1,50 @@
+{
+    "version": "0.1.0",
+    "name": "jira",
+    "style": "java_webapp",
+
+    "publisher": {
+        "maintainer": "Jonathan Cobb",
+        "maintainer_email": "jonathan@cloudstead.io",
+        "license": "https://www.atlassian.com/licensing/jira",
+        "code_copyright": "Copyright © 2002 - 2014 Atlassian Corporation Pty Ltd.",
+        "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+    },
+
+    "tarball": {
+        "url": "http://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-6.3.3.tar.gz"
+    },
+
+    "database": { "type": "postgresql" },
+
+    "packages": [ "jsvc" ],
+
+    "web": { "type": "apache", "mode": "proxy" },
+
+    "dirs": [ "jira-home" ],
+
+    "symlinks": { "@name/bin": "which jsvc" },
+
+    "move": {
+        "@name/atlassian-jira/WEB-INF/lib/mail-*.jar": "@name/lib/",
+        "@name/atlassian-jira/WEB-INF/lib/activation-*.jar": "@name/lib/"
+    },
+
+    "templates": {
+        "@name/atlassian-jira/WEB-INF/classes/jira-application.properties": "_",
+        "@name/conf/server.xml": "_",
+        "jira-home/dbconfig.xml": "_"
+    },
+
+    "perms": {
+        "@name": { "perms": "-R 500" },
+        "@name/logs": { "perms": "-R 700" },
+        "@name/temp": { "perms": "-R 700" },
+        "@name/work": { "perms": "-R 700" }
+    },
+
+    "sysinit": [ "@name/bin/daemon.sh --tomcat-user @name --java-home @java_home" ],
+
+    "auth": {}
+
+}

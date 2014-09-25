@@ -1,0 +1,43 @@
+{
+    "version": "0.1.0",
+    "name": "roundcube-calendar",
+    "style": "php",
+    "parent": "roundcube",
+
+    "publisher": {
+        "maintainer": "Jonathan Cobb",
+        "maintainer_email": "jonathan@cloudstead.io",
+        "license": "https://raw.githubusercontent.com/roundcube/roundcubemail/master/LICENSE",
+        "code_copyright": "Copyright 2014 Roundcube.net, all rights reserved.",
+        "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+    },
+
+    "web": {
+        "type": "apache",
+        "mode": "service",
+        "apache": { "vhost": "enable" }
+    },
+
+    "database": {
+        "type": "postgresql",
+        "schema": "@doc_root/plugins/calendar/drivers/database/SQL/postgres.initial.sql",
+        "unless": "calendars"
+    },
+
+    "tarball": {
+        "url": "http://git.kolab.org/roundcubemail-plugins-kolab/snapshot/roundcubemail-plugins-kolab-3.1.13.tar.gz",
+        "shasum": "0876e58d044077ffae71e31f4c6a71b42db879ec68c8722c8d7f3e81c78656dd",
+        "copy": [ {
+            "from": "plugins/calendar",
+            "to": "@doc_root/plugins"
+        }, {
+            "from": "plugins/libcalendaring",
+            "to": "@doc_root/plugins"
+        } ]
+    },
+
+    "append": {
+        "@doc_root/config/config.inc.php": "array_push($config['plugins'],'calendar','libcalendaring');"
+    }
+
+}

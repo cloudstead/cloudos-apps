@@ -1,0 +1,53 @@
+{
+    "name": "email",
+    "version": "0.1.0",
+    "style": "system",
+    "publisher": {
+        "maintainer": "Jonathan Cobb",
+        "maintainer_email": "jonathan@cloudstead.io",
+        "license": "https://www.gnu.org/licenses/agpl-3.0.txt",
+        "code_copyright": "Copyright 2014 Cloudstead, Inc.",
+        "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+    },
+
+    "databags": [ {
+        "name": "init",
+        "items": [ "smtp_relay.user", "smtp_relay.password", "smtp_relay.host", "smtp_relay.port" ]
+    } ],
+
+    "packages": [ "dovecot-core", "dovecot-imapd", "dovecot-pop3d", "dovecot-gssapi",
+                  "libpam-krb5", "postfix", "amavisd-new", "spamassassin",
+                  "clamav-daemon", "clamav-freshclam", "re2c", "pyzor", "razor", "spamc" ],
+
+    "users": [
+        { "label": "postmaster", "home": "/var/postmaster" },
+        { "label": "vmail", "home": "/var/vmail" }
+    ],
+
+    "groups": [ { "group": "vmail", "members": ["vmail", "postfix"] } ],
+
+    "templates": {
+        "/etc/dovecot/conf.d/01-mail-stack-delivery.conf": "_",
+        "/etc/dovecot/conf.d/10-mail.conf": "_",
+        "/etc/dovecot/conf.d/10-auth.conf": "_",
+        "/etc/dovecot/conf.d/10-logging.conf": "_",
+        "/etc/postfix/main.cf": "_",
+        "/etc/postfix/master.cf": "_",
+        "/etc/postfix/virtual": "_",
+        "/etc/pam.d/dovecot": "_",
+        "/etc/mailname": "_"
+    },
+
+    "post_install": [ { "exec": "/usr/sbin/postmap virtual", "dir": "/etc/postfix" } ],
+
+    "mailboxes": [
+        { "address": "postmaster" },
+        { "address": "root", "alias_for": "postmaster" }
+    ],
+
+    "services": [
+        { "name": "dovecot", "pattern": "/usr/sbin/dovecot", "provider": "upstart" },
+        { "name": "postfix", "pattern": "/usr/lib/postfix/master" }
+    ]
+
+}
