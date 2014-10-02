@@ -2,4 +2,4 @@
 
 BASE=$(cd $(dirname $0) && pwd)
 
-../cloudos-appstore/bin/cbundle ${BASE}/apps
+../cloudos-appstore/bin/cbundle ${BASE}/apps && ${BASE}/consolidate-cookbooks.sh
