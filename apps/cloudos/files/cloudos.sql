@@ -39,16 +39,22 @@ CREATE TABLE account (
     name character varying(100) NOT NULL,
     admin boolean NOT NULL,
     auth_id character varying(30),
+    email character varying(255) NOT NULL,
+    email_verification_code character varying(255),
+    email_verification_code_created_at bigint,
+    email_verified boolean NOT NULL,
     first_name character varying(25) NOT NULL,
     last_login bigint,
     last_name character varying(25) NOT NULL,
     mobile_phone character varying(30),
     mobile_phone_country_code integer,
-    primary_group character varying(100),
-    recovery_email character varying(1024) NOT NULL,
-    storage_quota character varying(10),
+    mobile_phone_verification_code character varying(100),
+    mobile_phone_verification_code_created_at bigint,
+    mobile_phone_verified boolean NOT NULL,
     suspended boolean NOT NULL,
-    two_factor boolean NOT NULL
+    two_factor boolean NOT NULL,
+    primary_group character varying(100),
+    storage_quota character varying(10)
 );
 
 
@@ -157,7 +163,7 @@ ALTER TABLE public.ssl_certificate OWNER TO cloudos;
 -- Data for Name: account; Type: TABLE DATA; Schema: public; Owner: cloudos
 --
 
-COPY account (uuid, ctime, name, admin, auth_id, first_name, last_login, last_name, mobile_phone, mobile_phone_country_code, primary_group, recovery_email, storage_quota, suspended, two_factor) FROM stdin;
+COPY account (uuid, ctime, name, admin, auth_id, email, email_verification_code, email_verification_code_created_at, email_verified, first_name, last_login, last_name, mobile_phone, mobile_phone_country_code, mobile_phone_verification_code, mobile_phone_verification_code_created_at, mobile_phone_verified, suspended, two_factor, primary_group, storage_quota) FROM stdin;
 \.
 
 
@@ -206,7 +212,7 @@ COPY installed_app (uuid, ctime, account, active, hostname, manifest_json, name,
 --
 
 COPY ssl_certificate (uuid, ctime, name, common_name, description, key_md5, key_sha, pem_md5, pem_sha) FROM stdin;
-143c422f-26d4-49b8-959a-ee933aa0e2f4	1411637283546	ssl-https	*.cloudstead.io	cloudstead.io wildcard certificate	23a5bcd716f54cc819a7367e64fe70e9	1844d332ccb478a82eb038e947988b1b1e5b7882ddda85456efbc89bca327e97	e367ebcdec3792a33c0005e8b8098040	761f5e4128089695d51600c36e6b96438828e0ee7c76d7a15da2c13516832417
+da7033d4-655a-4789-9910-b82fb3cf4757	1412350713716	ssl-https	*.cloudstead.io	cloudstead.io wildcard certificate	23a5bcd716f54cc819a7367e64fe70e9	1844d332ccb478a82eb038e947988b1b1e5b7882ddda85456efbc89bca327e97	e367ebcdec3792a33c0005e8b8098040	761f5e4128089695d51600c36e6b96438828e0ee7c76d7a15da2c13516832417
 \.
 
 
@@ -224,6 +230,14 @@ ALTER TABLE ONLY account_device
 
 ALTER TABLE ONLY account_device
     ADD CONSTRAINT account_device_pkey PRIMARY KEY (uuid);
+
+
+--
+-- Name: account_email_key; Type: CONSTRAINT; Schema: public; Owner: cloudos; Tablespace: 
+--
+
+ALTER TABLE ONLY account
+    ADD CONSTRAINT account_email_key UNIQUE (email);
 
 
 --
@@ -272,14 +286,6 @@ ALTER TABLE ONLY account
 
 ALTER TABLE ONLY account
     ADD CONSTRAINT account_pkey PRIMARY KEY (uuid);
-
-
---
--- Name: account_recovery_email_key; Type: CONSTRAINT; Schema: public; Owner: cloudos; Tablespace: 
---
-
-ALTER TABLE ONLY account
-    ADD CONSTRAINT account_recovery_email_key UNIQUE (recovery_email);
 
 
 --
