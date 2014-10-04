@@ -16,7 +16,10 @@
                    "dyndns.account", "dyndns.user", "dyndns.password", "dyndns.zone" ]
     } ],
 
-    "tarball": { "url": "http://cloudstead.io/downloads/cloudos-dns.tar.gz" },
+    "tarball": {
+        "url": "http://cloudstead.io/downloads/cloudos-dns-server.tar.gz",
+        "shasum": "a13a793ece260e4425a0d65e3b0151a0a31ab5348a93146c093a56eccfd8be49"
+    },
 
     "database": {
         "type": "postgresql",

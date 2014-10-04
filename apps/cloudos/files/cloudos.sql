@@ -40,7 +40,7 @@ CREATE TABLE account (
     admin boolean NOT NULL,
     auth_id character varying(30),
     email character varying(255) NOT NULL,
-    email_verification_code character varying(255),
+    email_verification_code character varying(100),
     email_verification_code_created_at bigint,
     email_verified boolean NOT NULL,
     first_name character varying(25) NOT NULL,
@@ -212,7 +212,7 @@ COPY installed_app (uuid, ctime, account, active, hostname, manifest_json, name,
 --
 
 COPY ssl_certificate (uuid, ctime, name, common_name, description, key_md5, key_sha, pem_md5, pem_sha) FROM stdin;
-da7033d4-655a-4789-9910-b82fb3cf4757	1412350713716	ssl-https	*.cloudstead.io	cloudstead.io wildcard certificate	23a5bcd716f54cc819a7367e64fe70e9	1844d332ccb478a82eb038e947988b1b1e5b7882ddda85456efbc89bca327e97	e367ebcdec3792a33c0005e8b8098040	761f5e4128089695d51600c36e6b96438828e0ee7c76d7a15da2c13516832417
+53905e9b-7ecc-4176-aeb9-ff4d6f5cee37	1412404090695	ssl-https	*.cloudstead.io	cloudstead.io wildcard certificate	23a5bcd716f54cc819a7367e64fe70e9	1844d332ccb478a82eb038e947988b1b1e5b7882ddda85456efbc89bca327e97	e367ebcdec3792a33c0005e8b8098040	761f5e4128089695d51600c36e6b96438828e0ee7c76d7a15da2c13516832417
 \.
 
 
