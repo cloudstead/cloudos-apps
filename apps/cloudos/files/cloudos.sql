@@ -44,13 +44,13 @@ CREATE TABLE account (
     email_verification_code_created_at bigint,
     email_verified boolean NOT NULL,
     first_name character varying(25) NOT NULL,
+    hashed_password character varying(200) NOT NULL,
+    reset_token character varying(30),
+    reset_token_ctime bigint,
     last_login bigint,
     last_name character varying(25) NOT NULL,
     mobile_phone character varying(30),
     mobile_phone_country_code integer,
-    mobile_phone_verification_code character varying(100),
-    mobile_phone_verification_code_created_at bigint,
-    mobile_phone_verified boolean NOT NULL,
     suspended boolean NOT NULL,
     two_factor boolean NOT NULL,
     primary_group character varying(100),
@@ -163,7 +163,7 @@ ALTER TABLE public.ssl_certificate OWNER TO cloudos;
 -- Data for Name: account; Type: TABLE DATA; Schema: public; Owner: cloudos
 --
 
-COPY account (uuid, ctime, name, admin, auth_id, email, email_verification_code, email_verification_code_created_at, email_verified, first_name, last_login, last_name, mobile_phone, mobile_phone_country_code, mobile_phone_verification_code, mobile_phone_verification_code_created_at, mobile_phone_verified, suspended, two_factor, primary_group, storage_quota) FROM stdin;
+COPY account (uuid, ctime, name, admin, auth_id, email, email_verification_code, email_verification_code_created_at, email_verified, first_name, hashed_password, reset_token, reset_token_ctime, last_login, last_name, mobile_phone, mobile_phone_country_code, suspended, two_factor, primary_group, storage_quota) FROM stdin;
 \.
 
 
@@ -212,7 +212,7 @@ COPY installed_app (uuid, ctime, account, active, hostname, manifest_json, name,
 --
 
 COPY ssl_certificate (uuid, ctime, name, common_name, description, key_md5, key_sha, pem_md5, pem_sha) FROM stdin;
-53905e9b-7ecc-4176-aeb9-ff4d6f5cee37	1412404090695	ssl-https	*.cloudstead.io	cloudstead.io wildcard certificate	23a5bcd716f54cc819a7367e64fe70e9	1844d332ccb478a82eb038e947988b1b1e5b7882ddda85456efbc89bca327e97	e367ebcdec3792a33c0005e8b8098040	761f5e4128089695d51600c36e6b96438828e0ee7c76d7a15da2c13516832417
+da0683e4-ce2c-44f1-b571-6e85ddfc091d	1412600099561	ssl-https	*.cloudstead.io	cloudstead.io wildcard certificate	23a5bcd716f54cc819a7367e64fe70e9	1844d332ccb478a82eb038e947988b1b1e5b7882ddda85456efbc89bca327e97	e367ebcdec3792a33c0005e8b8098040	761f5e4128089695d51600c36e6b96438828e0ee7c76d7a15da2c13516832417
 \.
 
 
