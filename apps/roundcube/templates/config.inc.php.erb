@@ -81,5 +81,8 @@ $config['plugins'] = array(
     'zipdownload',
 );
 
+// 24-hours + 1 minute, ensures it's longer than the cloudos session timeout
+$config['session_lifetime'] = 1441;
+
 // skin name: folder from skins/
 $config['skin'] = 'larry';
