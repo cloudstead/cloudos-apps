@@ -36,7 +36,7 @@
 
     "tarball": { "url": "@databag[init][server_tarball]" },
 
-    "database": { "type": "postgresql", "here_schema": "cloudos.sql" },
+    "database": { "type": "postgresql" },
 
     "web": { "type": "apache", "mode": "proxy_root", "ssl_cert_name": "@databag[base][ssl_cert_name]" },
 
@@ -46,6 +46,16 @@
         "first_time_setup.sh": "_",
         "/etc/rooty.yml": "_",
         "@chef_home/chef.rooty.yml": "chef.yml"
+    },
+
+    "copy": {
+        "@files/owncloud/*": "/var/www/owncloud/",
+        "@files/roundcube/*": "/var/www/roundcube/"
+    },
+
+    "append": {
+        "/var/www/roundcube/config/config.inc.php": "array_unshift($config['plugins'],'rcs_skins','rcs_skins'); config['skin']='outlook';",
+        "/var/www/owncloud/config/config.php": "$CONFIG['theme'] = 'cloudstead';"
     },
 
     "perms": {
