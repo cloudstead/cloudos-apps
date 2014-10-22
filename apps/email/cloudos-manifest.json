@@ -30,6 +30,7 @@
         "/etc/dovecot/conf.d/01-mail-stack-delivery.conf": "_",
         "/etc/dovecot/conf.d/10-mail.conf": "_",
         "/etc/dovecot/conf.d/10-auth.conf": "_",
+        "/etc/dovecot/conf.d/10-ssl.conf": "_",
         "/etc/dovecot/conf.d/10-logging.conf": "_",
         "/etc/postfix/main.cf": "_",
         "/etc/postfix/master.cf": "_",
