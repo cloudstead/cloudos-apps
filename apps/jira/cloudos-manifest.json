@@ -23,7 +23,7 @@
 
     "dirs": [ "jira-home" ],
 
-    "symlinks": { "@name/bin": "which jsvc" },
+    "symlinks": { "@name/bin": "/usr/bin/jsvc" },
 
     "move": {
         "@name/atlassian-jira/WEB-INF/lib/mail-*.jar": "@name/lib/",
