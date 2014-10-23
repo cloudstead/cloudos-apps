@@ -39,6 +39,10 @@
         "/etc/mailname": "_"
     },
 
+    "perms": {
+        "/etc/postfix/main.cf": { "chgrp": "dovecot", "perms": "640" }
+    },
+
     "post_install": [ { "exec": "/usr/sbin/postmap virtual", "dir": "/etc/postfix" } ],
 
     "mailboxes": [
