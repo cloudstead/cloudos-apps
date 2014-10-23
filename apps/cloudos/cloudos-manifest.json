@@ -45,7 +45,8 @@
         "/usr/sbin/dns-admin.sh": "_",
         "first_time_setup.sh": "_",
         "/etc/rooty.yml": "_",
-        "@chef_home/chef.rooty.yml": "chef.yml"
+        "@chef_home/chef.rooty.yml": "chef.yml",
+        "/usr/local/bin/install_cloudos_app": "_"
     },
 
     "copy": {
