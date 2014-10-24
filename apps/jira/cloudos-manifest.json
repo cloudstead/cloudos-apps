@@ -23,7 +23,7 @@
 
     "dirs": [ "jira-home" ],
 
-    "symlinks": { "@name/bin": "/usr/bin/jsvc" },
+    "symlinks": { "@name/bin/jsvc": "/usr/bin/jsvc" },
 
     "move": {
         "@name/atlassian-jira/WEB-INF/lib/mail-*.jar": "@name/lib/",
@@ -37,7 +37,10 @@
     },
 
     "perms": {
+        "@run_as_home": { "chown": "jira.root", "perms": "550" },
         "@name": { "perms": "-R 500" },
+        "@name/bin": { "perms": "755" },
+        "@name/bin/daemon.sh": { "perms": "755" },
         "@name/logs": { "perms": "-R 700" },
         "@name/temp": { "perms": "-R 700" },
         "@name/work": { "perms": "-R 700" }
@@ -45,6 +48,20 @@
 
     "sysinit": [ "@name/bin/daemon.sh --tomcat-user @name --java-home @java_home" ],
 
-    "auth": {}
+    "auth": {
+        "login_fields": {
+            "os_username": "{{account.name}}",
+            "os_password": "{{account.password}}",
+            "os_cookie": "true",
+            "os_captcha": "",
+            "rememberme": "on",
+            "authenticity_token": "pass"
+        },
+        "login_path": "/rest/gadget/1.0/login",
+        "login_page_markers": [
+            "for=\"login-form-username\"",
+            "for=\"login-form-password\""
+        ]
+    }
 
 }
