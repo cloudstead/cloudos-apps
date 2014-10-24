@@ -27,7 +27,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<Server port="<%=@app[:admin_port]%>" shutdown="SHUTDOWN">
+<Server port="<%=@app[:databag][:ports]['admin']%>" shutdown="SHUTDOWN">
 
     <!--APR library loader. Documentation at /docs/apr.html -->
     <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on"/>
@@ -44,12 +44,12 @@
                    maxHttpHeaderSize="8192"
                    maxThreads="150"
                    minSpareThreads="25"
-                   port="<%=@app[:port]%>"
+                   port="<%=@app[:databag][:ports]['primary']%>"
                    protocol="HTTP/1.1"
                    redirectPort="443"
                    useBodyEncodingForURI="true"
                    scheme="https"
-                   proxyName="<%=@app[:hostname]%>"
+                   proxyName="<%=@app[:name]%>-<%=@app[:hostname]%>"
                    proxyPort="443"
                    secure="true"/>
 
