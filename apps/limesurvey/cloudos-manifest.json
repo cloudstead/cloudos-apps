@@ -1,0 +1,59 @@
+{
+    "version": "0.1.0",
+    "name": "phplist",
+    "style": "php",
+
+    "publisher": {
+        "maintainer": "Jonathan Cobb",
+        "maintainer_email": "jonathan@cloudstead.io",
+        "license": "http://manual.limesurvey.org/License",
+        "code_copyright": "Copyright 2003-2011 LimeSurvey Project Team / Carsten Schmitz",
+        "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+    },
+
+    "tarball": {
+        "url": "http://cloudstead.io/downloads/limesurvey-build141020.tar.gz",
+        "shasum": "a51efae85ec58a56037bc4ed6986ff2e64a5c2ea8474504368cb69d6b9506fe9"
+    },
+
+    "packages": [ "php5-gd", "php5-imap", "php5-ldap" ],
+
+    "database": {
+        "type": "postgresql",
+        "inserts": [
+            { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('SessionName', '@uniq[0]_@uniq[1]')",
+              "unless": "SELECT COUNT(*) FROM lime_settings_global WHERE stg_name='SessionName'" },
+            { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('siteadminemail', 'limesurvey@@hostname')",
+              "unless": "SELECT COUNT(*) FROM lime_settings_global WHERE stg_name='siteadminemail'" },
+            { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('siteadminbounce', 'limesurvey@@hostname')",
+              "unless": "SELECT COUNT(*) FROM lime_settings_global WHERE stg_name='siteadminbounce'" }
+        ]
+    },
+
+    "web": {
+        "type": "apache",
+        "mode": "service",
+        "apache": {
+            "php_set": [
+                { "name": "extension", "value": "pdo_pgsql.so" },
+                { "name": "extension", "value": "imap.so" }
+            ]
+        }
+    },
+
+    "templates": {
+        "@doc_root/application/config/config.php": "_"
+    },
+
+    "perms": {
+         "@doc_root/tmp": { "perms": "770", "recursive": true },
+         "@doc_root/upload": { "perms": "770", "recursive": true },
+         "@doc_root/application/config": { "perms": "770", "recursive": true }
+    },
+
+    "mailboxes": [
+        { "address": "surveys", "alias_for": "postmaster" }
+    ],
+
+    "auth": {}
+}
