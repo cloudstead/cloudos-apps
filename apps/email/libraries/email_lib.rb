@@ -5,7 +5,7 @@ class Chef::Recipe::Email
     '/etc/postfix/vmailbox'
   end
 
-  def self.create_mailbox(chef, account, vmail_user, vmail_group, domain, deliver_to_account = nil)
+  def self.create_mailbox(chef, account, domain, deliver_to_account = nil)
 
     email_lib = Chef::Recipe::Email
     vmailbox = email_lib.vmailbox
@@ -23,8 +23,8 @@ echo "#{account}@#{domain}   #{domain}/#{deliver_to_account}/Maildir/" >> #{vmai
     end
 
     chef.directory "/var/vmail/vhosts/#{domain}/#{deliver_to_account}" do
-      owner vmail_user
-      group vmail_group
+      owner 'vmail'
+      group 'vmail'
       mode '0700'
       recursive true
       action :create
@@ -47,7 +47,7 @@ postmap #{vmailbox}
     end
 
     # for some reason this directory ends up being owned by root (?)
-    email_lib.permission chef, '/var/vmail', nil, vmail_user, vmail_group, nil, true
+    email_lib.permission chef, '/var/vmail', nil, 'vmail', 'vmail', nil, true
   end
 
 end
