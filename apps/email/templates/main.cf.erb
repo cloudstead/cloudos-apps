@@ -70,7 +70,7 @@ smtpd_tls_auth_only = yes
 tls_random_source = dev:/dev/urandom
 
 # virtual_transport = lmtp:unix:/var/spool/mail
-virtual_mailbox_domains = <%=@app[:hostname]%>
+virtual_mailbox_domains = <%=%x(printf "$(hostname)\n$(cat /etc/postfix/vmailbox.domains 2> /dev/null)" | tr '[:upper:]' '[:lower:]' | sort | uniq | egrep '\w' | tr '\n' ' ')%>
 virtual_mailbox_base = <%=@app[:users]['vmail'][:home]%>/vhosts
 virtual_mailbox_maps = hash:/etc/postfix/vmailbox
 virtual_minimum_uid = 100
