@@ -38,7 +38,11 @@
 
     "database": { "type": "postgresql" },
 
-    "web": { "type": "apache", "mode": "proxy_root", "ssl_cert_name": "@databag[base][ssl_cert_name]" },
+    "web": {
+        "type": "apache", "apache": { "mods": ["@session_header"] },
+        "mode": "proxy_root",
+        "ssl_cert_name": "@databag[base][ssl_cert_name]"
+    },
 
     "dirs": [ "/etc/rooty_handlers" ],
 
