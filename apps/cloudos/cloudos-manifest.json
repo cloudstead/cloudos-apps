@@ -40,18 +40,20 @@
 
     "web": { "type": "apache", "mode": "proxy_root", "ssl_cert_name": "@databag[base][ssl_cert_name]" },
 
+    "dirs": [ "/etc/rooty_handlers" ],
+
     "templates": {
         ".cloudos.env": "dot-cloudos.env",
-        "/usr/sbin/dns-admin.sh": "_",
         "first_time_setup.sh": "_",
         "/etc/rooty.yml": "_",
         "@chef_home/chef.rooty.yml": "chef.yml",
-        "/usr/local/bin/install_cloudos_app": "_"
+        "/usr/bin/cos": "_"
     },
 
     "copy": {
         "@files/owncloud/*": "/var/www/owncloud/",
-        "@files/roundcube/*": "/var/www/roundcube/"
+        "@files/roundcube/*": "/var/www/roundcube/",
+        "@files/cloudos/dot-cos-commands": "@name/.cos-commands"
     },
 
     "append": {
@@ -64,16 +66,18 @@
         "@name": { "chgrp": "@group[rooty]", "perms": "770" },
         "@name/logs": { "chgrp": "@group[rooty]", "perms": "770" },
         "@name/logs/cloudos-RootyMain-chef.log": { "chown": "@chef_user.@group[rooty]", "perms": "600" },
+        "@name/target/*.jar": { "chgrp": "@group[rooty]", "perms": "640" },
         "/etc/chef-user": { "chgrp": "@group[rooty]", "perms": "640" },
         "/etc/rooty.yml": { "chown": "root.root", "perms": "600" },
-        "/usr/sbin/dns-admin.sh": { "chown": "root.root", "perms": "700" },
-        "@chef_home/chef.rooty.yml": { "chown": "@chef_user", "perms": "600" }
+        "/etc/rooty_handlers": { "chown": "root.root", "perms": "700" },
+        "@chef_home/chef.rooty.yml": { "chown": "@chef_user", "perms": "600" },
+        "/usr/bin/cos": { "chown": "root.@group[rooty]", "perms": "750" }
     },
 
     "post_install": [
-        { "exec": "/usr/sbin/dns-admin.sh --operation add --record a  --fqdn @hostname    --value @ipaddress   --ttl 14400" },
-        { "exec": "/usr/sbin/dns-admin.sh --operation add --record a  --fqdn mx.@hostname --value @ipaddress   --ttl 14400" },
-        { "exec": "/usr/sbin/dns-admin.sh --operation add --record mx --fqdn @hostname    --value mx.@hostname --ttl 14400 --options rank=1" },
+        { "exec": "cos dns --operation add --record a  --fqdn @hostname    --value @ipaddress   --ttl 14400" },
+        { "exec": "cos dns --operation add --record a  --fqdn mx.@hostname --value @ipaddress   --ttl 14400" },
+        { "exec": "cos dns --operation add --record mx --fqdn @hostname    --value mx.@hostname --ttl 14400 --options rank=1" },
         { "exec": "@home/first_time_setup.sh" }
     ],
 

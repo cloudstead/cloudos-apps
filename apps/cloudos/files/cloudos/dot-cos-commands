@@ -1,0 +1,3 @@
+install: cloudos.main.InstallAppMain
+dns:     cloudos.dns.main.DnsMain
+json:    org.cobbzilla.util.json.main.JsonEditor

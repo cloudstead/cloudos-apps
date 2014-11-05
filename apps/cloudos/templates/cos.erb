@@ -1,0 +1,43 @@
+#!/bin/bash
+
+function die () {
+  echo >2 "${1}"
+  exit 1
+}
+
+BASE=$(cd <%=@app[:run_as_home]%>/<%=@app[:name]%> && pwd)
+
+JAR_PATTERN="cloudos-server-*.jar"
+JAR_DIR="${BASE}/target"
+JAR="$(find ${JAR_DIR} -maxdepth 1 -type f -name ${JAR_PATTERN})"
+NUM_JARS=$(find ${JAR_DIR} -maxdepth 1 -type f -name ${JAR_PATTERN} | wc -l | tr -d ' ')
+
+if [ ${NUM_JARS} -eq 0 ] ; then
+  die "No cloudos-server jar found in ${JAR_DIR}. Please build it first: cd ${BASE}/target && mvn package"
+
+elif [ ${NUM_JARS} -gt 1 ] ; then
+  die "Multiple cloudos-server jars found in ${JAR_DIR}: ${JAR}"
+fi
+
+CMD_LIST="${BASE}/.cos-commands"
+all_commands=$(cat ${CMD_LIST} | awk '{print $1}' | tr -d ':')
+
+command="${1}"
+if [ -z "${command}" ] ; then
+  die "No command given. Use one of these: ${all_commands}"
+fi
+shift
+
+class=$(cat ${CMD_LIST} | egrep "^${command}:" | tr ':' ' ' | awk '{print $2}')
+if [ -z "${class}" ] ; then
+  die "$0 doesn't understand ${command}. Use one of these: ${all_commands}"
+fi
+
+FIXED_ARGS=""
+if [ ${command} = "dns" ] ; then
+  CONFIG=<%=@app[:chef_user_home]%>/chef/data_bags/cloudos/init.json
+  CONFIG_NODE="dns"
+  FIXED_ARGS="--config ${CONFIG} --config-node ${CONFIG_NODE}"
+fi
+
+exec java -cp ${JAR} ${class} ${FIXED_ARGS} "$@"

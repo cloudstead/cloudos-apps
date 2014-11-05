@@ -1,0 +1,24 @@
+#!/bin/bash
+
+function die () {
+  echo >2 "${1}"
+  exit 1
+}
+
+ACCOUNT="${1}"
+if [ -z "${ACCOUNT}" ] ; then
+  die "No account name provided"
+fi
+
+SETTINGS_JSON="<%=@app[:run_as_home]%>/<%=@app[:name]%>/settings.json"
+BACKUP=$(mktemp $(dirname ${SETTINGS_JSON})/settings.json.$(date +%Y%m%d_%H%M%S).XXXXXXX)
+TEMP=$(mktemp $(dirname ${SETTINGS_JSON})/.settings.json.XXXXXXX)
+
+cos json --file ${SETTINGS_JSON} \
+  --operation delete \
+  --path users.${ACCOUNT} \
+  --outfile ${TEMP} && \
+cp ${SETTINGS_JSON} ${BACKUP} && \
+cat ${TEMP} > ${SETTINGS_JSON} && \
+rm ${TEMP} && \
+service <%=@app[:service_name]%> restart

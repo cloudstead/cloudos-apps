@@ -1,0 +1,54 @@
+{
+    "title": "Etherpad",
+
+    "favicon": "favicon.ico",
+
+    "ip": "127.0.0.1",
+    "port" : <%=@app[:databag][:ports]['primary']%>,
+
+    "sessionKey" : "<%=@app[:uniq][0]%>",
+
+    "dbType" : "dirty",
+    "dbSettings" : {
+        "filename" : "var/dirty.db"
+    },
+    "defaultPadText" : "Welcome to Etherpad!\n\nThis pad text is synchronized as you type, so that everyone viewing this page sees the same text. This allows you to collaborate seamlessly on documents!\n\nGet involved with Etherpad at http:\/\/etherpad.org\n",
+
+    "requireSession" : false,
+
+    "editOnly" : false,
+
+    "sessionNoPassword" : false,
+
+    "minify" : true,
+
+    "maxAge" : 21600,
+
+    "abiword" : "/usr/bin/abiword",
+
+    "requireAuthentication": true,
+
+    "requireAuthorization": false,
+
+    "trustProxy": true,
+
+    "disableIPlogging": false,
+
+    "users": {
+        "admin": {
+            "password": "<%=@app[:uniq][1]%>",
+            "is_admin": true
+        }
+    },
+
+    "socketTransportProtocols" : ["xhr-polling", "jsonp-polling", "htmlfile"],
+
+    "loglevel": "INFO",
+
+    "logconfig" :
+    { "appenders": [
+        { "type": "console"
+        }
+    ]
+    }
+}

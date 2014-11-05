@@ -1,10 +1,9 @@
 queueName: <%=@app[:passwords]['rooty_queue']%>+root
 secret: <%=@app[:passwords]['rooty']%> # used to encrypt messages and generate hashes in request filenames
 
+configDir: /etc/rooty_handlers
+
 handlers:
-  # Longer term, we should load handlers from /etc/rooty/handlers.d/
-  # Then individual apps could more easily add their own handlers.
-  # Like PostfixHandler should really be added by the email recipe.
   rooty.toots.postfix.PostfixHandler:
     params:
       vmailbox: /etc/postfix/vmailbox

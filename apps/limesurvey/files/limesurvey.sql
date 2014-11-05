@@ -1612,16 +1612,6 @@ SELECT pg_catalog.setval('lime_user_groups_ugid_seq', 1, false);
 COPY lime_user_in_groups (ugid, uid) FROM stdin;
 \.
 
-
---
--- Data for Name: lime_users; Type: TABLE DATA; Schema: public; Owner: limesurvey
---
-
-COPY lime_users (uid, users_name, password, full_name, parent_id, lang, email, htmleditormode, templateeditormode, questionselectormode, one_time_pw, dateformat, created, modified) FROM stdin;
-1	admin	713bfda78870bf9d1b261f565286f85e97ee614efe5f0faf7c34e7ca4f65baca	Administrator	0	en	limesurvey@beta8.cloudstead.io	default	default	default	\N	1	2014-10-28 11:45:12.670355	\N
-\.
-
-
 --
 -- Name: lime_users_uid_seq; Type: SEQUENCE SET; Schema: public; Owner: limesurvey
 --

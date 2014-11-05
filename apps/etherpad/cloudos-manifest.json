@@ -1,0 +1,38 @@
+{
+    "version": "0.1.0",
+    "name": "etherpad",
+    "style": "nodejs",
+
+    "publisher": {
+        "maintainer": "Jonathan Cobb",
+        "maintainer_email": "jonathan@cloudstead.io",
+        "license": "https://raw.githubusercontent.com/ether/etherpad-lite/develop/LICENSE",
+        "code_copyright": "Copyright 2013 THE ETHERPAD FOUNDATION",
+        "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+    },
+
+    "tarball": {
+        "url": "http://cloudstead.io/downloads/ether-etherpad-lite-1.4.1-0-g1932d24.tar.gz",
+        "shasum": "b2d5d9453f410a3b6c9233f7ec57877a8fe9099341b3f5500370a5a190adde61"
+    },
+
+    "packages": [ "gzip", "git-core", "curl", "python", "libssl-dev", "pkg-config", "build-essential", "abiword" ],
+
+    "web": { "type": "apache", "mode": "proxy" },
+
+    "templates": {
+        "@name/settings.json": "_"
+    },
+
+    "sysinit": [ "wrap:@name/bin/run.sh:@name/node_modules/ep_etherpad-lite/node/server.js" ],
+
+    "auth": {
+        "http_auth": "basic",
+        "user_management": {
+            "exists": "@name/bin/user_exists.sh",
+            "create": "@name/bin/user_create.sh",
+            "delete": "@name/bin/user_delete.sh",
+            "change_password": "@name/bin/user_change_password.sh"
+        }
+    }
+}

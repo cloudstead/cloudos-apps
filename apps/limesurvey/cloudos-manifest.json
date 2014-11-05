@@ -11,6 +11,11 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
+    "databags": [ {
+        "name": "init",
+        "items": [ "admin.name", "admin.password", "admin.email", "admin.bounce" ]
+    } ],
+
     "tarball": {
         "url": "http://cloudstead.io/downloads/limesurvey-build141020.tar.gz",
         "shasum": "a51efae85ec58a56037bc4ed6986ff2e64a5c2ea8474504368cb69d6b9506fe9"
@@ -19,14 +24,16 @@
     "packages": [ "php5-gd", "php5-imap", "php5-ldap" ],
 
     "database": {
-        "type": "postgresql",
+        "type": "mysql",
         "inserts": [
             { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('SessionName', '@uniq[0]_@uniq[1]')",
               "unless": "SELECT COUNT(*) FROM lime_settings_global WHERE stg_name='SessionName'" },
-            { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('siteadminemail', 'limesurvey@@hostname')",
+            { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('siteadminemail', '@databag[init][admin][email]')",
               "unless": "SELECT COUNT(*) FROM lime_settings_global WHERE stg_name='siteadminemail'" },
-            { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('siteadminbounce', 'limesurvey@@hostname')",
-              "unless": "SELECT COUNT(*) FROM lime_settings_global WHERE stg_name='siteadminbounce'" }
+            { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('siteadminbounce', '@databag[init][admin][bounce]')",
+              "unless": "SELECT COUNT(*) FROM lime_settings_global WHERE stg_name='siteadminbounce'" },
+            { "sql": "INSERT INTO lime_users (uid, users_name, password, full_name, parent_id, lang, email, htmleditormode, templateeditormode, questionselectormode, one_time_pw, dateformat, created, modified) VALUES (1, 'admin', '@sha256:@databag[init][admin][password]', 'Administrator', 0, 'en', '@databag[init][admin][email]', 'default', 'default', 'default', NULL, 1, '2014-10-28 11:45:12.670355', NULL)",
+              "unless": "SELECT COUNT(*) FROM lime_users WHERE users_name='@databag[init][admin][name]'" }
         ]
     },
 
@@ -51,9 +58,18 @@
          "@doc_root/application/config": { "perms": "770", "recursive": true }
     },
 
-    "mailboxes": [
-        { "address": "surveys", "alias_for": "postmaster" }
-    ],
+    "mailboxes": [ { "address": "surveys", "alias_for": "postmaster" } ],
 
-    "auth": {}
+    "auth": {
+        "home_path": "/limesurvey/admin",
+        "login_path": "/limesurvey/index.php/admin/authentication/sa/login",
+        "login_fields": {
+            "authMethod": "AuthLDAP",
+            "user": "{{account.name}}",
+            "password": "{{account.password}}",
+            "loginlang": "default",
+            "action": "login",
+            "login_submit": "Login"
+        }
+    }
 }
