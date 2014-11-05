@@ -24,6 +24,11 @@
         "@name/settings.json": "_"
     },
 
+    "perms": {
+        "@home": { "chown": "@run_as", "perms": "-R 770" },
+        "@name/settings.json": { "chown": "@run_as.root", "perms": "660" }
+    },
+
     "sysinit": [ "wrap:@name/bin/run.sh:@name/node_modules/ep_etherpad-lite/node/server.js" ],
 
     "auth": {
