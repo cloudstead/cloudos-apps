@@ -128,11 +128,12 @@ ALTER TABLE public.email_domain OWNER TO cloudos;
 CREATE TABLE installed_app (
     uuid character varying(100) NOT NULL,
     ctime bigint NOT NULL,
+    name character varying(100) NOT NULL,
     account character varying(255),
     active boolean NOT NULL,
+    admin_port integer NOT NULL,
     hostname character varying(255),
     manifest_json character varying(4096),
-    name character varying(255) NOT NULL,
     path character varying(255),
     port integer NOT NULL
 );
@@ -203,7 +204,7 @@ COPY email_domain (uuid, ctime, name) FROM stdin;
 -- Data for Name: installed_app; Type: TABLE DATA; Schema: public; Owner: cloudos
 --
 
-COPY installed_app (uuid, ctime, account, active, hostname, manifest_json, name, path, port) FROM stdin;
+COPY installed_app (uuid, ctime, name, account, active, admin_port, hostname, manifest_json, path, port) FROM stdin;
 \.
 
 
@@ -212,7 +213,7 @@ COPY installed_app (uuid, ctime, account, active, hostname, manifest_json, name,
 --
 
 COPY ssl_certificate (uuid, ctime, name, common_name, description, key_md5, key_sha, pem_md5, pem_sha) FROM stdin;
-da0683e4-ce2c-44f1-b571-6e85ddfc091d	1412600099561	ssl-https	*.cloudstead.io	cloudstead.io wildcard certificate	23a5bcd716f54cc819a7367e64fe70e9	1844d332ccb478a82eb038e947988b1b1e5b7882ddda85456efbc89bca327e97	e367ebcdec3792a33c0005e8b8098040	761f5e4128089695d51600c36e6b96438828e0ee7c76d7a15da2c13516832417
+6d37a56b-b2d2-451f-a391-15804ccda788	1415865063558	ssl-https	*.cloudstead.io	cloudstead.io wildcard certificate	23a5bcd716f54cc819a7367e64fe70e9	1844d332ccb478a82eb038e947988b1b1e5b7882ddda85456efbc89bca327e97	e367ebcdec3792a33c0005e8b8098040	761f5e4128089695d51600c36e6b96438828e0ee7c76d7a15da2c13516832417
 \.
 
 
