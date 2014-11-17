@@ -48,7 +48,10 @@
             "authenticity_token",
             "type=\"password\"",
             "value=\"Login\""
-        ]
+        ],
+        "user_management": {
+            "change_password": "@doc_root/bin/user_change_password.sh"
+        }
     }
 
 }
