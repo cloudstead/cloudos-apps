@@ -1,3 +1,5 @@
+<% vendor_bag = @app[:databag][:init]['vendor'] %>
+
 queueName: <%=@app[:passwords]['rooty_queue']%>+root
 secret: <%=@app[:passwords]['rooty']%> # used to encrypt messages and generate hashes in request filenames
 
@@ -17,8 +19,10 @@ handlers:
 
   rooty.toots.service.ServiceKeyHandler:
     params:
-      serviceKeyEndpoint: <%=@app[:databag][:init]['vendor']['service_key_endpoint']%>
-      defaultSslKeySha: <%=@app[:databag][:init]['vendor']['ssl_key_sha']%>
+  <% if vendor_bag %>
+      serviceKeyEndpoint: <%=vendor_bag['service_key_endpoint']%>
+      defaultSslKeySha: <%=vendor_bag['ssl_key_sha']%>
+  <% end %>
 
   rooty.toots.vendor.VendorSettingHandler:
     params:
