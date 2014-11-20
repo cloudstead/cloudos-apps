@@ -51,8 +51,8 @@
     ],
 
     "services": [
-        { "name": "dovecot", "pattern": "/usr/sbin/dovecot", "provider": "upstart" },
-        { "name": "postfix", "pattern": "/usr/lib/postfix/master" }
+        { "name": "postfix", "pattern": "/usr/lib/postfix/master" },
+        { "name": "dovecot", "pattern": "/usr/sbin/dovecot", "provider": "upstart" }
     ]
 
 }
