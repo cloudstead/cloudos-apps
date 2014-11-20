@@ -44,8 +44,6 @@
         "ssl_cert_name": "@databag[base][ssl_cert_name]"
     },
 
-    "dirs": [ "/etc/rooty_handlers" ],
-
     "templates": {
         ".cloudos.env": "dot-cloudos.env",
         "first_time_setup.sh": "_",
@@ -73,7 +71,6 @@
         "@name/target/*.jar": { "chgrp": "@group[rooty]", "perms": "640" },
         "/etc/chef-user": { "chgrp": "@group[rooty]", "perms": "640" },
         "/etc/rooty.yml": { "chown": "root.root", "perms": "600" },
-        "/etc/rooty_handlers": { "chown": "root.root", "perms": "700" },
         "@chef_home/chef.rooty.yml": { "chown": "@chef_user", "perms": "600" },
         "/usr/bin/cos": { "chown": "root.@group[rooty]", "perms": "750" }
     },
