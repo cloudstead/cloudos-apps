@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# usage: restore <backup files>
+# TODO: allow user to pass an app list and date instead of specific files?
+
+BACKUP_KEY=<%=@app[:run_as_home]%>/.backup-key
+S3_ROOT=<%=@app[:init][:s3_root]%>
+HOSTNAME=<%=@app[:hostname]%>
+RESTORE_DIR=/var/cloudos/restore
+
+export AWS_CONFIG_FILE=<%=@app[:run_as_home]%>/.aws/config
+
+args=( $@ )
+arg_count=${#args[@]}
+
+declare -a tars
+declare -a s3_tars
+if [ $arg_count -ge "2" ] ; then
+	tars=${args[@]:1:$arg_count}
+else
+	echo "no backup list supplied - restoring all apps using latest backup"
+	apps=( `aws s3 ls s3://$S3_ROOT/$HOSTNAME/backup/ | awk '{print $2}'` )
+	for app in ${apps[@]}
+	do
+		echo "checking backups for ${app}"
+		app_tars=( `aws s3 ls s3://$S3_ROOT/$HOSTNAME/backup/$app | awk '{print $4}'` )
+		# this is a little scary, as it assumes aws orders the ls results by date ascending
+		app_tar_count=${#app_tars[@]}
+		tars=( "${tars[@]}" "${app_tars[$app_tar_count - 1]}")
+	done
+fi
+
+# we assume the tar filenames don't include the full bucket path, so we need to figure that out
+for tar in ${tars[@]}
+do
+	s3_path=`aws s3 ls s3://$S3_ROOT/$HOSTNAME/backup --recursive | grep ${tar} | awk '{print $4}'`
+	s3_tars=( "${s3_tars[@]}" $s3_path )
+done
+echo "will restore files: ${s3_tars[@]}"
+
+echo "creating restore directory ${RESTORE_DIR}"
+if [ -d "${RESTORE_DIR}" ] ; then
+	rm -rf $RESTORE_DIR
+fi
+
+mkdir -p $RESTORE_DIR
+
+# for each of the restore files, we need to get it from s3, decrypt & un-tar the contents, and then run the
+# restore chef
+for file in ${s3_tars[@]}
+do
+ 	echo "retrieving file ${file}"
+	file_name=`basename $file`
+	tar_name=`basename $file .enc`
+	app_name=`echo ${file} | awk -F/ '{print $3}'`
+	mkdir -p $RESTORE_DIR/$app_name
+	aws s3 cp s3://$S3_ROOT/$file $RESTORE_DIR/$app_name
+ 	echo "... tarball retrived, decrypting"
+ 	openssl enc -d -aes256 -pass file:$BACKUP_KEY -in $RESTORE_DIR/$app_name/$file_name -out $RESTORE_DIR/$app_name/$tar_name
+ 	tar xjfp $RESTORE_DIR/$app_name/$tar_name -C $RESTORE_DIR/$app_name
+ 	echo "... applying restore of ${app_name}"
+ 	chef-solo -c $RESTORE_DIR/$app_name/restore-solo.rb -j $RESTORE_DIR/$app_name/restore.json
+done
