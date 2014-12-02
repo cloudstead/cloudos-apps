@@ -1,3 +1,5 @@
-install: cloudos.main.InstallAppMain
-dns:     cloudos.dns.main.DnsMain
-json:    org.cobbzilla.util.json.main.JsonEditor
+download:   cloudos.main.app.AppDownloadMain
+config:     cloudos.main.app.AppConfigMain
+install:    cloudos.main.app.AppInstallMain
+dns:        cloudos.dns.main.DnsMain
+json:       org.cobbzilla.util.json.main.JsonEditor
