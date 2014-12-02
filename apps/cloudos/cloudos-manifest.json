@@ -63,6 +63,8 @@
         "/var/www/owncloud/config/config.php": "$CONFIG['theme'] = 'cloudstead';"
     },
 
+    "dirs": [ "app-repository" ],
+
     "perms": {
         "@home": { "chgrp": "@group[rooty]", "perms": "770" },
         "@name": { "chgrp": "@group[rooty]", "perms": "770" },
@@ -72,7 +74,8 @@
         "/etc/chef-user": { "chgrp": "@group[rooty]", "perms": "640" },
         "/etc/rooty.yml": { "chown": "root.root", "perms": "600" },
         "@chef_home/chef.rooty.yml": { "chown": "@chef_user", "perms": "600" },
-        "/usr/bin/cos": { "chown": "root.@group[rooty]", "perms": "750" }
+        "/usr/bin/cos": { "chown": "root.@group[rooty]", "perms": "750" },
+        "app-repository": { "chgrp": "@group[rooty]", "perms": "750" }
     },
 
     "post_install": [

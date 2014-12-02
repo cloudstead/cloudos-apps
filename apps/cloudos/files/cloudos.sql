@@ -122,26 +122,6 @@ CREATE TABLE email_domain (
 ALTER TABLE public.email_domain OWNER TO cloudos;
 
 --
--- Name: installed_app; Type: TABLE; Schema: public; Owner: cloudos; Tablespace: 
---
-
-CREATE TABLE installed_app (
-    uuid character varying(100) NOT NULL,
-    ctime bigint NOT NULL,
-    name character varying(100) NOT NULL,
-    account character varying(255),
-    active boolean NOT NULL,
-    admin_port integer NOT NULL,
-    hostname character varying(255),
-    manifest_json character varying(4096),
-    path character varying(255),
-    port integer NOT NULL
-);
-
-
-ALTER TABLE public.installed_app OWNER TO cloudos;
-
---
 -- Name: ssl_certificate; Type: TABLE; Schema: public; Owner: cloudos; Tablespace: 
 --
 
@@ -201,19 +181,11 @@ COPY email_domain (uuid, ctime, name) FROM stdin;
 
 
 --
--- Data for Name: installed_app; Type: TABLE DATA; Schema: public; Owner: cloudos
---
-
-COPY installed_app (uuid, ctime, name, account, active, admin_port, hostname, manifest_json, path, port) FROM stdin;
-\.
-
-
---
 -- Data for Name: ssl_certificate; Type: TABLE DATA; Schema: public; Owner: cloudos
 --
 
 COPY ssl_certificate (uuid, ctime, name, common_name, description, key_md5, key_sha, pem_md5, pem_sha) FROM stdin;
-6d37a56b-b2d2-451f-a391-15804ccda788	1415865063558	ssl-https	*.cloudstead.io	cloudstead.io wildcard certificate	23a5bcd716f54cc819a7367e64fe70e9	1844d332ccb478a82eb038e947988b1b1e5b7882ddda85456efbc89bca327e97	e367ebcdec3792a33c0005e8b8098040	761f5e4128089695d51600c36e6b96438828e0ee7c76d7a15da2c13516832417
+2122b011-f3e1-49d3-b31e-4dcc765389b1	1417500608027	ssl-https	*.cloudstead.io	cloudstead.io wildcard certificate	23a5bcd716f54cc819a7367e64fe70e9	1844d332ccb478a82eb038e947988b1b1e5b7882ddda85456efbc89bca327e97	e367ebcdec3792a33c0005e8b8098040	761f5e4128089695d51600c36e6b96438828e0ee7c76d7a15da2c13516832417
 \.
 
 
@@ -303,22 +275,6 @@ ALTER TABLE ONLY email_domain
 
 ALTER TABLE ONLY email_domain
     ADD CONSTRAINT email_domain_pkey PRIMARY KEY (uuid);
-
-
---
--- Name: installed_app_name_key; Type: CONSTRAINT; Schema: public; Owner: cloudos; Tablespace: 
---
-
-ALTER TABLE ONLY installed_app
-    ADD CONSTRAINT installed_app_name_key UNIQUE (name);
-
-
---
--- Name: installed_app_pkey; Type: CONSTRAINT; Schema: public; Owner: cloudos; Tablespace: 
---
-
-ALTER TABLE ONLY installed_app
-    ADD CONSTRAINT installed_app_pkey PRIMARY KEY (uuid);
 
 
 --
