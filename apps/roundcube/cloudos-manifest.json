@@ -2,6 +2,7 @@
     "version": "0.1.0",
     "name": "roundcube",
     "style": "php",
+    "interactive": true,
 
     "publisher": {
         "maintainer": "Jonathan Cobb",
@@ -38,17 +39,14 @@
 
     "auth": {
         "login_fields": {
-            "email": "{{account.name}}@{{email_domain}}",
-            "password": "{{account.password}}",
-            "authenticity_token": "pass"
+            "_user": "{{account.name}}",
+            "_pass": "{{account.password}}",
+            "_token": "pass",
+            "_timezone": "{{timezone-name}}",
+            "_task": "login",
+            "_action": "login"
         },
-        "login_path": "/session",
-        "login_page_markers": [
-            "user_email",
-            "authenticity_token",
-            "type=\"password\"",
-            "value=\"Login\""
-        ],
+        "login_path": "/./?_task=login",
         "user_management": {
             "change_password": "@doc_root/bin/user_change_password.sh"
         }

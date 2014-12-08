@@ -2,6 +2,7 @@
     "version": "0.1.0",
     "name": "jira",
     "style": "java_webapp",
+    "interactive": true,
 
     "publisher": {
         "maintainer": "Jonathan Cobb",

@@ -3,6 +3,7 @@
     "name": "roundcube-calendar",
     "style": "php",
     "parent": "roundcube",
+    "interactive": true,
 
     "publisher": {
         "maintainer": "Jonathan Cobb",

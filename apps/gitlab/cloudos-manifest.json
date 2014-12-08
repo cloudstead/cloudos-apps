@@ -3,6 +3,7 @@
     "name": "gitlab",
     "style": "rails",
     "run_as": { "user": "git" },
+    "interactive": true,
 
     "publisher": {
         "maintainer": "Jonathan Cobb",
