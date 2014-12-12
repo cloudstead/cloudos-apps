@@ -4,6 +4,7 @@
     "style": "php",
     "parent": "roundcube",
     "interactive": true,
+    "path": "/?_task=calendar",
 
     "publisher": {
         "maintainer": "Jonathan Cobb",
@@ -13,11 +14,7 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
-    "web": {
-        "type": "apache",
-        "mode": "service",
-        "apache": { "vhost": "enable" }
-    },
+    "web": { "type": "apache", "mode": "service", "apache": { "vhost": "enable" } },
 
     "database": { "type": "postgresql", "unless": "calendars" },
 

@@ -49,13 +49,13 @@
 
     "auth": {
         "login_fields": {
-            "email": "{{account.name}}",
+            "user": "{{account.name}}",
             "password": "{{account.password}}",
             "remember_login": "1",
             "timezone-offset": "{{timezone-offset}}",
             "requesttoken": "pass"
         },
-        "login_path": "/",
+        "login_path": "index.php",
         "login_page_markers": [ "<form method=\"post\" name=\"login\">", "class=\"login primary\"" ]
     }
 
