@@ -19,7 +19,7 @@
             "items": [
                 "server_tarball", "server_port",
                 "admin_initial_pass", "recovery_email",
-                "aws_access_key", "aws_secret_key", "cloudos.aws_iam_user", "cloudos.s3_bucket",
+                "aws_access_key", "aws_secret_key", "aws_iam_user", "s3_bucket",
                 "authy.user", "authy.base_uri",
                 "dns.user", "dns.password", "dns.base_uri"
             ]
