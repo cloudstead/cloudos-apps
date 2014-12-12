@@ -89,5 +89,14 @@
         "jrun",
         "jrun:rooty.RootyMain:/etc/rooty.yml:root",
         "jrun:rooty.RootyMain:@chef_home/chef.rooty.yml:@chef_user"
-    ]
+    ],
+
+    "backup": {
+        "files": [
+            "@home",
+            "@chef_home",
+            "/etc/rooty.yml",
+            "/etc/rooty_handlers"
+        ]
+    }
 }
