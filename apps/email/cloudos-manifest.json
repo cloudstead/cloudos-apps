@@ -53,6 +53,22 @@
     "services": [
         { "name": "postfix", "pattern": "/usr/lib/postfix/master" },
         { "name": "dovecot", "pattern": "/usr/sbin/dovecot", "provider": "upstart" }
-    ]
+    ],
+
+    "backup": {
+        "files": [
+            "/etc/dovecot",
+            "/etc/postfix"
+        ],
+        "pre": [
+            { "exec": "dsync backup maildir:@backup_dir/tmp/dsync-@backup_timestamp.dump" }
+        ]
+    },
+
+    "restore": {
+        "post": [
+            { "exec": "dsync backup -R maildir:@restore_dir/tmp/dsync-@backup_timestamp.dump" }
+        ]
+    }
 
 }
