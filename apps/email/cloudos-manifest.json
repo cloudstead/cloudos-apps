@@ -58,16 +58,27 @@
     "backup": {
         "files": [
             "/etc/dovecot",
-            "/etc/postfix"
+            "/etc/postfix",
+            "/var/vmail"
         ],
         "pre": [
-            { "exec": "dsync backup maildir:@backup_dir/tmp/dsync-@backup_timestamp.dump" }
+            { "exec": "service postfix stop" },
+            { "exec": "service dovecot stop" }
+        ],
+        "post": [
+            { "exec": "service postfix start" },
+            { "exec": "service dovecot start" }
         ]
     },
 
     "restore": {
+        "pre": [
+            { "exec": "service postfix stop" },
+            { "exec": "service dovecot stop" }
+        ],
         "post": [
-            { "exec": "dsync backup -R maildir:@restore_dir/tmp/dsync-@backup_timestamp.dump" }
+            { "exec": "service postfix start" },
+            { "exec": "service dovecot start" }
         ]
     }
 
