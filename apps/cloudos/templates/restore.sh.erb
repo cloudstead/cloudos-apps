@@ -6,7 +6,7 @@
 BACKUP_KEY=<%=@app[:run_as_home]%>/.backup-key
 S3_ROOT=<%=@app[:init][:s3_root]%>
 HOSTNAME=<%=@app[:hostname]%>
-RESTORE_DIR=/var/cloudos/restore
+RESTORE_DIR=/var/cloudos/backup
 
 export AWS_CONFIG_FILE=<%=@app[:run_as_home]%>/.aws/config
 

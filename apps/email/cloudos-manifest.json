@@ -53,6 +53,33 @@
     "services": [
         { "name": "postfix", "pattern": "/usr/lib/postfix/master" },
         { "name": "dovecot", "pattern": "/usr/sbin/dovecot", "provider": "upstart" }
-    ]
+    ],
+
+    "backup": {
+        "files": [
+            "/etc/dovecot",
+            "/etc/postfix",
+            "/var/vmail"
+        ],
+        "pre": [
+            { "exec": "service postfix stop" },
+            { "exec": "service dovecot stop" }
+        ],
+        "post": [
+            { "exec": "service postfix start" },
+            { "exec": "service dovecot start" }
+        ]
+    },
+
+    "restore": {
+        "pre": [
+            { "exec": "service postfix stop" },
+            { "exec": "service dovecot stop" }
+        ],
+        "post": [
+            { "exec": "service postfix start" },
+            { "exec": "service dovecot start" }
+        ]
+    }
 
 }
