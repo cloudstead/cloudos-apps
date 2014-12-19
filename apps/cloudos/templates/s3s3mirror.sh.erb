@@ -1,0 +1,26 @@
+#!/bin/bash
+
+<% init_bag = @app[:databag][:init] %>
+
+THISDIR=$(cd "$(dirname $0)" && pwd)
+
+VERSION=2.0.2
+JARFILE="${THISDIR}/s3s3mirror.jar"
+VERSION_ARG="-Ds3s3mirror.version=2.0.2"
+
+export AWS_ACCESS_KEY_ID=$(cat <%=@app[:run_as_home]%>/.cloudos.env | grep "export AWS_ACCESS_KEY_ID" | awk -F '=' '{print $NF}')
+export AWS_SECRET_ACCESS_KEY=$(cat <%=@app[:run_as_home]%>/.cloudos.env | grep "export AWS_SECRET_ACCESS_KEY" | awk -F '=' '{print $NF}')
+
+DEBUG=$1
+if [ "${DEBUG}" = "--debug" ] ; then
+  # Run in debug mode
+  shift   # remove --debug from options
+  java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 ${VERSION_ARG} -jar "${JARFILE}" "$@"
+
+else
+  # Run in regular mode
+  java ${VERSION_ARG} -jar "${JARFILE}" "$@"
+fi
+
+exit $?
+

@@ -1,11 +1,12 @@
 #!/bin/bash
 
+<% init_bag = @app[:databag][:init] %>
+
 # usage: restore <backup files>
 # TODO: allow user to pass an app list and date instead of specific files?
 
 BACKUP_KEY=<%=@app[:run_as_home]%>/.backup-key
-S3_ROOT=<%=@app[:init][:s3_root]%>
-HOSTNAME=<%=@app[:hostname]%>
+S3_ROOT="<%=init_bag['s3_bucket']%>/<%=init_bag['aws_iam_user']%>/backup"
 RESTORE_DIR=/var/cloudos/backup
 
 export AWS_CONFIG_FILE=<%=@app[:run_as_home]%>/.aws/config
@@ -19,11 +20,11 @@ if [ $arg_count -ge "2" ] ; then
 	tars=${args[@]:1:$arg_count}
 else
 	echo "no backup list supplied - restoring all apps using latest backup"
-	apps=( `aws s3 ls s3://$S3_ROOT/$HOSTNAME/backup/ | awk '{print $2}'` )
+	apps=( `aws s3 ls s3://$S3_ROOT/ | awk '{print $2}'` )
 	for app in ${apps[@]}
 	do
 		echo "checking backups for ${app}"
-		app_tars=( `aws s3 ls s3://$S3_ROOT/$HOSTNAME/backup/$app | awk '{print $4}'` )
+		app_tars=( `aws s3 ls s3://$S3_ROOT/$app | awk '{print $4}'` )
 		# this is a little scary, as it assumes aws orders the ls results by date ascending
 		app_tar_count=${#app_tars[@]}
 		tars=( "${tars[@]}" "${app_tars[$app_tar_count - 1]}")
@@ -33,7 +34,7 @@ fi
 # we assume the tar filenames don't include the full bucket path, so we need to figure that out
 for tar in ${tars[@]}
 do
-	s3_path=`aws s3 ls s3://$S3_ROOT/$HOSTNAME/backup --recursive | grep ${tar} | awk '{print $4}'`
+	s3_path=`aws s3 ls s3://$S3_ROOT/ --recursive | grep ${tar} | awk '{print $4}'`
 	s3_tars=( "${s3_tars[@]}" $s3_path )
 done
 echo "will restore files: ${s3_tars[@]}"

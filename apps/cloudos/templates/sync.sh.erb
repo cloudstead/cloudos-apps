@@ -1,7 +1,8 @@
 #!/bin/bash
-RUNAS="<%=@app[:run_as]%>"
-BUCKET="<%=@app[:init][:s3_root]%>/<%=@app[:hostname]%>/backup"
-export AWS_CONFIG_FILE="<%=@app[:run_as_home]%>/.aws/config"
+
+<% init_bag = @app[:databag][:init] %>
+
+S3_ROOT="<%=init_bag['s3_bucket']%>/<%=init_bag['aws_iam_user']%>/backup/"
 
 # we sync only .enc files as a safeguard against accidentally uploading unencrypted content
-aws s3 sync /var/cloudos/backup s3://$BUCKET --exclude '*' --include '*.enc'
+s3s3mirror.sh --regex '.+\.enc' /var/cloudos/backup/ s3://${S3_ROOT}

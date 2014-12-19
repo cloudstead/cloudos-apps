@@ -62,23 +62,23 @@
             "/var/vmail"
         ],
         "pre": [
-            { "exec": "service postfix stop" },
-            { "exec": "service dovecot stop" }
+            { "exec": "if [ $(service postfix status | grep process | wc -l) -gt 0 ] ; then service postfix stop ; fi" },
+            { "exec": "if [ $(service dovecot status | grep process | wc -l) -gt 0 ] ; then service dovecot stop ; fi" }
         ],
         "post": [
-            { "exec": "service postfix start" },
-            { "exec": "service dovecot start" }
+            { "exec": "service postfix restart" },
+            { "exec": "service dovecot restart" }
         ]
     },
 
     "restore": {
         "pre": [
-            { "exec": "service postfix stop" },
-            { "exec": "service dovecot stop" }
+            { "exec": "if [ $(service postfix status | grep process | wc -l) -gt 0 ] ; then service postfix stop ; fi" },
+            { "exec": "if [ $(service dovecot status | grep process | wc -l) -gt 0 ] ; then service dovecot stop ; fi" }
         ],
         "post": [
-            { "exec": "service postfix start" },
-            { "exec": "service dovecot start" }
+            { "exec": "service postfix restart" },
+            { "exec": "service dovecot restart" }
         ]
     }
 

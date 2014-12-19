@@ -32,7 +32,7 @@
 
     "passwords": [ "kerberos", "backup_key", "rooty", "rooty_queue" ],
 
-    "packages": [ "memcached", "redis-server" ],
+    "packages": [ "memcached", "redis-server", "awscli" ],
 
     "tarball": { "url": "@databag[init][server_tarball]" },
 
@@ -49,13 +49,18 @@
         "first_time_setup.sh": "_",
         "/etc/rooty.yml": "_",
         "@chef_home/chef.rooty.yml": "chef.yml",
-        "/usr/bin/cos": "_"
+        "/usr/bin/cos": "_",
+        "/usr/bin/s3s3mirror.sh": "_",
+        "@chef_home/backup.sh": "_",
+        "@chef_home/restore.sh": "_",
+        "@chef_home/sync.sh": "_"
     },
 
     "copy": {
         "@files/owncloud/*": "/var/www/owncloud/",
         "@files/roundcube/*": "/var/www/roundcube/",
-        "@files/cloudos/dot-cos-commands": "@name/.cos-commands"
+        "@files/cloudos/dot-cos-commands": "@name/.cos-commands",
+        "@files/s3s3mirror.jar": "/usr/bin"
     },
 
     "append": {
@@ -75,7 +80,12 @@
         "/etc/rooty.yml": { "chown": "root.root", "perms": "600" },
         "@chef_home/chef.rooty.yml": { "chown": "@chef_user", "perms": "600" },
         "/usr/bin/cos": { "chown": "root.@group[rooty]", "perms": "750" },
-        "app-repository": { "chgrp": "@group[rooty]", "perms": "750" }
+        "/usr/bin/s3s3mirror.jar": { "chown": "root.root", "perms": "700" },
+        "/usr/bin/s3s3mirror.sh": { "chown": "root.root", "perms": "700" },
+        "app-repository": { "chgrp": "@group[rooty]", "perms": "750" },
+        "@chef_home/backup.sh": { "chown": "@chef_user.root", "perms": "700" },
+        "@chef_home/restore.sh": { "chown": "@chef_user.root", "perms": "700" },
+        "@chef_home/sync.sh": { "chown": "@chef_user.root", "perms": "700" }
     },
 
     "post_install": [

@@ -1,24 +1,30 @@
 #!/bin/bash
 
-CHEF_HOME=<%=Chef::Recipe::Base.chef_user_home%>/chef
+CHEF_HOME="<%=Chef::Recipe::Base.chef_user_home%>/chef"
+BACKUP_JSON="${CHEF_HOME}/backup.json"
 
 # see if there's an existing backup runlist ... if so, delete it
 if [ -f "${CHEF_HOME}/backup.json" ] ; then
 	rm "${CHEF_HOME}/backup.json"
 fi
 
-echo '{ "run_list": [' > ${CHEF_HOME}/backup.json
+echo '{ "run_list": [' > ${BACKUP_JSON}
 
 # get the list of installed, backup-able apps
-apps=( `find ${CHEF_HOME} -type f -name 'backup.rb' | awk -F/ '{print $3}'` )
-
-for app in ${apps[@]}
-do
-	echo "\"recipe[${app}::backup]\","
+apps=$(cat ${CHEF_HOME}/solo.json  | ${CHEF_HOME}/JSON.sh | grep \"run_list\", | tr '[]' '  ' | awk '{print $3}' | grep -v '::')
+for app in ${apps} ; do
+  if [ -f ${CHEF_HOME}/cookbooks/${app}/recipes/lib.rb ] ; then
+	echo "\"recipe[${app}::lib]\"," >> ${BACKUP_JSON}
+  fi
+done
+for app in ${apps} ; do
+  if [ -f ${CHEF_HOME}/cookbooks/${app}/recipes/backup.rb ] ; then
+	echo "\"recipe[${app}::backup]\"," >> ${BACKUP_JSON}
+  fi
 done
 
-sed -i '$s/,$//' ${CHEF_HOME}/backup.json
-echo '} ]' >> ${CHEF_HOME}/backup.json
+sed -i '$s/,$//' ${BACKUP_JSON}
+echo '] }' >> ${BACKUP_JSON}
 
 cd ${CHEF_HOME}
-chef-solo -c solo.rb -j backup.json
+chef-solo -c solo.rb -j ${BACKUP_JSON}
