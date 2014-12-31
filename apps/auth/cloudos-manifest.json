@@ -27,6 +27,12 @@
         "/etc/ldap/ldap.conf": "_"
     },
 
+    "perms": {
+        "/etc/krb5.conf": { "perms": "644" },
+        "/etc/krb5kdc/kadm5.acl": { "perms": "644" },
+        "/etc/ldap/ldap.conf": { "perms": "644" }
+    },
+
     "post_install": [ {
         "exec": "@files/post_install.sh @domain @domain @password[kerberos] @password[ldap]",
         "unless": "/etc/krb5kdc/setup.marker"
