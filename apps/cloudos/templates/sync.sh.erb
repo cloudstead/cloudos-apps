@@ -2,7 +2,7 @@
 
 <% init_bag = @app[:databag][:init] %>
 
-S3_ROOT="<%=init_bag['s3_bucket']%>/<%=init_bag['aws_iam_user']%>/backup/"
+S3_ROOT="<%=init_bag['s3_bucket']%>/<%=init_bag['aws_iam_user']%>/backup"
 
 # we sync only .enc files as a safeguard against accidentally uploading unencrypted content
-s3s3mirror.sh --regex '.+\.enc' /var/cloudos/backup/ s3://${S3_ROOT}
+s3s3mirror.sh --regex '.+\.enc' /var/cloudos/backup/ s3://${S3_ROOT}/

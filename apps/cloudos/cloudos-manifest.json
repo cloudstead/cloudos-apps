@@ -106,7 +106,8 @@
             "@home",
             "@chef_home",
             "/etc/rooty.yml",
-            "/etc/rooty_handlers"
+            "/etc/rooty_handlers",
+            "/etc/.cloudos"
         ]
     }
 }

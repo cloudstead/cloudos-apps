@@ -1,0 +1,52 @@
+{
+    "name": "auth",
+    "version": "0.1.0",
+    "style": "system",
+    "publisher": {
+        "maintainer": "Jonathan Cobb",
+        "maintainer_email": "jonathan@cloudstead.io",
+        "license": "https://www.gnu.org/licenses/agpl-3.0.txt",
+        "code_copyright": "Copyright 2014 Cloudstead, Inc.",
+        "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+    },
+
+    "pre_package": [ { "exec": "@files/pre_package.sh", "unless": "/etc/krb5kdc/setup.marker" } ],
+
+    "packages": [ "slapd", "ldap-utils", "krb5-kdc", "krb5-kdc-ldap", "krb5-admin-server", "ldapscripts" ],
+
+    "post_package": [ {
+        "exec": "@files/post_package.sh @domain @password[ldap] @files/schema_convert.conf",
+        "unless": "/etc/krb5kdc/setup.marker"
+    } ],
+
+    "passwords": [ "kerberos", "ldap" ],
+
+    "templates": {
+        "/etc/krb5.conf": "_",
+        "/etc/krb5kdc/kadm5.acl": "_",
+        "/etc/ldap/ldap.conf": "_"
+    },
+
+    "post_install": [ {
+        "exec": "@files/post_install.sh @domain @domain @password[kerberos] @password[ldap]",
+        "unless": "/etc/krb5kdc/setup.marker"
+    } ],
+
+    "services": [
+        { "name": "krb5-kdc" },
+        { "name": "krb5-admin-server", "pattern": "/usr/sbin/kadmind" }
+    ],
+
+    "backup": {
+        "files": [ "/etc/krb*" ],
+        "pre": [
+            { "exec": "@files/pre_backup.sh @backup_dir" }
+        ]
+    },
+
+    "restore": {
+        "pre": [ {"exec": "@files/pre_restore.sh @backup_dir"} ],
+        "post": [ {"exec": "service slapd restart"} ]
+    }
+
+}

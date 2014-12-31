@@ -5,60 +5,110 @@
 # usage: restore <backup files>
 # TODO: allow user to pass an app list and date instead of specific files?
 
-BACKUP_KEY=<%=@app[:run_as_home]%>/.backup-key
+function die () {
+  echo "$@"
+  exit 1
+}
+
+function fetch_app_tarball () {
+  # download from s3, decrypt & un-tar the contents into ${RESTORE_DIR}
+  RESTORE_DIR=$1
+  s3_tar=$2
+
+  file_name=$(basename ${s3_tar})
+  tar_name="${file_name}.enc"
+  app_name=$(basename $(dirname ${s3_tar}))
+  mkdir -p ${RESTORE_DIR}/${app_name}
+
+  # todo: determine closest region by geo
+  aws s3 cp --region us-east-1 ${s3_tar} ${RESTORE_DIR}/${app_name} 2> /dev/null 1>&2 || die "Error retrieving tarball: ${s3_tar}"
+  openssl enc -d -aes256 -pass file:${BACKUP_KEY} -in ${RESTORE_DIR}/${app_name}/${file_name} -out ${RESTORE_DIR}/${app_name}/$tar_name || die "Error decrypting tarball"
+  tar xjfp ${RESTORE_DIR}/${app_name}/${tar_name} -C ${RESTORE_DIR}/${app_name} || die "Error unrolling tarball"
+}
+
+#BACKUP_KEY=<%=@app[:run_as_home]%>/.backup-key
+BACKUP_KEY="/etc/.cloudos"
 S3_ROOT="<%=init_bag['s3_bucket']%>/<%=init_bag['aws_iam_user']%>/backup"
 RESTORE_DIR=/var/cloudos/backup
 
-export AWS_CONFIG_FILE=<%=@app[:run_as_home]%>/.aws/config
+. <%=@app[:run_as_home]%>/.cloudos.env
 
 args=( $@ )
 arg_count=${#args[@]}
 
-declare -a tars
-declare -a s3_tars
-if [ $arg_count -ge "2" ] ; then
-	tars=${args[@]:1:$arg_count}
-else
-	echo "no backup list supplied - restoring all apps using latest backup"
-	apps=( `aws s3 ls s3://$S3_ROOT/ | awk '{print $2}'` )
-	for app in ${apps[@]}
-	do
-		echo "checking backups for ${app}"
-		app_tars=( `aws s3 ls s3://$S3_ROOT/$app | awk '{print $4}'` )
-		# this is a little scary, as it assumes aws orders the ls results by date ascending
-		app_tar_count=${#app_tars[@]}
-		tars=( "${tars[@]}" "${app_tars[$app_tar_count - 1]}")
-	done
-fi
-
-# we assume the tar filenames don't include the full bucket path, so we need to figure that out
-for tar in ${tars[@]}
-do
-	s3_path=`aws s3 ls s3://$S3_ROOT/ --recursive | grep ${tar} | awk '{print $4}'`
-	s3_tars=( "${s3_tars[@]}" $s3_path )
-done
-echo "will restore files: ${s3_tars[@]}"
-
-echo "creating restore directory ${RESTORE_DIR}"
 if [ -d "${RESTORE_DIR}" ] ; then
-	rm -rf $RESTORE_DIR
+  rm -rf ${RESTORE_DIR}
 fi
+mkdir -p ${RESTORE_DIR}
 
-mkdir -p $RESTORE_DIR
+declare -a tars
+if [ ${arg_count} -ge 1 ] ; then
+  tar_names=${args[@]}
+  for tar in ${tar_names[@]} ; do
+    app="$(echo -n $(basename ${tar}) | awk -F '-' '{print $1}')"
+    tar=$(aws s3 ls s3://$S3_ROOT/${app}/ | awk '{print $4}' | sort | grep ${tar} | tail -n 1)
+    if [ -z "${tar}" ] ; then
+      die "Tarball not found: ${tar}"
+    fi
+    tars+=( "s3://$S3_ROOT/${app}/${tar}" )
+  done
 
-# for each of the restore files, we need to get it from s3, decrypt & un-tar the contents, and then run the
-# restore chef
-for file in ${s3_tars[@]}
-do
- 	echo "retrieving file ${file}"
-	file_name=`basename $file`
-	tar_name=`basename $file .enc`
-	app_name=`echo ${file} | awk -F/ '{print $3}'`
-	mkdir -p $RESTORE_DIR/$app_name
-	aws s3 cp s3://$S3_ROOT/$file $RESTORE_DIR/$app_name
- 	echo "... tarball retrived, decrypting"
- 	openssl enc -d -aes256 -pass file:$BACKUP_KEY -in $RESTORE_DIR/$app_name/$file_name -out $RESTORE_DIR/$app_name/$tar_name
- 	tar xjfp $RESTORE_DIR/$app_name/$tar_name -C $RESTORE_DIR/$app_name
- 	echo "... applying restore of ${app_name}"
- 	chef-solo -c $RESTORE_DIR/$app_name/restore-solo.rb -j $RESTORE_DIR/$app_name/restore.json
-done
+  # echo "tars=${tars[@]}" ; exit 1
+  # for each of the restore files, we need to get it from s3, decrypt & un-tar the contents, and then run the
+  # restore chef
+  for file in ${tars[@]} ; do
+    # fetch, decrypt and unroll
+    fetch_app_tarball ${RESTORE_DIR} ${file}
+
+    # run chef-solo
+    #chef-solo -c ${RESTORE_DIR}/${app_name}/restore-solo.rb -j ${RESTORE_DIR}/${app_name}/restore.json || die "Error running chef-solo for app: ${app_name}"
+    echo "would run chef-solo on ${RESTORE_DIR}/${app_name}/restore-solo.rb here"
+
+    # if it succeeded, ensure this app is added to the solo.json run_list
+    # todo: add to solo.json run_list
+    echo "would add ${app_name} to solo.json run_list here"
+  done
+
+else
+  echo "no backup list supplied - restoring cloudos latest backup and finding apps from there"
+  cloudos_tar=$(aws s3 ls s3://${S3_ROOT}/cloudos/ | awk '{print $4}' | sort | tail -n 1)
+
+  # fetch, decrypt and unroll cloudos
+  fetch_app_tarball ${RESTORE_DIR} s3://${S3_ROOT}/cloudos/${cloudos_tar}
+
+  # determine solo.json and chef user
+  CHEF_RESTORE_DIR=$(find ${RESTORE_DIR}/cloudos/home -type d -name chef)
+  SOLO_JSON=$(find ${CHEF_RESTORE_DIR} -type f -name solo.json)
+  CHEF_RESTORE_USER=$(basename $(dirname $(dirname ${SOLO_JSON})))
+  RESTORE_JSON="${CHEF_RESTORE_DIR}/solo-restore.json"
+
+  # load apps from solo.json that was restored
+  apps=$(cat ${CHEF_RESTORE_DIR}/solo.json | ${CHEF_RESTORE_DIR}/JSON.sh | grep \"run_list\", | tr '[]' '  ' | awk '{print $3}' | grep -v '::' | grep -v '^cloudos$')
+
+  echo '{ "run_list": [' > ${RESTORE_JSON}
+  for app in ${apps} ; do
+    app_tarball=$(aws s3 ls s3://${S3_ROOT}/${app}/ | awk '{print $4}' | sort | tail -n 1)
+    if [ -f ${CHEF_RESTORE_DIR}/cookbooks/${app}/recipes/lib.rb ] ; then
+      echo "\"recipe[${app}::lib]\"," >> ${RESTORE_JSON}
+    fi
+  done
+  for app in ${apps} ; do
+    if [ -f ${CHEF_RESTORE_DIR}/cookbooks/${app}/recipes/restore.rb ] ; then
+      echo "\"recipe[${app}::restore]\"," >> ${RESTORE_JSON}
+    fi
+  done
+  sed -i '$s/,$//' ${RESTORE_JSON}
+  echo '] }' >> ${RESTORE_JSON}
+
+  echo "wrote restorejson to ${RESTORE_JSON}"
+  exit 1
+
+  CHEF_HOME="<%=Chef::Recipe::Base.chef_user_home%>/chef"
+  RESTORE_JSON="${CHEF_HOME}/restore.json"
+
+
+  #for app in ${apps} ; do
+  #  most_recent_app_tar=$(aws s3 ls s3://$S3_ROOT/$app | awk '{print $4}' | sort | tail -n 1)
+  #  tars+=( "s3://$S3_ROOT/${app}${most_recent_app_tar}" )
+  #done
+fi
