@@ -6,8 +6,8 @@ if [ -z "${BACKUP_DIR}" ] ; then
   exit 1
 fi
 
-slapcat -n 0 > ${BACKUP_DIR}/config.ldif
-slapcat -n 1 > ${BACKUP_DIR}/data.ldif
+# slapcat -n 0 > ${BACKUP_DIR}/config.ldif
+slapcat -n 1 -a '(!(|(objectclass=dcObject)(objectclass=krbContainer)(objectclass=krbRealmContainer)(krbPrincipalName=*kadmin*)(krbPrincipalName=*krbtgt*)(krbPrincipalName=*cloudos*)(krbPrincipalName=*K\2fM*)(cn=admin)))' > ${BACKUP_DIR}/data.ldif
 if [ ! -f ${BACKUP_DIR}/data.ldif ] ; then
 	echo "unable to dump ldap database"
 	exit 1
