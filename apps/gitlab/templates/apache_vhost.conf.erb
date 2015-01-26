@@ -1,0 +1,12 @@
+AllowEncodedSlashes NoDecode
+
+#apache equivalent of nginx try files
+# http://serverfault.com/questions/290784/what-is-apaches-equivalent-of-nginxs-try-files
+# http://stackoverflow.com/questions/10954516/apache2-proxypass-for-rails-app-gitlabRewriteEngine on
+RewriteCond %{DOCUMENT_ROOT}/%{REQUEST_FILENAME} !-f
+RewriteRule .* http://127.0.0.1:<%=@config[:port]%>%{REQUEST_URI} [P,QSA]
+
+ErrorDocument 404 /404.html
+ErrorDocument 422 /422.html
+ErrorDocument 500 /500.html
+ErrorDocument 503 /deploy.html

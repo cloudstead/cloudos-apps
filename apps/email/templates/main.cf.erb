@@ -1,0 +1,79 @@
+<%
+base_lib = Chef::Recipe::Base
+smtp_relay = @app[:databag][:init]['smtp_relay']
+%>
+
+# See /usr/share/postfix/main.cf.dist for a commented, more complete version
+
+myorigin = /etc/mailname
+
+smtpd_banner = $myhostname ESMTP $mail_name (Ubuntu)
+biff = no
+
+# appending .domain is the MUA's job.
+append_dot_mydomain = no
+
+# Uncomment the next line to generate "delayed mail" warnings
+#delay_warning_time = 4h
+
+readme_directory = no
+
+# TLS parameters
+smtpd_tls_cert_file = /etc/ssl/certs/ssl-https.pem
+smtpd_tls_key_file = /etc/ssl/private/ssl-https.key
+smtpd_use_tls = yes
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+
+# See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for
+# information on enabling SSL in the smtp client.
+
+myhostname = <%=@app[:hostname]%>
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+mydestination = localhost.localdomain, localhost
+relay_domains = localhost.localdomain, localhost, 127.0.0.0/8
+#mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mynetworks = class
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = all
+home_mailbox = Maildir/
+
+# SendGrid for outbound emails
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = static:<%=smtp_relay['username']%>:<%=smtp_relay['password']%>
+smtp_sasl_security_options = noanonymous
+smtp_tls_security_level = encrypt
+header_size_limit = 4096000
+relayhost = [<%=smtp_relay['host']%>]:<%=smtp_relay['port']%>
+inet_protocols = ipv4
+
+# Dovecot for inbound emails
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/dovecot-auth
+smtpd_sasl_authenticated_header = yes
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_local_domain = $myhostname
+# relayhost =
+
+broken_sasl_auth_clients = yes
+smtpd_recipient_restrictions = reject_unknown_sender_domain, reject_unknown_recipient_domain, reject_unauth_pipelining, permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination
+smtpd_sender_restrictions = permit_mynetworks, reject_unknown_sender_domain
+mailbox_command = /usr/lib/dovecot/deliver -c /etc/dovecot/conf.d/01-mail-stack-delivery.conf -m "${EXTENSION}"
+smtp_use_tls = yes
+smtpd_tls_received_header = yes
+smtpd_tls_mandatory_protocols = SSLv3, TLSv1
+smtpd_tls_mandatory_ciphers = medium
+smtpd_tls_auth_only = yes
+tls_random_source = dev:/dev/urandom
+
+# virtual_transport = lmtp:unix:/var/spool/mail
+virtual_mailbox_domains = $myhostname <%=%x(cat /etc/postfix/vmailbox.domains 2> /dev/null | tr '[:upper:]' '[:lower:]' | sort | uniq | egrep '[[:alnum:]]+[-[:alnum:]]+' | tr '\n' ' ')%>
+virtual_mailbox_base = <%=@app[:users]['vmail'][:home]%>/vhosts
+virtual_mailbox_maps = hash:/etc/postfix/vmailbox
+virtual_minimum_uid = 100
+virtual_uid_maps = static:<%=base_lib.uid(@app[:users]['vmail'][:name])%>
+virtual_gid_maps = static:<%=base_lib.gid(@app[:groups]['vmail'][:name])%>
+virtual_alias_maps = hash:/etc/postfix/virtual

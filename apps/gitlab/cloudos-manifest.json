@@ -1,0 +1,68 @@
+{
+    "version": "0.1.0",
+    "name": "gitlab",
+    "style": "rails",
+    "run_as": { "user": "git" },
+    "interactive": true,
+
+    "publisher": {
+        "maintainer": "Jonathan Cobb",
+        "maintainer_email": "jonathan@cloudstead.io",
+        "license": "https://gitlab.com/gitlab-org/gitlab-ce/blob/master/LICENSE",
+        "code_copyright": "Copyright (c) 2011-2014 GitLab B.V.",
+        "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+    },
+
+    "packages": [ "build-essential", "zlib1g-dev", "libyaml-dev", "libicu-dev",
+                  "libssl-dev", "libgdbm-dev", "libreadline-dev", "libmysqlclient-dev",
+                  "libncurses5-dev", "libffi-dev", "curl", "git-core", "redis-server" ],
+
+    "database": {
+        "type": "postgresql",
+        "dbname": "gitlabhq_production",
+        "options": { "rake_tasks": [ "gitlab:setup" ] }
+    },
+
+    "repo": {
+        "url": "https://gitlab.com/gitlab-org/gitlab-ce.git",
+        "branch": "7-1-stable", "dir": "gitlab"
+    },
+
+    "web": {
+        "type": "apache",
+        "mode": "proxy",
+        "apache": { "vhost": "enable", "location": [ "/" ] }
+    },
+
+    "dirs": [ "gitlab-satellites", "repositories", "repositories/root" ],
+
+    "templates": {
+        "@repo/config/gitlab.yml": "_",
+        "@repo/config/unicorn.rb": "_",
+        "@repo/config/initializers/rack_attack.rb": "_"
+    },
+
+    "symlinks": { "@repo/@name": "@repo" },
+
+    "perms": {
+        "@repo/log": { "perms": "-R u+rwX" },
+        "@repo/tmp": { "perms": "-R u+rwX" },
+        "@repo/public/uploads": { "perms": "-R u+rwX" },
+        "gitlab-satellites": { "perms": "u+rwx,g=rx,o-rwx" },
+        "@repo/config/database.yml": { "perms": "o-rwx" }
+    },
+
+    "post_install": [
+        { "user": "git", "exec": "git config --global user.name \"GitLab\"" },
+        { "user": "git", "exec": "git config --global user.email \"@name@@hostname\"" },
+        { "user": "git", "exec": "git config --global core.autocrlf input" },
+        { "user": "git", "dir": "@repo", "exec": "bundle exec rake gitlab:shell:install[v1.9.6] REDIS_URL=redis://localhost:6379 RAILS_ENV=production" }
+    ],
+
+    "logrotate": [ "gitlab-shell/gitlab-shell.log" ],
+
+    "sysinit": [ "@repo/lib/support/init.d/gitlab" ],
+
+    "auth": {}
+
+}

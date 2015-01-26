@@ -1,0 +1,17 @@
+{
+    "\/$user\/files\/@@FOLDER@@": {
+        "class": "\\OC\\Files\\Storage\\CloudsteadS3",
+        "options": {
+            "key": "<%=@app[:cloudos_databag]['aws_access_key']%>",
+            "secret": "<%=@app[:cloudos_databag]['aws_secret_key'].gsub('/', '\/')%>",
+            "bucket": "<%=@app[:cloudos_databag]['s3_bucket']%>",
+            "prefix": "@@ACCOUNT@@",
+            "hostname": "",
+            "port": "",
+            "region": "",
+            "use_ssl": "true",
+            "use_path_style": "false"
+        },
+        "priority": 100
+    }
+}

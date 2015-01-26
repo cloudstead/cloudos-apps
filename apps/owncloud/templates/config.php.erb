@@ -1,0 +1,43 @@
+<% base = Chef::Recipe::Base %>
+<?php
+$CONFIG = array (
+  'session_lifetime' => (60 * 61 * 24),
+  'instanceid' => '<%=@app[:uniq][0]%>',
+  'passwordsalt' => '<%=@app[:uniq][1]%>',
+  'trusted_domains' =>
+  array (
+    0 => '<%=@app[:hostname]%>',
+  ),
+  'datadirectory' => '<%=@app[:doc_root]%>/data',
+  'dbtype' => 'pgsql',
+  'version' => '7.0.1.1',
+  'dbname' => '<%=@app[:dbname]%>',
+  'dbhost' => '127.0.0.1',
+  'dbtableprefix' => 'oc_',
+  'dbuser' => '<%=@app[:dbuser]%>',
+  'dbpassword' => '<%=@app[:dbpass]%>',
+  'installed' => true,
+
+  'user_backends' => array (
+    0 => array (
+        "class"     => "OC_User_IMAP",
+        "arguments" => array (
+            0 => '{<%=@app[:hostname]%>:993/imap/ssl/novalidate-cert}INBOX'
+        ),
+    ),
+  ),
+
+  'mail_smtpmode' => 'smtp',
+  'mail_from_address' => 'root',
+  'mail_domain' => '<%=@app[:hostname]%>',
+  'mail_smtpauth' => true,
+  'mail_smtphost' => '127.0.0.1',
+  'mail_smtpport' => '587',
+  'mail_smtpname' => 'cloudos_system_mailer',
+  'mail_smtppassword' => '<%=base.password('cloudos_system_mailer')%>',
+  'mail_smtpauthtype' => 'PLAIN',
+  'mail_smtpsecure' => 'tls',
+
+  'theme' => '',
+  'maintenance' => false,
+);

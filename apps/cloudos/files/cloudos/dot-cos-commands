@@ -1,0 +1,9 @@
+download:   cloudos.main.app.AppDownloadMain
+config:     cloudos.main.app.AppConfigMain
+install:    cloudos.main.app.AppInstallMain
+sync-apps:  cloudos.main.app.SyncAppRepositoryMain
+appstore:   cloudos.main.app.SearchAppStoreMain
+backup-key: cloudos.main.GetBackupKeyMain
+restore:    cloudos.main.RestoreCloudsteadMain
+dns:        cloudos.dns.main.DnsMain
+json:       org.cobbzilla.util.json.main.JsonEditor

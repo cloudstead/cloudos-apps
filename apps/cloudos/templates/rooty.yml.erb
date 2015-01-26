@@ -1,0 +1,31 @@
+<% vendor_bag = @app[:databag][:init]['vendor'] %>
+
+queueName: <%=@app[:passwords]['rooty_queue']%>+root
+secret: <%=@app[:passwords]['rooty']%> # used to encrypt messages and generate hashes in request filenames
+
+configDir: /etc/rooty_handlers
+
+handlers:
+  rooty.toots.postfix.PostfixHandler:
+    params:
+      vmailbox: /etc/postfix/vmailbox
+      vmailboxDir: /var/vmail/vhosts
+
+  rooty.toots.ssl.SslCertHandler:
+    params:
+
+  rooty.toots.system.SystemHandler:
+    params:
+
+  rooty.toots.service.ServiceKeyHandler:
+    params:
+  <% if vendor_bag %>
+      serviceKeyEndpoint: <%=vendor_bag['service_key_endpoint']%>
+      defaultSslKeySha: <%=vendor_bag['ssl_key_sha']%>
+  <% end %>
+
+  rooty.toots.vendor.VendorSettingHandler:
+    params:
+
+  rooty.toots.restore.RestoreHandler:
+    params:

@@ -1,0 +1,266 @@
+#!/bin/bash
+#
+# Usage: restore <backup files>
+#
+# Environment variables that must be defined:
+# AWS_ACCESS_KEY_ID -- the S3 access key
+# AWS_SECRET_ACCESS_KEY -- the S3 secret key
+# AWS_IAM_USER -- the IAM user name, this is the folder within the S3 bucket that the user has access to
+# S3_BUCKET -- the S3 bucket that hold the backups
+# BACKUP_KEY -- path to a file containing the encryption key
+#
+
+function die () {
+  echo "$@"
+  exit 1
+}
+
+export DEBIAN_FRONTEND=noninteractive
+
+if [ -z "${AWS_ACCESS_KEY_ID}" ] ; then
+  die "No AWS_ACCESS_KEY_ID found in environment"
+fi
+if [ -z "${AWS_SECRET_ACCESS_KEY}" ] ; then
+  die "No AWS_SECRET_ACCESS_KEY found in environment"
+fi
+if [ -z "${S3_BUCKET}" ] ; then
+  die "No S3_BUCKET found in environment"
+fi
+if [ -z "${AWS_IAM_USER}" ] ; then
+  die "No AWS_IAM_USER found in environment"
+fi
+if [ -z "${BACKUP_KEY}" ] ; then
+  die "No BACKUP_KEY found in environment"
+fi
+
+# Overwrite backup key if it's not the default key
+DEFAULT_KEY="/etc/.cloudos"
+if [ $(echo -n ${BACKUP_KEY} | head -c 1) != "/" ] ; then
+  # BACKUP_KEY contains the actual key. write it to the default key location.
+  echo -n ${BACKUP_KEY} > ${DEFAULT_KEY} && BACKUP_KEY=${DEFAULT_KEY}
+
+elif [ "${BACKUP_KEY}" != "${DEFAULT_KEY}" ] ; then
+  # BACKUP_KEY contains the path to the key. write it to the default key location
+  cat ${BACKUP_KEY} > ${DEFAULT_KEY} && rm -f ${BACKUP_KEY} && BACKUP_KEY=${DEFAULT_KEY}
+fi
+chmod 600 ${DEFAULT_KEY}
+
+function fetch_app_tarball () {
+  # download from s3, decrypt & un-tar the contents into ${RESTORE_DIR}
+  RESTORE_DIR=$1
+  s3_tar=$2
+
+  file_name=$(basename ${s3_tar})
+  tar_name="${file_name}.enc"
+  app_name=$(basename $(dirname ${s3_tar}))
+  mkdir -p ${RESTORE_DIR}/${app_name}
+
+  # todo: determine closest region by geo
+  aws s3 cp --region us-east-1 ${s3_tar} ${RESTORE_DIR}/${app_name} 2> /dev/null 1>&2 || die "Error retrieving tarball: ${s3_tar}"
+  openssl enc -d -aes256 -pass file:${BACKUP_KEY} -in ${RESTORE_DIR}/${app_name}/${file_name} -out ${RESTORE_DIR}/${app_name}/$tar_name || die "Error decrypting tarball: ${file_name}"
+  tar xjfp ${RESTORE_DIR}/${app_name}/${tar_name} -C ${RESTORE_DIR}/${app_name} || die "Error unrolling tarball: ${tar_name}"
+
+  # for sanity: tar can unroll things to /tmp /var /etc or /home and it preserves the permissions from the backup dir
+  # so after unrolling an app tarball, ensure that permissions are back to normal
+  chmod 1777 /tmp && chown root.root /tmp
+  for rootdir in /etc /var /home ; do
+    chmod 755 ${rootdir} && chown root.root ${rootdir}
+  done
+}
+
+S3_ROOT="${S3_BUCKET}/${AWS_IAM_USER}/backup"
+RESTORE_DIR=/var/cloudos/backup
+
+args=( $@ )
+arg_count=${#args[@]}
+
+if [ -d "${RESTORE_DIR}" ] ; then
+  rm -rf ${RESTORE_DIR}
+fi
+mkdir -p ${RESTORE_DIR}
+
+declare -a tars
+if [ ${arg_count} -ge 1 ] ; then
+  tar_names=${args[@]}
+  for tar in ${tar_names[@]} ; do
+    app="$(echo -n $(basename ${tar}) | awk -F '-' '{print $1}')"
+    tar=$(aws s3 ls s3://$S3_ROOT/${app}/ | awk '{print $4}' | sort | grep ${tar} | tail -n 1)
+    if [ -z "${tar}" ] ; then
+      die "Tarball not found: ${tar}"
+    fi
+    tars+=( "s3://$S3_ROOT/${app}/${tar}" )
+  done
+
+  # echo "tars=${tars[@]}" ; exit 1
+  # for each of the restore files, we need to get it from s3, decrypt & un-tar the contents, and then run the
+  # restore chef
+  for file in ${tars[@]} ; do
+    # fetch, decrypt and unroll
+    fetch_app_tarball ${RESTORE_DIR} ${file}
+
+    # run chef-solo
+    #chef-solo -c ${RESTORE_DIR}/${app_name}/restore-solo.rb -j ${RESTORE_DIR}/${app_name}/restore.json || die "Error running chef-solo for app: ${app_name}"
+    echo "would run chef-solo on ${RESTORE_DIR}/${app_name}/restore-solo.rb here"
+
+    # if it succeeded, ensure this app is added to the solo.json run_list
+    # todo: add to solo.json run_list
+    echo "would add ${app_name} to solo.json run_list here"
+  done
+
+else
+  echo "no backup list supplied - restoring cloudos latest backup and finding apps from there"
+  cloudos_tar=$(aws s3 ls s3://${S3_ROOT}/cloudos/ | awk '{print $4}' | sort | tail -n 1)
+
+  # fetch, decrypt and unroll cloudos
+  fetch_app_tarball ${RESTORE_DIR} s3://${S3_ROOT}/cloudos/${cloudos_tar}
+
+  # determine solo.json and chef user
+  SOLO_JSON=$(find ${RESTORE_DIR}/cloudos/home -type f -name solo.json | head -n 1)
+  if [ -z "${SOLO_JSON}" ] ; then
+    die "No solo.json found in ${RESTORE_DIR}/cloudos/home"
+  fi
+
+  CHEF_RESTORE_DIR=$(dirname ${SOLO_JSON})
+  CHEF_USER=$(basename $(dirname ${CHEF_RESTORE_DIR}))
+  if [ -z "${CHEF_USER}" ] ; then
+    die "No chef-user found"
+  fi
+
+  # Create the chef-user if it does not exist
+  if [ $(cat /etc/passwd | grep "${CHEF_USER}:" | wc -l | tr -d '') -eq 0 ] ; then
+    useradd --create-home --home /home/users/${CHEF_USER} --shell /bin/bash --gid wheel --groups rooty ${CHEF_USER}
+  fi
+  CHEF_HOME="$(bash -c "cd ~${CHEF_USER} && pwd")"
+
+  # Stash previous chef-user here, we will need to copy some files from their homedir
+  PREV_CHEF_USER="$(cd $(dirname $0) && basename $(pwd))"
+  PREV_CHEF_USER_HOME="$(bash -c "cd ~${PREV_CHEF_USER} && pwd")"
+
+  echo ${CHEF_USER} > /etc/chef-user
+  BACKUP_HOST="${CHEF_USER}.$(hostname --domain)"
+  hostname ${BACKUP_HOST}
+  echo ${BACKUP_HOST} > /etc/hostname
+
+  # Restore the original chef-repo
+  rsync -avzc ${CHEF_RESTORE_DIR}/* ${CHEF_HOME}/chef/
+
+  # load apps from solo.json that was restored
+  apps=$(cat ${SOLO_JSON} | egrep -v '[[:space:]]*//' | ${CHEF_RESTORE_DIR}/JSON.sh | grep \"run_list\", | tr '[]' '  ' | awk '{print $3}' | grep -v '::')
+
+  RESTORE_JSON="${CHEF_HOME}/chef/restore.json"
+  echo '{ "run_list": [' > ${RESTORE_JSON}
+
+  RESTORE_TIMESTAMPS="${CHEF_HOME}/chef/data_bags/restore/timestamps.json"
+  mkdir -p $(dirname ${RESTORE_TIMESTAMPS})
+  echo '{ "id": "timestamps" }' > ${RESTORE_TIMESTAMPS}
+
+  for app in ${apps} ; do
+    app_tarball=$(aws s3 ls s3://${S3_ROOT}/${app}/ | awk '{print $4}' | sort | tail -n 1)
+
+    if [ ! -z "${app_tarball}" ] ; then
+      if [ "${app}" != "cloudos" ] ; then
+        fetch_app_tarball ${RESTORE_DIR} s3://${S3_ROOT}/${app}/${app_tarball}
+      fi
+
+      timestamp=$(basename ${app_tarball} | sed -e 's/^'${app}'-//' | awk -F '.' '{print $1}')
+      cos json --file ${RESTORE_TIMESTAMPS} --outfile ${RESTORE_TIMESTAMPS} --operation write --path ${app} --value '"'${timestamp}'"'
+    fi
+
+    if [ -f ${CHEF_RESTORE_DIR}/cookbooks/${app}/recipes/lib.rb ] ; then
+      echo "\"recipe[${app}::lib]\"," >> ${RESTORE_JSON}
+    fi
+  done
+  for app in ${apps} ; do
+    if [ -f ${CHEF_RESTORE_DIR}/cookbooks/${app}/recipes/restore.rb ] ; then
+      echo "\"recipe[${app}::restore]\"," >> ${RESTORE_JSON}
+    fi
+  done
+  sed -i '$s/,$//' ${RESTORE_JSON}
+  echo '] }' >> ${RESTORE_JSON}
+
+  echo "wrote restorejson to ${RESTORE_JSON}"
+
+  # ensure chef user owns everything in their own home and in backup dir
+  chown -R ${CHEF_USER} ${CHEF_HOME} ${RESTORE_DIR}
+
+  # Nuke kerberos and ldap, they will get reinstalled with proper keys
+  KERBEROS_LDAP_PACKAGES=$(cos json -f ${CHEF_HOME}/chef/data_bags/auth/cloudos-manifest.json -o read -p packages | tr -d '[]",')
+  apt-get -y --purge remove ${KERBEROS_LDAP_PACKAGES} && rm -rf /etc/krb* /etc/ldap*
+
+  # Nuke all java processes. This will ensure that all cloudos services are stopped
+  killall -9 java
+
+  # ensure .first_time_setup is empty, run chef-solo with default installation, then restore
+  # then re-run default installation to set proper permissions everywhere, then restart apache
+  cd ${CHEF_HOME}/chef && \
+    cat /dev/null > ~cloudos/.first_time_setup && \
+    echo "--------------- RESTORE: default chef-solo..." && \
+    bash install.sh && \
+    echo "--------------- RESTORE: chef-solo to restore..." && \
+    /usr/bin/chef-solo -c solo.rb -j restore.json -l debug && \
+    echo "--------------- RESTORE: default chef-solo to finalize restoration..." && \
+    bash install.sh && \
+    echo "--------------- RESTORE: restore complete, restarting Apache..." && \
+    chmod 755 /var/www && service apache2 restart
+  RESTORE_EXIT_VALUE=$?
+
+  # make double-certain that the .first_time_setup file is empty
+  cat /dev/null > ~cloudos/.first_time_setup
+
+  # note: RESTORE_NOTIFY_EMAIL and RESTORE_LOG are set in the RestoreHandler
+  if [ ! -z "${RESTORE_NOTIFY_EMAIL}" ] ; then
+    # Ensure postfix is running
+    service postfix restart
+    sleep 2s
+    if [ $(service postfix status | grep 'not running' | wc -l | tr -d ' ') -gt 0 ] ; then
+      echo "postfix not running, cannot send status email!"
+      exit 1
+    fi
+
+    if [ ${RESTORE_EXIT_VALUE} -eq 0 ] ; then
+      IPADDR=$(ifconfig | grep -A 2 "^eth" | grep "inet addr:" | tr ':' ' ' | awk '{print $3}')
+      RESTORE_HOST=$(cat /etc/hosts | grep ${IPADDR} | grep -v $(hostname) | awk '{print $2}')
+      sendmail -oi -t <<EOF
+From: do-not-reply@$(hostname)
+To: ${RESTORE_NOTIFY_EMAIL}
+Subject: Your $(hostname) cloudstead has been restored
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Your cloudstead has been restored.
+
+The URL for your cloudstead is https://$(hostname)/
+However, this will still route to your old cloudstead until the DNS changes have propagated across
+the Internet. This propagation usually takes a couple of hours.
+
+In the meantime, you can always access your cloudstead with this URL: https://${RESTORE_HOST}/
+
+Happy Cloudsteading!
+
+EOF
+
+    else
+      sendmail -oi -t <<EOF
+From: do-not-reply@$(hostname)
+To: ${RESTORE_NOTIFY_EMAIL}
+Subject: Your $(hostname) cloudstead was not successfully restored
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Sorry! A problem occurred trying to restore your cloudstead.
+
+You can try the restore again, or forward this email to support@cloudstead.io which
+will automatically open a support ticket and we will get right back to you.
+
+The last output from the restore process is below.
+
+
+--------------------------------------------------
+$(cat ${RESTORE_LOG} | tail -n 1000)
+
+EOF
+
+    fi
+  fi
+
+fi

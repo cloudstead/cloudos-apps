@@ -1,0 +1,8 @@
+queueName: <%=@app[:passwords]['rooty_queue']%>+chef
+secret: <%=@app[:passwords]['rooty']%> # used to encrypt messages and generate hashes in request filenames
+
+handlers:
+  rooty.toots.chef.ChefHandler:
+    params:
+      chefRepo: <%=Chef::Recipe::Base.chef_user_home%>/chef
+      group: <%=@app[:groups]['rooty'][:name]%>

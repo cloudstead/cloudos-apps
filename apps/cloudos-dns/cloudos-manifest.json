@@ -1,0 +1,41 @@
+{
+    "name": "cloudos-dns",
+    "version": "0.1.0",
+    "style": "java_webapp",
+    "publisher": {
+        "maintainer": "Jonathan Cobb",
+        "maintainer_email": "jonathan@cloudstead.io",
+        "license": "https://www.gnu.org/licenses/agpl-3.0.txt",
+        "code_copyright": "Copyright 2014 Cloudstead, Inc.",
+        "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+    },
+
+    "databags": [ {
+        "name": "init",
+        "items": [ "admin.name", "admin.password",
+                   "dyndns.account", "dyndns.user", "dyndns.password", "dyndns.zone" ]
+    } ],
+
+    "tarball": {
+        "url": "http://cloudstead.io/downloads/cloudos-dns-server.tar.gz",
+        "shasum": "a13a793ece260e4425a0d65e3b0151a0a31ab5348a93146c093a56eccfd8be49"
+    },
+
+    "database": {
+        "type": "postgresql",
+        "inserts": [ {
+            "sql": "insert into dns_account (uuid, ctime, admin, \"name\", hashed_password) VALUES ('@name', @now_millis, TRUE, '@databag[init][admin][name]', '@databag[init][admin][password]')",
+            "unless": "select count(*) from dns_account where admin = true"
+        } ]
+    },
+
+    "web": { "type": "apache", "mode": "proxy_service", "mount": "dns" },
+
+    "templates": { ".cloudos-dns.env": "dot-cloudos-dns.env" },
+
+    "sysinit": [ "jrun" ],
+
+    "plugin": "cloudos.appstore.model.ConfigurableAppRuntime",
+
+    "auth": {}
+}

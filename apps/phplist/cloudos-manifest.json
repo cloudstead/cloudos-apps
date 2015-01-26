@@ -1,0 +1,33 @@
+{
+    "version": "0.1.0",
+    "name": "phplist",
+    "style": "php",
+    "interactive": true,
+
+    "publisher": {
+        "maintainer": "Jonathan Cobb",
+        "maintainer_email": "jonathan@cloudstead.io",
+        "license": "https://www.gnu.org/licenses/gpl-2.0.html",
+        "code_copyright": "Copyright (C) 2000-2013 Michiel Dethmers, phpList ltd",
+        "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+    },
+
+    "assets": { "taskbarIconAltText": "mailing lists" },
+
+    "tarball": {
+        "url": "http://downloads.sourceforge.net/project/phplist/phplist/3.0.8/phplist-3.0.8.tgz?r=&ts=1412150382&use_mirror=softlayer-dal",
+        "shasum": "4f3a8f7a219c312deb351c9bb902edae9e18ac6ae698451e8fcf4df89e23e98a"
+    },
+
+    "database": {
+        "type": "mysql", "dbuser": "root",
+        "set_config": [ { "group": "mysqld", "name": "sql_mode", "value": "STRICT_ALL_TABLES" } ]
+    },
+
+    "web": {
+        "type": "apache",
+        "mode": "vhost"
+    },
+
+    "auth": {}
+}

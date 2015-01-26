@@ -1,0 +1,41 @@
+{
+    "version": "0.1.0",
+    "name": "kanban",
+    "style": "rails",
+    "interactive": true,
+
+    "publisher": {
+        "maintainer": "Jonathan Cobb",
+        "maintainer_email": "jonathan@cloudstead.io",
+        "license": "https://raw.githubusercontent.com/somlor/kanban/master/LICENSE",
+        "code_copyright": "Copyright (c) 2013-2014 Sean Omlor",
+        "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+    },
+
+    "repo": {
+        "url": "https://github.com/cobbzilla/kanban.git",
+        "branch": "cloudstead"
+    },
+
+    "database": { "type": "postgresql" },
+
+    "packages": ["g++", "libsqlite3-dev"],
+
+    "web": { "type": "apache", "mode": "proxy" },
+
+    "auth": {
+        "login_fields": {
+            "email": "{{account.name}}@{{emailDomain}}",
+            "password": "{{account.password}}",
+            "authenticity_token": "pass"
+        },
+        "login_path": "/session",
+        "login_page_markers": [
+            "user_email",
+            "authenticity_token",
+            "type=\"password\"",
+            "value=\"Login\""
+        ]
+    }
+
+}

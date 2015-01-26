@@ -1,0 +1,95 @@
+{
+    "version": "0.1.0",
+    "name": "phabricator",
+    "style": "php",
+    "interactive": true,
+
+    "publisher": {
+        "maintainer": "Jonathan Cobb",
+        "maintainer_email": "jonathan@cloudstead.io",
+        "license": "https://raw.githubusercontent.com/phacility/phabricator/master/LICENSE",
+        "code_copyright": "Copyright 2014 Phacility, Inc.",
+        "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+    },
+
+    "packages": [ "php-pear", "php5-curl", "php5-gd", "libpcre3-dev", "g++" ],
+
+    "repo": {
+        "url": "https://github.com/cobbzilla/phabricator.git",
+        "branch": "cloudstead"
+    },
+
+    "supporting_repos": [
+        {
+            "url": "https://github.com/phacility/libphutil.git",
+            "branch": "master"
+        }, {
+            "url": "https://github.com/phacility/arcanist.git",
+            "branch": "master"
+        }
+    ],
+
+    "prep_code": [
+        { "exec": "/var/www/phabricator/libphutil/scripts/build_xhpast.sh", "dir": "@repo",
+          "unless": "@home/libphutil/src/parser/xhpast/bin/xhpast" },
+        { "exec": "@home/arcanist/bin/arc liberate", "dir": "@repo" }
+    ],
+
+    "database": {
+        "type": "mysql",
+        "dbuser": "root",
+        "set_config": [ { "group": "mysqld", "name": "sql_mode", "value": "STRICT_ALL_TABLES" } ],
+        "init_command": {
+            "exec": "phabricator/bin/storage upgrade --force"
+        },
+        "inserts": [
+            { "sql": "INSERT INTO `auth_providerconfig` VALUES (1,'PHID-AUTH-4lcuirex2wm4amih2uwp','PhabricatorCloudOsAuthProvider','cloudos','self',1,1,1,1,1,1,'[]',1407976572,1407976572)",
+              "dbname": "phabricator_auth",
+              "unless": "SELECT COUNT(*) FROM auth_providerconfig WHERE providerClass='PhabricatorCloudOsAuthProvider'" }
+        ]
+    },
+
+    "web": {
+        "type": "apache",
+        "mode": "vhost",
+        "doc_root": "phabricator/webroot",
+        "apache": {
+            "vhost": "enable",
+            "dir": [ "@doc_root" ]
+        }
+    },
+
+    "dirs": [ "/var/repo" ],
+
+    "post_install": [
+        { "exec": "@repo/bin/config set phabricator.base-uri 'https://@name-@hostname/'" },
+        { "exec": "@repo/bin/config set auth.require-approval false" },
+        { "exec": "@repo/bin/config set storage.upload-size-limit '10M'" }
+    ],
+
+    "sysinit": [ "@repo/bin/phd" ],
+
+    "auth": {
+        "login_fields": {
+            "cloudos_username": "{{account.name}}",
+            "cloudos_password": "{{account.password}}",
+            "__form__": "pass",
+            "__dialog__": "pass",
+            "__csrf__": "pass"
+        },
+        "login_path": "/auth/login/cloudos:self/",
+
+        "login_redirect": "/auth/validate/\\?expect=.+",
+        "registration_redirect": "/auth/register/[a-z0-9]+/",
+
+        "registration_fields": {
+            "username": "{{account.name}}",
+            "email": "{{account.name}}@{{email_domain}}",
+            "realName": "{{account.name}}",
+            "__form__": "pass",
+            "__csrf__": "pass"
+        },
+        "registration_path": "self"
+    }
+
+}

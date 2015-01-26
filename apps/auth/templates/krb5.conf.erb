@@ -1,0 +1,45 @@
+<% ldap_domain="dc=#{@app[:domain].gsub(/\./, ',dc=')}" %>
+
+[libdefaults]
+        default_realm = <%=@app[:domain]%>
+        dns_lookup_kdc = false
+
+[realms]
+        <%=@app[:domain]%> = {
+                kdc = <%=%x(hostname).strip%>
+                admin_server = <%=%x(hostname).strip%>
+                default_domain = <%=@app[:domain]%>
+                database_module = openldap_ldapconf
+        }
+
+[domain_realm]
+        <%=@app[:domain]%> = <%=@app[:domain]%>
+        .<%=@app[:domain]%> = <%=@app[:domain]%>
+
+[login]
+        krb4_convert = false
+        krb4_get_tickets = false
+
+[logging]
+        kdc = FILE:/var/log/kerberos/krb5kdc.log
+        admin_server = FILE:/var/log/kerberos/kadmin.log
+        default = FILE:/var/log/kerberos/krb5lib.log
+
+[dbdefaults]
+    ldap_kerberos_container_dn = cn=cloudos,<%=ldap_domain%>
+
+[dbmodules]
+    openldap_ldapconf = {
+        db_library = kldap
+        ldap_kdc_dn = "cn=admin,<%=ldap_domain%>"
+
+        # this object needs to have read rights on
+        # the realm container, principal container and realm sub-trees
+        ldap_kadmind_dn = "cn=admin,<%=ldap_domain%>"
+
+        # this object needs to have read and write rights on
+        # the realm container, principal container and realm sub-trees
+        ldap_service_password_file = /etc/krb5kdc/service.keyfile
+        ldap_servers = ldapi:///
+        ldap_conns_per_server = 5
+    }

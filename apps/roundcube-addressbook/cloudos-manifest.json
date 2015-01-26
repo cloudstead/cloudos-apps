@@ -1,0 +1,19 @@
+{
+    "version": "0.1.0",
+    "name": "roundcube-addressbook",
+    "style": "php",
+    "parent": "roundcube",
+    "interactive": true,
+    "path": "/?_task=addressbook",
+
+    "publisher": {
+        "maintainer": "Jonathan Cobb",
+        "maintainer_email": "jonathan@cloudstead.io",
+        "license": "https://raw.githubusercontent.com/roundcube/roundcubemail/master/LICENSE",
+        "code_copyright": "Copyright 2014 Roundcube.net, all rights reserved.",
+        "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
+    },
+
+    "assets": { "taskbarIconAltText": "contacts" }
+
+}

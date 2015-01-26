@@ -1,0 +1,45 @@
+#!/bin/bash
+
+function die () {
+  echo >2 "${1}"
+  exit 1
+}
+
+ACCOUNT="${1}"
+if [ -z "${ACCOUNT}" ] ; then
+  die "No account name provided"
+fi
+
+$(dirname $0)/user_exists.sh ${ACCOUNT} 2>&1 > /dev/null
+if [ $? -ne 0 ] ; then
+  # Account does not exist
+  echo "false"
+  exit 0
+fi
+
+MOUNT_JSON=/var/www/owncloud/data/mount.json
+BACKUP=$(mktemp $(dirname ${MOUNT_JSON})/mount.json.$(date +%Y%m%d_%H%M%S).XXXXXXX)
+TEMP=$(mktemp $(dirname ${MOUNT_JSON})/.mount.$$.json.XXXXXXX)
+
+if [ -f ${MOUNT_JSON} ] ; then
+  cp ${MOUNT_JSON} ${BACKUP} || die "Error backing up ${MOUNT_JSON}"
+else
+  # No accounts exist in owncloud
+  echo "false"
+  exit 0
+fi
+
+# Add json config block for new user, write to temp file
+cos json --file ${MOUNT_JSON} --operation delete --path user.${ACCOUNT} --outfile ${TEMP} \
+  || die "Error generating new mount.json that removes account ${ACCOUNT}"
+
+cat ${TEMP} > ${MOUNT_JSON} || die "Error writing to ${MOUNT_JSON}"
+chown <%=@app[:run_as]%> ${MOUNT_JSON} || die "Error chown'ing ${MOUNT_JSON} to <%=@app[:run_as]%>"
+chmod 600 ${MOUNT_JSON} || die "Error chmod'ing ${MOUNT_JSON} to 600"
+rm -f ${TEMP}
+
+if $(dirname $0)/user_exists.sh ${ACCOUNT} 2>&1 > /dev/null ; then
+  echo "$0 error -- account still exists: ${ACCOUNT}"
+  exit 1;
+fi
+exit 0

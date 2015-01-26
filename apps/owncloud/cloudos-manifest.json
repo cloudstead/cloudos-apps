@@ -1,0 +1,105 @@
+{
+    "version": "0.1.0",
+    "name": "owncloud",
+    "style": "php",
+    "interactive": true,
+
+    "publisher": {
+        "maintainer": "Jonathan Cobb",
+        "maintainer_email": "jonathan@cloudstead.io",
+        "license": "https://raw.githubusercontent.com/owncloud/core/master/COPYING-README",
+        "code_copyright": "Copyright (c) 2014 Owncloud, Inc.",
+        "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+    },
+
+    "assets": { "taskbarIconAltText": "files" },
+
+    "packages" : [ "php5-imap", "php5-gd", "php5-json", "php5-curl",
+                   "php5-intl", "php5-mcrypt", "php5-imagick" ],
+
+    "database": {
+        "type": "postgresql",
+        "inserts": [ {
+            "sql": "insert into oc_preferences (userid, appid, configkey, configvalue) values ('admin', 'settings', 'email', 'root@@hostname');",
+            "unless": "select count(*) from oc_preferences where userid='admin' and appid='settings' and configkey='email'"
+        }, {
+            "sql": "update oc_users set password='__disabled__' where uid='admin'",
+            "unless": "select count(*) from oc_users where 1=0"
+        }, {
+            "sql": "insert into oc_storages (id) values ('amazon::@cloudos[aws_access_key]@md5(@cloudos[aws_secret_key]@cloudos[aws_iam_user]/)')",
+            "unless": "select count(*) from oc_storages where id like 'amazon::@cloudos[aws_access_key]%'"
+        } ]
+    },
+
+    "tarball": {
+        "url": "https://download.owncloud.org/community/owncloud-7.0.1.tar.bz2",
+        "shasum": "15d0b8c46c64b266f1efa9dcb43b5249d7913922cb40dbc228900a72f430d28a"
+    },
+
+    "web": {
+        "type": "apache",
+        "mode": "service",
+        "apache": {
+            "mods": [ "rewrite" ],
+            "php_set": [ { "name": "extension", "value": "imap.so" } ],
+            "dir": [ "@doc_root" ],
+            "htaccess": [ "@doc_root", "@doc_root/data" ]
+        }
+    },
+
+    "templates": {
+        "@doc_root/config/config.php": "_",
+        "@doc_root/config/cloudsteads3.key": "_",
+        "@doc_root/data/mount-template.json": "_",
+        "@doc_root/apps/files_external/lib/cloudsteads3.php": "_"
+    },
+
+    "dirs": [
+        "@doc_root/data",
+        "@doc_root/data/admin",
+        "@doc_root/data/admin/files",
+        "@doc_root/data/admin/thumbnails"
+    ],
+
+    "perms": {
+        "@doc_root/data": { "perms": "700" },
+        "@doc_root/data/.ocdata": { "perms": "700" },
+        "@doc_root/config": { "perms": "700" },
+        "@doc_root/apps": { "perms": "700" }
+    },
+
+    "copy": { "@files/themes": "/var/www/owncloud/" },
+
+    "append": {
+        "@doc_root/apps/files_external/appinfo/app.php":
+        "\n\nOC::$CLASSPATH['OC\\Files\\Storage\\CloudsteadS3'] = 'files_external/lib/cloudsteads3.php';\nOC_Mount_Config::registerBackend('\\OC\\Files\\Storage\\CloudsteadS3', array(\n'backend' => (string)$l->t('Cloudstead S3'),\n'priority' => 100,\n'configuration' => array(\n'prefix' => '&'.$l->t('Prefix'),\n'hostname' => '&'.$l->t('Hostname (optional)'),\n'port' => '&'.$l->t('Port (optional)'),\n'region' => '&'.$l->t('Region (optional)'),\n'use_path_style' => '!'.$l->t('Enable Path Style')),\n'has_dependencies' => true));\n\n",
+
+        "/var/www/roundcube/config/config.inc.php":
+        "array_unshift($config['plugins'],'rcs_skins','rcs_skins'); $config['skin']='outlook';",
+
+        "/var/www/owncloud/config/config.php":
+        "$CONFIG['theme'] = 'cloudstead';"
+    },
+
+    "post_install": [
+        { "exec": "@doc_root/config/user_create.sh all no_password false" }
+    ],
+
+    "auth": {
+        "login_fields": {
+            "user": "{{account.name}}",
+            "password": "{{account.password}}",
+            "remember_login": "1",
+            "timezone-offset": "{{timezone-offset}}",
+            "requesttoken": "pass"
+        },
+        "login_path": "index.php",
+        "login_page_markers": [ "<form method=\"post\" name=\"login\">", "class=\"login primary\"" ],
+        "user_management": {
+            "exists": "@doc_root/config/user_exists.sh",
+            "create": "@doc_root/config/user_create.sh",
+            "delete": "@doc_root/config/user_delete.sh"
+        }
+    }
+
+}

@@ -1,0 +1,42 @@
+# Some general options
+protocols = imap pop3
+disable_plaintext_auth = yes
+ssl = yes
+ssl_cert = </etc/ssl/certs/ssl-https.pem
+ssl_key = </etc/ssl/private/ssl-https.key
+ssl_cipher_list = ALL:!LOW:!SSLv2:ALL:!aNULL:!ADH:!eNULL:!EXP:RC4+RSA:+HIGH:+MEDIUM
+mail_location = maildir:<%=@app[:users]['vmail'][:home]%>/vhosts/<%=@app[:hostname]%>/%u/Maildir
+
+auth_username_chars = abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890.-_@
+
+# IMAP configuration
+protocol imap {
+        mail_max_userip_connections = 10
+        imap_client_workarounds = delay-newmail
+}
+
+# POP3 configuration
+protocol pop3 {
+        mail_max_userip_connections = 10
+        pop3_client_workarounds = outlook-no-nuls oe-ns-eoh
+}
+
+# Authentication configuration
+# auth_mechanisms = plain login
+auth_mechanisms = plain gssapi
+userdb {
+  driver = static
+  args = uid=vmail gid=vmail home=<%=@app[:users]['vmail'][:home]%>/vhosts/<%=@app[:hostname]%>/%u
+}
+passdb {
+  driver = pam
+}
+
+service auth {
+  # Postfix smtp-auth
+  unix_listener /var/spool/postfix/private/dovecot-auth {
+    mode = 0660
+    user = postfix
+    group = postfix
+  }
+}

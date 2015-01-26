@@ -1,0 +1,14 @@
+#!/bin/bash
+
+CHEF_USER_HOME="<%=Chef::Recipe::Base.chef_user_home%>"
+LOG=/var/log/cloudos_backup.log
+
+# start fresh
+rm -rf /var/cloudos/backup/*
+
+echo "$(date): Starting backup of up cloustead: $(hostname) ..." >> ${LOG} && \
+  ${CHEF_USER_HOME}/backup.sh 2>&1 | tee -a ${LOG} && \
+  echo "$(date): Syncing encrypted backup files to cloud storage..." >> ${LOG} && \
+  ${CHEF_USER_HOME}/sync.sh 2>&1 | tee -a ${LOG} && \
+  rm -rf /var/cloudos/backup/* && \
+  echo "$(date): Backup complete" >> ${LOG}
