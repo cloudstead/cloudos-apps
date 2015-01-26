@@ -3,6 +3,8 @@ config:     cloudos.main.app.AppConfigMain
 install:    cloudos.main.app.AppInstallMain
 sync-apps:  cloudos.main.app.SyncAppRepositoryMain
 appstore:   cloudos.main.app.SearchAppStoreMain
+valet:      cloudos.main.ServiceKeyMain
+unlock:     cloudos.main.UnlockMain
 backup-key: cloudos.main.GetBackupKeyMain
 restore:    cloudos.main.RestoreCloudsteadMain
 dns:        cloudos.dns.main.DnsMain
