@@ -1,8 +1,10 @@
 download:   cloudos.main.app.AppDownloadMain
 config:     cloudos.main.app.AppConfigMain
 install:    cloudos.main.app.AppInstallMain
+uninstall:  cloudos.main.app.AppUninstallMain
 sync-apps:  cloudos.main.app.SyncAppRepositoryMain
 appstore:   cloudos.main.app.SearchAppStoreMain
+apps:       cloudos.main.app.AppManagementMain
 valet:      cloudos.main.ServiceKeyMain
 unlock:     cloudos.main.UnlockMain
 backup-key: cloudos.main.GetBackupKeyMain
