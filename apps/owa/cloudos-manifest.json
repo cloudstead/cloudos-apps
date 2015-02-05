@@ -40,6 +40,12 @@
     "@doc_root/modules/cos/module.php": "_"
   },
 
+  "perms": {
+    "@doc_root/owa-data": { "chown": "@run_as.root", "perms": "700" },
+    "@doc_root/owa-config.php": { "chown": "@run_as.root", "perms": "700" },
+    "@doc_root/cli.php": { "chown": "@chef_user.root", "perms": "700" }
+  },
+
   "post_install": [
     { "exec": "php5 @doc_root/cli.php cmd=install-module module=cos" }
   ],
