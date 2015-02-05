@@ -1030,16 +1030,6 @@ CREATE TABLE `owa_site` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `owa_site`
---
-
-LOCK TABLES `owa_site` WRITE;
-/*!40000 ALTER TABLE `owa_site` DISABLE KEYS */;
-INSERT INTO `owa_site` VALUES (1525514316,'d53b6fa927da81515709f7e80a5c3fd8','https://cs07.cloudstead.io','https://cs07.cloudstead.io','','','');
-/*!40000 ALTER TABLE `owa_site` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `owa_site_user`
 --
 
@@ -1131,16 +1121,6 @@ CREATE TABLE `owa_user` (
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `owa_user`
---
-
-LOCK TABLES `owa_user` WRITE;
-/*!40000 ALTER TABLE `owa_user` DISABLE KEYS */;
-INSERT INTO `owa_user` VALUES (1,'admin','b25ef06be3b6948c0bc431da46c2c738','admin','','jonathan@cs07.cloudstead.io','f80ba0f8fddad5994fe6937b6fd1ec1d',1423120660,1423120660,'c0d6003f7ec3953333696eddee0e06b2');
-/*!40000 ALTER TABLE `owa_user` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `owa_visitor`
