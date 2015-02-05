@@ -19,13 +19,7 @@
     "shasum": "81b6a8741588ec2d0979e95e7862cd8a0e6272f37cb0c158a252460bfb3a67a7"
   },
 
-  "database": {
-    "type": "mysql",
-    "inserts": [ {
-      "sql": "INSERT INTO `owa_site` VALUES (1525514316,'@md5(https://@hostname)','https://@hostname','https://@hostname','','','')",
-      "unless": "SELECT count(*) from owa_site where domain='https://@hostname'"
-    } ]
-  },
+  "database": { "type": "mysql" },
 
   "web": { "type": "apache", "mode": "service" },
 
@@ -47,7 +41,8 @@
   },
 
   "post_install": [
-    { "exec": "php5 @doc_root/cli.php cmd=install-module module=cos" }
+    { "exec": "php5 @doc_root/cli.php cmd=install-module module=cos" },
+    { "exec": "php5 @doc_root/cli.php cmd=install domain=https://@hostname email_address=postmaster@@hostname" }
   ],
 
   "auth": {
