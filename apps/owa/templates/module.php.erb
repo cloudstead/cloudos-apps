@@ -1,0 +1,89 @@
+<?php
+
+require_once(OWA_BASE_DIR.'/owa_module.php');
+require_once(OWA_BASE_DIR.'/httpful.phar');
+
+/**
+ * CloudOs Authentication Module
+ *
+ * @author      Jonathan Cobb <jonathan@cloudstead.io>
+ * @copyright   Copyright &copy; 2015 Cloudstead, Inc.
+ * @license     https://www.gnu.org/licenses/agpl-3.0.txt
+ * @category    owa
+ * @package     owa
+ * @version		$Revision$
+ * @since		owa 1.5.7
+ */
+class owa_cosModule extends owa_module {
+
+    function __construct() {
+        $this->name = 'cos';
+        $this->display_name = 'CloudOs Authentication';
+        $this->group = 'cloudstead';
+        $this->author = 'Jonathan Cobb';
+        $this->version = '1.0';
+        $this->description = 'User authentication plugin for CloudOs';
+        $this->config_required = false;
+        $this->required_schema_version = 1;
+        return parent::__construct();
+    }
+
+    /**
+     * Registers Event Handlers with queue queue
+     */
+    function _registerEventHandlers() {
+        $dispatch = owa_coreAPI::getEventDispatch();
+        $dispatch->attachFilter('auth_status', 'owa_cosAuthUser', 0);
+    }
+}
+
+function owa_cosAuthUser($auth_status) {
+    session_start();
+    $cos_account = NULL;
+    if (!isset($_SESSION['COS_ACCOUNT'])) {
+
+        $userid = owa_coreAPI::getRequestParam('user_id');
+        if (!isset($userid)) return false;
+
+        $password = owa_coreAPI::getRequestParam('password');
+        if (!isset($password)) return false;
+
+        $uri = 'http://127.0.0.1:3001/api/accounts';
+        $auth_json = '{"name":"' . $userid . '", "password": "' . $password . '"}';
+
+        $response = \Httpful\Request::post($uri)->sendsJson()->body($auth_json)->send();
+
+        if ($response->code == 200) {
+            $cos_account = $response->body->account;
+            $_SESSION['COS_ACCOUNT'] = $cos_account;
+        } else {
+            return false;
+        }
+
+    } else {
+        $cos_account = $_SESSION['COS_ACCOUNT'];
+    }
+
+    $cu = owa_coreAPI::getCurrentUser();
+    $cu->setAuthStatus(true);
+    $cu->setUserData('real_name', $cos_account->name);
+    $cu->setUserData('user_id', $cos_account->name);
+    $cu->setUserData('email_address', $cos_account->name . '@' . gethostname());
+    if ($cos_account->admin) {
+        $cu->setRole('admin');
+    } else {
+        $cu->setRole('viewer');
+    }
+    $domains = array();
+    $domains[] = 'https://' . gethostname();
+
+    if (! defined('OWA_INSTALLING') ) {
+        // load assigned sites list by domain
+        $cu->loadAssignedSitesByDomain($domains);
+    }
+
+    $cu->setInitialized();
+
+    return true;
+}
+?>

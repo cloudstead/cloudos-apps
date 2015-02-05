@@ -1,0 +1,58 @@
+{
+  "version": "0.1.0",
+  "name": "owa",
+  "style": "php",
+  "interactive": true,
+
+  "publisher": {
+    "maintainer": "Jonathan Cobb",
+    "maintainer_email": "jonathan@cloudstead.io",
+    "license": "http://wiki.openwebanalytics.com/index.php?title=License",
+    "code_copyright": "Copyright 2006 Peter Adams",
+    "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
+  },
+
+  "assets": { "taskbarIconAltText": "web analytics" },
+
+  "tarball": {
+    "url": "https://github.com/padams/Open-Web-Analytics/archive/1.5.7.tar.gz",
+    "shasum": "81b6a8741588ec2d0979e95e7862cd8a0e6272f37cb0c158a252460bfb3a67a7"
+  },
+
+  "database": {
+    "type": "mysql",
+    "inserts": [ {
+      "sql": "INSERT INTO `owa_site` VALUES (1525514316,'@md5(https://@hostname)','https://@hostname','https://@hostname','','','')",
+      "unless": "SELECT count(*) from owa_site where domain='https://@hostname'"
+    } ]
+  },
+
+  "web": { "type": "apache", "mode": "service" },
+
+  "copy": {
+    "@files/httpful.phar": "@doc_root/httpful.phar"
+  },
+
+  "dirs": [ "@doc_root/modules/cos" ],
+
+  "templates": {
+    "@doc_root/owa-config.php": "_",
+    "@doc_root/modules/cos/module.php": "_"
+  },
+
+  "post_install": [
+    { "exec": "php5 @doc_root/cli.php cmd=install-module module=cos" }
+  ],
+
+  "auth": {
+    "login_fields": {
+      "owa_user_id": "{{account.name}}",
+      "owa_password": "{{account.password}}",
+      "owa_go": "pass",
+      "owa_action": "pass",
+      "owa_submit_btn": "pass"
+    },
+    "login_path": "index.php",
+    "login_page_markers": [ "name=\"owa_password\"", "name=\"owa_submit_btn\" value=\"Login\"" ]
+  }
+}
