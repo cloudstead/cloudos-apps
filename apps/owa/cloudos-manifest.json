@@ -36,8 +36,8 @@
 
   "perms": {
     "@doc_root/owa-data": { "chown": "@run_as.root", "perms": "700" },
-    "@doc_root/owa-config.php": { "chown": "@run_as.root", "perms": "700" },
-    "@doc_root/cli.php": { "chown": "@chef_user.root", "perms": "700" }
+    "@doc_root/owa-config.php": { "chown": "@run_as.root", "perms": "400" },
+    "@doc_root/cli.php": { "chown": "@chef_user.root", "perms": "500" }
   },
 
   "post_install": [
