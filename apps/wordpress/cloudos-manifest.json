@@ -35,9 +35,13 @@
     } ]
   },
 
-  "post_install": [
-    { "exec": "@files/wp_dbinit.sh @dbname @dbuser @dbpass @files/wppass @doc_root @databag[init][admin][login] @databag[init][admin][password] @databag[init][admin][email] '@date(%Y-%m-%d %H:%m:%s)'" }
-  ],
+  "copy": {
+    "@files/httpful.phar": "@doc_root/httpful.phar"
+  },
+
+  "templates": {
+    "@doc_root/wp-content/plugins/cos_auth.php": "_"
+  },
 
   "web": { "type": "apache", "mode": "service" },
 
@@ -47,5 +51,24 @@
 
   "perms": {
     "@doc_root/wp-config.php": { "perms": "400" }
+  },
+
+  "post_install": [
+    { "exec": "@files/install_cos_auth_plugin.php @doc_root"},
+    { "exec": "@files/wp_dbinit.sh @dbname @dbuser @dbpass @files/wppass.php @doc_root @databag[init][admin][login] @databag[init][admin][password] @databag[init][admin][email] '@date(%Y-%m-%d %H:%m:%s)'" }
+  ],
+
+  "auth": {
+    "login_fields": {
+      "user_login": "{{account.name}}",
+      "pwd": "{{account.password}}",
+      "rememberme": "forever",
+      "wp-submit": "pass",
+      "redirect_to": "pass",
+      "testcookie": "pass"
+    },
+    "login_path": "wp-login.php",
+    "login_page_markers": [ "<form name=\"loginform\"", "<input name=\"rememberme\"" ]
   }
+
 }

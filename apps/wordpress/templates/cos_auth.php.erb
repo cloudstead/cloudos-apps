@@ -1,0 +1,48 @@
+<?php
+/**
+ * Plugin Name: cos_auth
+ * Plugin URI: http://cloudstead.io/
+ * Description: CloudOs Authentication Plugin
+ * Version: 1.0.0
+ * Author: Jonathan Cobb
+ * Author URI: https://github.com/cobbzilla
+ * Network: true
+ * License: AGPLv3
+ */
+
+require_once('<%=@app[:doc_root]%>/httpful.phar');
+
+add_action ('wp_authenticate' , 'cos_authentication');
+
+function cos_authentication ($username) {
+
+    $password = $_POST['pwd'];
+    if (!isset($username) || !isset($password)) return;
+
+    $uri = 'http://127.0.0.1:3001/api/accounts';
+    $auth_json = '{"name":"' . $username . '", "password": "' . $password . '"}';
+
+    $response = \Httpful\Request::post($uri)->sendsJson()->body($auth_json)->send();
+
+    if ($response->code == 200) {
+        $cos_account = $response->body->account;
+        $user = get_user_by('login', $username);
+        if (empty($user)) {
+            $user_id = wp_create_user($username, $password, $cos_account->email);
+            wp_update_user(array(
+                'ID'       => $user_id,
+                'nickname' => $cos_account->firstName
+            ));
+            $user = new WP_User( $user_id );
+            if ($cos_account->admin) {
+                $user->set_role( 'administrator' );
+            } else {
+                $user->set_role( 'contributor' );
+            }
+        }
+        return $user->user_login;
+    }
+
+}
+
+?>
