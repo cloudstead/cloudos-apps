@@ -40,14 +40,11 @@
   },
 
   "templates": {
+    "@doc_root/wp-config.php": "_",
     "@doc_root/wp-content/plugins/cos_auth.php": "_"
   },
 
   "web": { "type": "apache", "mode": "service" },
-
-  "templates": {
-    "@doc_root/wp-config.php": "_"
-  },
 
   "perms": {
     "@doc_root/wp-config.php": { "perms": "400" }
