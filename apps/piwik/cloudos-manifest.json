@@ -61,7 +61,7 @@
       "form_nonce": "pass",
       "form_rememberme": "1"
     },
-    "login_path": "index.php",
+    "login_path": "/./?module=CoreHome&action=",
     "login_page_markers": [ "name=\"login_form\"", "id=\"login_form_login\"", "id=\"login_form_password\"" ]
   }
 
