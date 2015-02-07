@@ -24,7 +24,7 @@
     "database": {
         "type": "postgresql",
         "inserts": [ {
-            "sql": "insert into dns_account (uuid, ctime, admin, \"name\", hashed_password) VALUES ('@name', @now_millis, TRUE, '@databag[init][admin][name]', '@databag[init][admin][password]')",
+            "sql": "insert into dns_account (uuid, ctime, admin, name, hashed_password) VALUES ('@name', @now_millis, TRUE, '@databag[init][admin][name]', '@databag[init][admin][password]')",
             "unless": "select count(*) from dns_account where admin = true"
         } ]
     },
