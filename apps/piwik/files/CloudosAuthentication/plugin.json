@@ -1,0 +1,16 @@
+{
+  "name": "CloudosAuthentication",
+  "version": "0.1.0",
+  "description": "Cloudos Authentication",
+  "theme": false,
+  "require": {
+    "piwik": ">=2.10.0"
+  },
+  "authors": [
+    {
+      "name": "Cloudstead",
+      "email": "jonathan@cloudstead.io",
+      "homepage": "http://cloudstead.io/"
+    }
+  ]
+}
