@@ -15,7 +15,7 @@
   "assets": { "taskbarIconAltText": "web analytics" },
 
   "tarball": {
-    "url": "http://builds.piwik.org/piwik.zip",
+    "url": "http://cloudstead.io/downloads/piwik-2.10.0.zip",
     "shasum": "328fcb44cdd12ebc57f2d0dddc0133c417d7ccad611365de8f3b33afc218b1b5"
   },
 
