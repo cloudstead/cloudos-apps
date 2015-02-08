@@ -44,7 +44,11 @@
     "@doc_root/wp-content/plugins/cos_auth.php": "_"
   },
 
-  "web": { "type": "apache", "mode": "service" },
+  "web": {
+    "type": "apache",
+    "mode": "service",
+    "apache": { "mods": [ "rewrite" ], "dir": [ "@doc_root" ] }
+  },
 
   "perms": {
     "@doc_root/wp-config.php": { "perms": "400" }

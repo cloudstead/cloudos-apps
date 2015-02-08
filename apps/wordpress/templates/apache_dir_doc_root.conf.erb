@@ -1,0 +1,12 @@
+<% if @config[:mode] == :vhost_root %>
+<Directory /var/www>
+<% else %>
+<Directory <%=@config[:doc_root]%>>
+<% end %>
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+
+</Directory>
