@@ -1,3 +1,5 @@
 #!/bin/bash
 
 cos sync-apps --exports <%=@app[:run_as_home]%>/.cloudos.env
+chown root.root /tmp
+chmod 1777 /tmp
