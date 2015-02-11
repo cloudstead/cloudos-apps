@@ -40,14 +40,16 @@
     },
 
     "perms": {
-        "/etc/postfix/main.cf": { "chgrp": "dovecot", "perms": "640" }
+        "/etc/postfix/main.cf": { "perms": "644" },
+        "/etc/mailname": { "perms": "644" }
     },
 
     "post_install": [ { "exec": "/usr/sbin/postmap virtual", "dir": "/etc/postfix" } ],
 
     "mailboxes": [
         { "address": "postmaster" },
-        { "address": "root", "alias_for": "postmaster" }
+        { "address": "root", "alias_for": "postmaster" },
+        { "address": "amaviz", "alias_for": "postmaster" }
     ],
 
     "services": [
@@ -62,8 +64,8 @@
             "/var/vmail"
         ],
         "pre": [
-            { "exec": "if [ $(service postfix status | grep process | wc -l) -gt 0 ] ; then service postfix stop ; fi" },
-            { "exec": "if [ $(service dovecot status | grep process | wc -l) -gt 0 ] ; then service dovecot stop ; fi" }
+            { "exec": "@bash service postfix stop || echo 'postfix not running'" },
+            { "exec": "@bash service dovecot stop || echo 'dovecot not running'" }
         ],
         "post": [
             { "exec": "service postfix restart" },
@@ -73,8 +75,8 @@
 
     "restore": {
         "pre": [
-            { "exec": "if [ $(service postfix status | grep process | wc -l) -gt 0 ] ; then service postfix stop ; fi" },
-            { "exec": "if [ $(service dovecot status | grep process | wc -l) -gt 0 ] ; then service dovecot stop ; fi" }
+            { "exec": "@bash service postfix stop || echo 'postfix not running'" },
+            { "exec": "@bash service dovecot stop || echo 'dovecot not running'" }
         ],
         "post": [
             { "exec": "service postfix restart" },

@@ -1,14 +1,15 @@
 #!/bin/bash
 
-backup_dir="${1}"
-if [ -z "${backup_dir}" ] ; then
+BACKUP_DIR="${1}"
+if [ -z "${BACKUP_DIR}" ] ; then
   echo "No backup dir specified"
   exit 1
 fi
 
-if [ $(service slapd status | grep running | wc -l) -gt 0 ] ; then
-  service slapd stop
-fi
+service krb5-admin-server stop || echo "krb5-admin-server not running"
+service krb5-kdc stop || echo "krb5-kdc not running"
+service slapd stop || echo "slapd not running"
 
-# slapadd -F /etc/ldap/slapd.d -n 0 -l ${backup_dir}/config.ldif
-slapadd -F /etc/ldap/slapd.d -n 1 -l ${backup_dir}/data.ldif
+FILES_DIR=${BACKUP_DIR}/tmp
+
+slapadd -F /etc/ldap/slapd.d -n 1 -l ${FILES_DIR}/data.ldif

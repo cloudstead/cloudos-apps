@@ -34,7 +34,7 @@ alias_database = hash:/etc/aliases
 mydestination = localhost.localdomain, localhost
 relay_domains = localhost.localdomain, localhost, 127.0.0.0/8
 #mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
-mynetworks = all
+mynetworks = class
 mailbox_size_limit = 0
 recipient_delimiter = +
 inet_interfaces = all
@@ -70,10 +70,10 @@ smtpd_tls_auth_only = yes
 tls_random_source = dev:/dev/urandom
 
 # virtual_transport = lmtp:unix:/var/spool/mail
-virtual_mailbox_domains = <%=%x(printf "$(hostname)\n$(cat /etc/postfix/vmailbox.domains 2> /dev/null)" | tr '[:upper:]' '[:lower:]' | sort | uniq | egrep '\w' | tr '\n' ' ')%>
+virtual_mailbox_domains = $myhostname <%=%x(cat /etc/postfix/vmailbox.domains 2> /dev/null | tr '[:upper:]' '[:lower:]' | sort | uniq | egrep '[[:alnum:]]+[-[:alnum:]]+' | tr '\n' ' ')%>
 virtual_mailbox_base = <%=@app[:users]['vmail'][:home]%>/vhosts
 virtual_mailbox_maps = hash:/etc/postfix/vmailbox
 virtual_minimum_uid = 100
 virtual_uid_maps = static:<%=base_lib.uid(@app[:users]['vmail'][:name])%>
 virtual_gid_maps = static:<%=base_lib.gid(@app[:groups]['vmail'][:name])%>
-# virtual_alias_maps = hash:/etc/postfix/virtual
+virtual_alias_maps = hash:/etc/postfix/virtual

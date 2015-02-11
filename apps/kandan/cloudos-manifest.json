@@ -12,6 +12,8 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
+    "assets": { "taskbarIconAltText": "chat" },
+
     "packages": [ "g++", "libsqlite3-dev", "libkrb5-dev" ],
 
     "repo": {

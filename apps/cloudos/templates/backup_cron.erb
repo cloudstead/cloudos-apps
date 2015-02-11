@@ -1,0 +1,6 @@
+#  <% backup_cron_schedule = @app[:databag][:init]['backup_cron_schedule'] %>
+#  <% base = Chef::Recipe::Base %>
+#  Backup entire cloudstead to S3
+#
+# m h dom mon dow user  command
+<%=backup_cron_schedule%>	root	<%=base.chef_user_home%>/backup_cloudos.sh

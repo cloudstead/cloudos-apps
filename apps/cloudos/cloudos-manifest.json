@@ -21,7 +21,8 @@
                 "admin_initial_pass", "recovery_email",
                 "aws_access_key", "aws_secret_key", "aws_iam_user", "s3_bucket",
                 "authy.user", "authy.base_uri",
-                "dns.user", "dns.password", "dns.base_uri"
+                "dns.user", "dns.password", "dns.base_uri",
+                "backup_cron_schedule"
             ]
         }
     ],
@@ -46,26 +47,22 @@
 
     "templates": {
         ".cloudos.env": "dot-cloudos.env",
+        "@name/jrun_prestart.sh": "_",
         "first_time_setup.sh": "_",
         "/etc/rooty.yml": "_",
         "@chef_home/chef.rooty.yml": "chef.yml",
         "/usr/bin/cos": "_",
         "/usr/bin/s3s3mirror.sh": "_",
         "@chef_home/backup.sh": "_",
-        "@chef_home/restore.sh": "_",
-        "@chef_home/sync.sh": "_"
+        "@chef_home/backup_cloudos.sh": "_",
+        "@chef_home/sync.sh": "_",
+        "/etc/cron.d/backup_cron": "_",
+        "@chef_home/restore.sh": "_"
     },
 
     "copy": {
-        "@files/owncloud/*": "/var/www/owncloud/",
-        "@files/roundcube/*": "/var/www/roundcube/",
         "@files/cloudos/dot-cos-commands": "@name/.cos-commands",
         "@files/s3s3mirror.jar": "/usr/bin"
-    },
-
-    "append": {
-        "/var/www/roundcube/config/config.inc.php": "array_unshift($config['plugins'],'rcs_skins','rcs_skins'); $config['skin']='outlook';",
-        "/var/www/owncloud/config/config.php": "$CONFIG['theme'] = 'cloudstead';"
     },
 
     "dirs": [ "app-repository" ],
@@ -73,6 +70,7 @@
     "perms": {
         "@home": { "chgrp": "@group[rooty]", "perms": "770" },
         "@name": { "chgrp": "@group[rooty]", "perms": "770" },
+        "@name/jrun_prestart.sh": { "chown": "@run_as.@group[rooty]", "perms": "770" },
         "@name/logs": { "chgrp": "@group[rooty]", "perms": "770" },
         "@name/logs/cloudos-RootyMain-chef.log": { "chown": "@chef_user.@group[rooty]", "perms": "600" },
         "@name/target/*.jar": { "chgrp": "@group[rooty]", "perms": "640" },
@@ -80,18 +78,22 @@
         "/etc/rooty.yml": { "chown": "root.root", "perms": "600" },
         "@chef_home/chef.rooty.yml": { "chown": "@chef_user", "perms": "600" },
         "/usr/bin/cos": { "chown": "root.@group[rooty]", "perms": "750" },
-        "/usr/bin/s3s3mirror.jar": { "chown": "root.root", "perms": "700" },
-        "/usr/bin/s3s3mirror.sh": { "chown": "root.root", "perms": "700" },
-        "app-repository": { "chgrp": "@group[rooty]", "perms": "750" },
+        "/usr/bin/s3s3mirror.jar": { "chown": "root.root", "perms": "755" },
+        "/usr/bin/s3s3mirror.sh": { "chown": "root.root", "perms": "755" },
+        "app-repository": { "chown": "@run_as.@group[rooty]", "perms": "750", "recursive": true },
         "@chef_home/backup.sh": { "chown": "@chef_user.root", "perms": "700" },
-        "@chef_home/restore.sh": { "chown": "@chef_user.root", "perms": "700" },
-        "@chef_home/sync.sh": { "chown": "@chef_user.root", "perms": "700" }
+        "@chef_home/backup_cloudos.sh": { "chown": "@chef_user.root", "perms": "700" },
+        "/etc/cron.d/backup_cron": { "chown": "root.root", "perms": "644" },
+        "/var/log/cloudos_backup.log": { "chown": "@chef_user.root", "perms": "660" },
+        "@chef_home/sync.sh": { "chown": "@chef_user.root", "perms": "700" },
+        "@chef_home/restore.sh": { "chown": "@chef_user.root", "perms": "700" }
     },
 
     "post_install": [
         { "exec": "cos dns --operation add --record a  --fqdn @hostname    --value @ipaddress   --ttl 14400" },
         { "exec": "cos dns --operation add --record a  --fqdn mx.@hostname --value @ipaddress   --ttl 14400" },
         { "exec": "cos dns --operation add --record mx --fqdn @hostname    --value mx.@hostname --ttl 14400 --options rank=1" },
+        { "exec": "service cron restart" },
         { "exec": "@home/first_time_setup.sh" }
     ],
 

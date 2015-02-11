@@ -1,0 +1,635 @@
+<?php
+
+/**
+ * Adapted from ownCloud's builtin AmazonS3 storage handler
+ * @author 2015 Jonathan Cobb
+ * @copyright 2015 Cloudstead, Inc jonathan@cloudstead.io
+ * This code is under the same license (AGPL) as the original ownCloud AmazonS3 code
+ *
+ * Original copyright and license below:
+ *
+ * ownCloud
+ *
+ * @author Michael Gapczynski
+ * @author Christian Berendt
+ * @copyright 2012 Michael Gapczynski mtgap@owncloud.com
+ * @copyright 2013 Christian Berendt berendt@b1-systems.de
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU AFFERO GENERAL PUBLIC LICENSE
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU AFFERO GENERAL PUBLIC LICENSE for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ */
+<%
+app_lib = Chef::Recipe::Owncloud
+pass_file = app_lib.subst('@doc_root/config/cloudsteads3.key', @app)
+%>
+namespace OC\Files\Storage;
+
+set_include_path(get_include_path() . PATH_SEPARATOR .
+	\OC_App::getAppPath('files_external') . '/3rdparty/aws-sdk-php');
+require 'aws-autoloader.php';
+
+use Aws\S3\S3Client;
+use Aws\S3\Exception\S3Exception;
+
+class CloudsteadS3 extends \OC\Files\Storage\Common {
+
+	/**
+	 * @var \Aws\S3\S3Client
+	 */
+	private $connection;
+	/**
+	 * @var string
+	 */
+	private $bucket;
+	/**
+	 * @var string
+	 */
+	private $prefix = '';
+	/**
+	 * @var array
+	 */
+	private static $tmpFiles = array();
+	/**
+	 * @var bool
+	 */
+	private $test = false;
+	/**
+	 * @var int
+	 */
+	private $timeout = 15;
+
+	/**
+	 * @param string $path
+	 */
+	private function normalizePath($path) {
+	    $orig = $path;
+		$path = trim($path, '/');
+
+		if (!$path) {
+			$path = '.';
+		}
+// \OCP\Util::writeLog('files_external', 'normalizePath('.$orig.') returning: '.$path, \OCP\Util::ERROR);
+		return $path;
+	}
+
+	private function testTimeout() {
+//			\OCP\Util::writeLog('files_external', 'testTimeout', \OCP\Util::ERROR);
+		if ($this->test) {
+			sleep($this->timeout);
+		}
+	}
+	private function cleanKey($path) {
+		if ($path === '.') {
+			$rval = ($this->prefix) == '' ? '/' : $this->prefix;
+//			\OCP\Util::writeLog('files_external', '1a cleanKey('.$path.') returning: ' . $rval, \OCP\Util::ERROR);
+			return $rval;
+		}
+//			\OCP\Util::writeLog('files_external', '2 cleanKey('.$path.') returning: ' .$this->prefix . $path, \OCP\Util::ERROR);
+		return $this->prefix . $path;
+	}
+
+	public function __construct($params) {
+//			\OCP\Util::writeLog('files_external', '__construct', \OCP\Util::ERROR);
+
+		$params['key'] = '<%=@app[:cloudos_databag]['aws_access_key']%>';
+		$params['secret'] = '<%=@app[:cloudos_databag]['aws_secret_key']%>';
+		$params['bucket'] = '<%=@app[:cloudos_databag]['s3_bucket']%>';
+		$params['prefix'] = '<%=@app[:cloudos_databag]['aws_iam_user']%>/owncloud/' . $params['prefix'] . '/';
+		$params['use_ssl'] = true;
+
+		$this->id = 'cloudstead-s3::' . $params['key'] . md5($params['secret'] . $params['prefix']);
+
+		$this->bucket = $params['bucket'];
+		$this->prefix = $params['prefix'];
+		$scheme = ($params['use_ssl'] === 'false') ? 'http' : 'https';
+		$this->test = isset($params['test']);
+		$this->timeout = ( ! isset($params['timeout'])) ? 15 : $params['timeout'];
+		$params['region'] = ( ! isset($params['region']) || $params['region'] === '' ) ? 'eu-west-1' : $params['region'];
+		$params['hostname'] = ( !isset($params['hostname']) || $params['hostname'] === '' ) ? 's3.amazonaws.com' : $params['hostname'];
+		if (!isset($params['port']) || $params['port'] === '') {
+			$params['port'] = ($params['use_ssl'] === 'false') ? 80 : 443;
+		}
+		$base_url = $scheme.'://'.$params['hostname'].':'.$params['port'].'/';
+
+		$this->connection = S3Client::factory(array(
+			'key' => $params['key'],
+			'secret' => $params['secret'],
+			'base_url' => $base_url,
+			'region' => $params['region']
+		));
+
+		if (!$this->connection->isValidBucketName($this->bucket)) {
+			throw new \Exception("The configured bucket name is invalid.");
+		}
+
+		if (!$this->connection->doesBucketExist($this->bucket)) {
+			try {
+				$result = $this->connection->createBucket(array(
+					'Bucket' => $this->bucket
+				));
+				$this->connection->waitUntilBucketExists(array(
+					'Bucket' => $this->bucket,
+					'waiter.interval' => 1,
+					'waiter.max_attempts' => 15
+				));
+			$this->testTimeout();
+			} catch (S3Exception $e) {
+				\OCP\Util::writeLog('files_external', $e->getMessage(), \OCP\Util::ERROR);
+				throw new \Exception("Creation of bucket failed.");
+			}
+		}
+		if (!$this->file_exists('.')) {
+			$result = $this->connection->putObject(array(
+				'Bucket' => $this->bucket,
+				'Key'    => $this->cleanKey('.'),
+				'Body'   => '',
+				'ContentType' => 'httpd/unix-directory',
+				'ContentLength' => 0
+			));
+			$this->testTimeout();
+		}
+	}
+
+	public function mkdir($path) {
+//			\OCP\Util::writeLog('files_external', 'mkdir', \OCP\Util::ERROR);
+		$path = $this->normalizePath($path);
+
+		if ($this->is_dir($path)) {
+			return false;
+		}
+
+		try {
+			$result = $this->connection->putObject(array(
+				'Bucket' => $this->bucket,
+				'Key'    => $this->prefix . $path . '/',
+				'Body'   => '',
+				'ContentType' => 'httpd/unix-directory',
+				'ContentLength' => 0
+			));
+			$this->testTimeout();
+		} catch (S3Exception $e) {
+			\OCP\Util::writeLog('files_external', $e->getMessage(), \OCP\Util::ERROR);
+			return false;
+		}
+
+		return true;
+	}
+
+	public function file_exists($path) {
+//			\OCP\Util::writeLog('files_external', 'file_exists', \OCP\Util::ERROR);
+		$path = $this->normalizePath($path);
+
+		if (!$path) {
+			$path = '.';
+		} else if ($path != '.' && $this->is_dir($path)) {
+			$path .= '/';
+		}
+
+		try {
+			$result = $this->connection->doesObjectExist(
+				$this->bucket,
+				$this->cleanKey($path)
+			);
+		} catch (S3Exception $e) {
+			\OCP\Util::writeLog('files_external', $e->getMessage(), \OCP\Util::ERROR);
+			return false;
+		}
+
+		return $result;
+	}
+
+
+	public function rmdir($path) {
+//			\OCP\Util::writeLog('files_external', 'rmdir', \OCP\Util::ERROR);
+		$path = $this->normalizePath($path);
+
+		if (!$this->file_exists($path)) {
+			return false;
+		}
+
+		$dh = $this->opendir($path);
+
+		if(is_resource($dh)) {
+			while (($file = readdir($dh)) !== false) {
+				if ($file === '.' || $file === '..') {
+					continue;
+				}
+
+				if ($this->is_dir($path . '/' . $file)) {
+					$this->rmdir($path . '/' . $file);
+				} else {
+					$this->unlink($path . '/' . $file);
+				}
+			}
+		}
+
+		try {
+			$result = $this->connection->deleteObject(array(
+				'Bucket' => $this->bucket,
+				'Key' => $this->prefix . $path . '/'
+			));
+			$this->testTimeout();
+		} catch (S3Exception $e) {
+			\OCP\Util::writeLog('files_external', $e->getMessage(), \OCP\Util::ERROR);
+			return false;
+		}
+
+		return true;
+	}
+
+	public function opendir($path) {
+		\OCP\Util::writeLog('files_external', 'opendir: '.$path, \OCP\Util::ERROR);
+		$path = $this->normalizePath($path);
+
+		if ($path === '.') {
+			$path = '';
+		} else if ($path) {
+			$path .= '/';
+		}
+
+		try {
+			$files = array();
+			$result = $this->connection->getIterator('ListObjects', array(
+				'Bucket' => $this->bucket,
+				'Delimiter' => '/',
+				'Prefix' => $this->prefix . $path
+			), array('return_prefixes' => true));
+
+			foreach ($result as $object) {
+				$file = basename(
+					isset($object['Key']) ? $object['Key'] : $object['Prefix']
+				);
+
+				if ($file != basename($path)) {
+			
+//		\OCP\Util::writeLog('files_external', 'opendir: (strip prefix?) file=' . $file . ' with basename(path)=' . basename($path), \OCP\Util::ERROR);
+				    $files[] = $file;
+				}
+			}
+
+			\OC\Files\Stream\Dir::register('amazons3' . $path, $files);
+
+			return opendir('fakedir://amazons3' . $path);
+		} catch (S3Exception $e) {
+			\OCP\Util::writeLog('files_external', $e->getMessage(), \OCP\Util::ERROR);
+			return false;
+		}
+	}
+
+	public function stat($path) {
+//			\OCP\Util::writeLog('files_external', 'stat', \OCP\Util::ERROR);
+		$path = $this->normalizePath($path);
+
+		try {
+			if ($this->is_dir($path) && $path != '.') {
+				$path .= '/';
+			}
+
+			$result = $this->connection->headObject(array(
+				'Bucket' => $this->bucket,
+				'Key' => $this->cleanKey($path)
+			));
+
+			$stat = array();
+			$stat['size'] = $result['ContentLength'] ? $result['ContentLength'] : 0;
+			if ($result['Metadata']['lastmodified']) {
+				$stat['mtime'] = strtotime($result['Metadata']['lastmodified']);
+			} else {
+				$stat['mtime'] = strtotime($result['LastModified']);
+			}
+			$stat['atime'] = time();
+
+			return $stat;
+		} catch(S3Exception $e) {
+			\OCP\Util::writeLog('files_external', $e->getMessage(), \OCP\Util::ERROR);
+			return false;
+		}
+	}
+
+	public function filetype($path) {
+//			\OCP\Util::writeLog('files_external', 'filetype', \OCP\Util::ERROR);
+		$path = $this->normalizePath($path);
+
+		try {
+			if ($path != '.' && $this->connection->doesObjectExist($this->bucket, $this->prefix . $path)) {
+				return 'file';
+			}
+
+			if ($path != '.') {
+				$path .= '/';
+			}
+			if ($this->connection->doesObjectExist($this->bucket, $this->cleanKey($path))) {
+				return 'dir';
+			}
+		} catch (S3Exception $e) {
+			\OCP\Util::writeLog('files_external', $e->getMessage(), \OCP\Util::ERROR);
+			return false;
+		}
+
+		return false;
+	}
+
+	public function unlink($path) {
+//			\OCP\Util::writeLog('files_external', 'unlink', \OCP\Util::ERROR);
+		$path = $this->normalizePath($path);
+
+		try {
+			$result = $this->connection->deleteObject(array(
+				'Bucket' => $this->bucket,
+				'Key' => $this->cleanKey($path)
+			));
+			$this->testTimeout();
+		} catch (S3Exception $e) {
+			\OCP\Util::writeLog('files_external', $e->getMessage(), \OCP\Util::ERROR);
+			return false;
+		}
+
+		return true;
+	}
+
+	public function fopen($path, $mode) {
+//			\OCP\Util::writeLog('files_external', 'fopen', \OCP\Util::ERROR);
+		$path = $this->normalizePath($path);
+
+		switch ($mode) {
+			case 'r':
+			case 'rb':
+				$tmpFile = \OC_Helper::tmpFile();
+				try {
+					$result = $this->connection->getObject(array(
+						'Bucket' => $this->bucket,
+						'Key' => $this->cleanKey($path),
+						'SaveAs' => $tmpFile
+					));
+				} catch (S3Exception $e) {
+					\OCP\Util::writeLog('files_external', $e->getMessage(), \OCP\Util::ERROR);
+					return false;
+				}
+
+				$tmpFile2 = \OC_Helper::tmpFile();
+				self::$tmpFiles[$tmpFile2] = $path;
+				$output = null;
+				$result = 0;
+				exec("openssl enc -d -aes256 -pass file:/var/www/owncloud/config/cloudsteads3.key -in $tmpFile -out $tmpFile2", $output, $result);
+				if ($result != 0) {
+					\OCP\Util::writeLog('files_external', 'fopen: error decrypting, openssl exited with status ' . $result, \OCP\Util::ERROR);
+					throw new Exception('error decrypting');
+				} else {
+					\OCP\Util::writeLog('files_external', "fopen: successfully decrypted $path ($tmpFile => decode => $tmpFile2), output=" . implode(" ", $output), \OCP\Util::ERROR);
+				}
+				// unlink($tmpFile);
+				return fopen($tmpFile2, 'r');
+			case 'w':
+			case 'wb':
+			case 'a':
+			case 'ab':
+			case 'r+':
+			case 'w+':
+			case 'wb+':
+			case 'a+':
+			case 'x':
+			case 'x+':
+			case 'c':
+			case 'c+':
+				if (strrpos($path, '.') !== false) {
+					$ext = substr($path, strrpos($path, '.'));
+				} else {
+					$ext = '';
+				}
+				$tmpFile = \OC_Helper::tmpFile($ext);
+				\OC\Files\Stream\Close::registerCallback($tmpFile, array($this, 'writeBack'));
+				if ($this->file_exists($path)) {
+					$source = $this->fopen($path, 'r');
+					file_put_contents($tmpFile, $source);
+				}
+				self::$tmpFiles[$tmpFile] = $path;
+
+				return fopen('close://' . $tmpFile, $mode);
+		}
+		return false;
+	}
+
+	public function getMimeType($path) {
+//			\OCP\Util::writeLog('files_external', 'getMimeType', \OCP\Util::ERROR);
+		$path = $this->normalizePath($path);
+
+		if ($this->is_dir($path)) {
+			return 'httpd/unix-directory';
+		} else if ($this->file_exists($path)) {
+			try {
+				$result = $this->connection->headObject(array(
+					'Bucket' => $this->bucket,
+					'Key' => $this->cleanKey($path)
+				));
+			} catch (S3Exception $e) {
+				\OCP\Util::writeLog('files_external', $e->getMessage(), \OCP\Util::ERROR);
+				return false;
+			}
+
+			return $result['ContentType'];
+		}
+		return false;
+	}
+
+	public function touch($path, $mtime = null) {
+//			\OCP\Util::writeLog('files_external', 'touch', \OCP\Util::ERROR);
+		$path = $this->normalizePath($path);
+
+		$metadata = array();
+		if (!is_null($mtime)) {
+			$metadata = array('lastmodified' => $mtime);
+		}
+
+		try {
+			if ($this->file_exists($path)) {
+				if ($this->is_dir($path) && $path != '.') {
+					$path .= '/';
+				}
+				$result = $this->connection->copyObject(array(
+					'Bucket' => $this->bucket,
+					'Key' => $this->cleanKey($path),
+					'Metadata' => $metadata,
+					'CopySource' => $this->bucket . '/' . $this->prefix . $path
+				));
+				$this->testTimeout();
+			} else {
+				$result = $this->connection->putObject(array(
+					'Bucket' => $this->bucket,
+					'Key' => $this->cleanKey($path),
+					'Metadata' => $metadata
+				));
+				$this->testTimeout();
+			}
+		} catch (S3Exception $e) {
+			\OCP\Util::writeLog('files_external', $e->getMessage(), \OCP\Util::ERROR);
+			return false;
+		}
+
+		return true;
+	}
+
+	public function copy($path1, $path2) {
+//			\OCP\Util::writeLog('files_external', 'copy', \OCP\Util::ERROR);
+		$path1 = $this->normalizePath($path1);
+		$path2 = $this->normalizePath($path2);
+
+		if ($this->is_file($this->prefix . $path1)) {
+			try {
+				$result = $this->connection->copyObject(array(
+					'Bucket' => $this->bucket,
+					'Key' => $this->cleanKey($path2),
+					'CopySource' => $this->bucket . '/' . $this->prefix . $path1
+				));
+				$this->testTimeout();
+			} catch (S3Exception $e) {
+				\OCP\Util::writeLog('files_external', $e->getMessage(), \OCP\Util::ERROR);
+				return false;
+			}
+		} else {
+			if ($this->file_exists($path2)) {
+				return false;
+			}
+
+			try {
+				$result = $this->connection->copyObject(array(
+					'Bucket' => $this->bucket,
+					'Key' => $this->prefix . $path2 . '/',
+					'CopySource' => $this->bucket . '/' . $this->prefix . $path1 . '/'
+				));
+				$this->testTimeout();
+			} catch (S3Exception $e) {
+				\OCP\Util::writeLog('files_external', $e->getMessage(), \OCP\Util::ERROR);
+				return false;
+			}
+
+			$dh = $this->opendir($path1);
+			if(is_resource($dh)) {
+				while (($file = readdir($dh)) !== false) {
+					if ($file === '.' || $file === '..') {
+						continue;
+					}
+
+					$source = $path1 . '/' . $file;
+					$target = $path2 . '/' . $file;
+					$this->copy($source, $target);
+				}
+			}
+		}
+
+		return true;
+	}
+
+	public function rename($path1, $path2) {
+//			\OCP\Util::writeLog('files_external', 'rename', \OCP\Util::ERROR);
+		$path1 = $this->normalizePath($path1);
+		$path2 = $this->normalizePath($path2);
+
+		if ($this->is_file($this->prefix . $path1)) {
+			if ($this->copy($path1, $path2) === false) {
+				return false;
+			}
+
+			if ($this->unlink($path1) === false) {
+				$this->unlink($path2);
+				return false;
+			}
+		} else {
+			if ($this->file_exists($path2)) {
+				return false;
+			}
+
+			if ($this->copy($path1, $path2) === false) {
+				return false;
+			}
+
+			if ($this->rmdir($path1) === false) {
+				$this->rmdir($path2);
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	public function test() {
+//			\OCP\Util::writeLog('files_external', 'test', \OCP\Util::ERROR);
+		if ($this->prefix == '') {
+		$test = $this->connection->getBucketAcl(array(
+			'Bucket' => $this->bucket,
+		));
+		if (isset($test) && !is_null($test->getPath('Owner/ID'))) {
+			return true;
+		}
+		return false;
+}
+//			\OCP\Util::writeLog('files_external', 'test: prefix set, assuming all is OK', \OCP\Util::ERROR);
+return true;
+	}
+
+	public function getId() {
+//			\OCP\Util::writeLog('files_external', 'getId', \OCP\Util::ERROR);
+		return $this->id;
+	}
+
+	public function getConnection() {
+//			\OCP\Util::writeLog('files_external', 'getConnection', \OCP\Util::ERROR);
+		return $this->connection;
+	}
+
+	public function writeBack($tmpFile) {
+//			\OCP\Util::writeLog('files_external', 'writeBack', \OCP\Util::ERROR);
+		if (!isset(self::$tmpFiles[$tmpFile])) {
+			return false;
+		}
+		$path = self::$tmpFiles[$tmpFile];
+
+		try {
+			$tmpFile2 = \OC_Helper::tmpFile();
+			$output = null;
+			$result = 0;
+			exec("openssl enc -e -aes256 -pass file:/var/www/owncloud/config/cloudsteads3.key -in $tmpFile -out $tmpFile2", $output, $result);
+			if ($result != 0) {
+				\OCP\Util::writeLog('files_external', 'writeBack: error encrypting, openssl exited with status ' . $result, \OCP\Util::ERROR);
+				throw new Exception('error encrypting');
+			} else {
+				\OCP\Util::writeLog('files_external', "writeBack: successfully encrypted $path ($tmpFile => encode => $tmpFile2), output=" . implode(" ", $output), \OCP\Util::ERROR);
+			}
+			$result= $this->connection->putObject(array(
+				'Bucket' => $this->bucket,
+				'Key' => $this->cleanKey($path),
+				'SourceFile' => $tmpFile2,
+				'ContentType' => \OC_Helper::getMimeType($tmpFile2),
+				'ContentLength' => filesize($tmpFile2)
+			));
+			$this->testTimeout();
+
+			//unlink($tmpFile);
+			//unlink($tmpFile2);
+		} catch (S3Exception $e) {
+			\OCP\Util::writeLog('files_external', $e->getMessage(), \OCP\Util::ERROR);
+			return false;
+		}
+	}
+
+	/**
+	 * check if curl is installed
+	 */
+	public static function checkDependencies() {
+		if (function_exists('curl_init')) {
+			return true;
+		} else {
+			return array('curl');
+		}
+	}
+
+}

@@ -1,0 +1,68 @@
+{
+  "version": "0.1.0",
+  "name": "piwik",
+  "style": "php",
+  "interactive": true,
+
+  "publisher": {
+    "maintainer": "Jonathan Cobb",
+    "maintainer_email": "jonathan@cloudstead.io",
+    "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+    "code_copyright": "Copyright (C) 2014 Matthieu Aubry",
+    "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
+  },
+
+  "assets": { "taskbarIconAltText": "web analytics" },
+
+  "tarball": {
+    "url": "http://cloudstead.io/downloads/piwik-2.10.0.zip",
+    "shasum": "328fcb44cdd12ebc57f2d0dddc0133c417d7ccad611365de8f3b33afc218b1b5"
+  },
+
+  "database": {
+    "type": "mysql",
+    "inserts": [ {
+      "sql": "INSERT INTO piwik_option VALUES ('piwikUrl','https://@hostname/piwik/',1)",
+      "unless": "SELECT COUNT(*) FROM piwik_option WHERE option_name='piwikUrl'"
+    }, {
+      "sql": "INSERT INTO piwik_option VALUES ('SitesManager_DefaultTimezone','@timezone',1)",
+      "unless": "SELECT COUNT(*) FROM piwik_option WHERE option_name='SitesManager_DefaultTimezone'"
+    }, {
+      "sql": "INSERT INTO piwik_option VALUES ('UpdateCheck_LastTimeChecked','@now(%s)',1)",
+      "unless": "SELECT COUNT(*) FROM piwik_option WHERE option_name='UpdateCheck_LastTimeChecked'"
+    }, {
+      "sql": "INSERT INTO piwik_site VALUES (1,'@hostname','https://@hostname','@now(%Y-%m-%d %H:%M:%S)',0,1,'','','@timezone','@currency_code','','','','','website',0)",
+      "unless": "SELECT COUNT(*) FROM piwik_site"
+    }, {
+      "sql": "INSERT INTO piwik_user VALUES ('anonymous','','anonymous','anonymous@example.org','anonymous',0,'@now(%Y-%m-%d %H:%M:%S)');",
+      "unless": "SELECT COUNT(*) FROM piwik_user WHERE login='anonymous'"
+    } ]
+  },
+
+  "web": { "type": "apache", "mode": "service" },
+
+  "copy": {
+    "@files/httpful.phar": "@doc_root/httpful.phar",
+    "@files/CloudosAuthentication": "@doc_root/plugins/"
+  },
+
+  "templates": {
+    "@doc_root/config/config.ini.php": "_"
+  },
+
+  "perms": {
+    "@doc_root/config/config.ini.php": { "chown": "@run_as.root", "perms": "400" }
+  },
+
+  "auth": {
+    "login_fields": {
+      "form_login": "{{account.name}}",
+      "form_password": "{{account.password}}",
+      "form_nonce": "pass",
+      "form_rememberme": "1"
+    },
+    "login_path": "/./?module=CoreHome&action=",
+    "login_page_markers": [ "name=\"login_form\"", "id=\"login_form_login\"", "id=\"login_form_password\"" ]
+  }
+
+}

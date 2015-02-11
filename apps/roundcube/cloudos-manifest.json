@@ -12,6 +12,8 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
+    "assets": { "taskbarIconAltText": "email" },
+
     "packages" : [ "php5-imap", "php5-gd", "php5-json", "php5-curl",
                    "php5-intl", "php5-mcrypt", "php5-imagick" ],
 
@@ -36,6 +38,15 @@
     ],
 
     "templates": { "@doc_root/config/config.inc.php": "config.inc.php" },
+
+    "append": {
+        "@doc_root/config/config.inc.php": "array_unshift($config['plugins'],'rcs_skins','rcs_skins'); $config['skin']='outlook';"
+    },
+
+    "copy": {
+        "@files/plugins": "/var/www/roundcube/",
+        "@files/skins": "/var/www/roundcube/"
+    },
 
     "auth": {
         "login_fields": {

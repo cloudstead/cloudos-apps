@@ -12,6 +12,7 @@
 email = @app[:databag][:init]['recovery_email']
 hash = @app[:databag][:init]['admin_initial_pass']
 key = @app[:rand][0][0..24]
+base = Chef::Recipe::Base
 %>
 
 FT_SETUP=$(cd ~cloudos && pwd)/.first_time_setup
@@ -22,7 +23,8 @@ if [ ! -f ${FT_SETUP} ] ; then
   echo "{
     \"secret\": \"<%=key%>\",
     \"email\": \"<%=email%>\",
-    \"passwordHash\": \""'<%=hash%>'"\"
+    \"passwordHash\": \""'<%=hash%>'"\",
+    \"backupKey\": \"<%=base.secret%>\"
   }
   " > ${FT_SETUP} && chown <%=@app[:run_as]%> ${FT_SETUP} && chmod 600 ${FT_SETUP}
 

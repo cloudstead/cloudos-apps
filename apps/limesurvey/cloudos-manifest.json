@@ -12,6 +12,8 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
+    "assets": { "taskbarIconAltText": "surveys" },
+
     "databags": [ {
         "name": "init",
         "items": [ "admin.name", "admin.password", "admin.email", "admin.bounce" ]

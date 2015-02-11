@@ -1,3 +1,4 @@
+<% base = Chef::Recipe::Base %>
 <?php
 $CONFIG = array (
   'session_lifetime' => (60 * 61 * 24),
@@ -25,6 +26,17 @@ $CONFIG = array (
         ),
     ),
   ),
+
+  'mail_smtpmode' => 'smtp',
+  'mail_from_address' => 'root',
+  'mail_domain' => '<%=@app[:hostname]%>',
+  'mail_smtpauth' => true,
+  'mail_smtphost' => '127.0.0.1',
+  'mail_smtpport' => '587',
+  'mail_smtpname' => 'cloudos_system_mailer',
+  'mail_smtppassword' => '<%=base.password('cloudos_system_mailer')%>',
+  'mail_smtpauthtype' => 'PLAIN',
+  'mail_smtpsecure' => 'tls',
 
   'theme' => '',
   'maintenance' => false,

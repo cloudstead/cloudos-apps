@@ -1684,6 +1684,7 @@ SELECT pg_catalog.setval('oc_activity_mq_mail_id_seq', 1, false);
 --
 -- Data for Name: oc_appconfig; Type: TABLE DATA; Schema: public; Owner: owncloud
 --
+--
 
 COPY oc_appconfig (appid, configkey, configvalue) FROM stdin;
 core	installedat	1396478460.0623
@@ -1769,6 +1770,11 @@ updater	installed_version	0.4
 core	lastupdatedat	0
 backgroundjob	lastjob	2
 core	lastcron	1407823463
+files_external	user_mounting_backends	\\OC\\Files\\Storage\\CloudsteadS3
+files_external	installed_version	0.2.1
+files_external	ocsid	166048
+files_external	types	filesystem
+files_external	enabled	yes
 \.
 
 

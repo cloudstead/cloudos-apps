@@ -46,6 +46,15 @@ postmap #{vmailbox}
       EOF
     end
 
+    # ensure users are in vmailbox.users file
+    chef.bash 'compile virtual and vmailbox into postfix db files' do
+      user 'root'
+      code <<-EOF
+echo #{account} >> #{vmailbox}.users
+      EOF
+      not_if { %x(cat #{vmailbox}.users | grep #{account} | wc -l | tr -d '').strip.to_i > 0 }
+    end
+
     # for some reason this directory ends up being owned by root (?)
     email_lib.permission chef, '/var/vmail', nil, 'vmail', 'vmail', nil, true
   end

@@ -5,12 +5,7 @@
 # Copyright 2014, cloudstead
 #
 
-bash 'synchronize cloudos apps' do
-  user 'root'
-  code <<-EOF
-cos sync-apps --exports ~cloudos/.cloudos.env
-  EOF
-end
+base = Chef::Recipe::Base
 
 bash 'ensure all services are running' do
   user 'root'
@@ -21,6 +16,9 @@ if [ $(netstat -nlpt | grep '/dovecot' | wc -c) -eq 0 ] ; then
 fi
 if [ $(netstat -nlpt | grep '/master' | grep ':25' | wc -c) -eq 0 ] ; then
   service postfix restart
+fi
+if [ $(service cloudos status | grep "is running" | wc -l) -eq 0 ] ; then
+  service cloudos restart
 fi
 
   EOF

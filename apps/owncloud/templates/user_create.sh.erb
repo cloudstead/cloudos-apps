@@ -1,0 +1,59 @@
+#!/bin/bash
+
+function die () {
+  echo >2 "${1}"
+  exit 1
+}
+
+ACCOUNT="${1}"
+if [ -z "${ACCOUNT}" ] ; then
+  die "No account name provided"
+fi
+PASSWORD="${2}"
+if [ -z "${PASSWORD}" ] ; then
+  die "No password provided"
+fi
+
+ADMIN="${3}"
+shopt -s nocasematch
+[[ ! -z "${ADMIN}" && "${ADMIN}" == "true" ]] && ADMIN="true" || ADMIN="false"
+shopt -u nocasematch
+
+$(dirname $0)/user_exists.sh ${ACCOUNT} 2>&1 > /dev/null
+if [ $? -eq 0 ] ; then
+  # Account already exists
+  echo "true"
+  exit 0
+fi
+
+MOUNT_JSON=/var/www/owncloud/data/mount.json
+MOUNT_TEMPLATE=/var/www/owncloud/data/mount-template.json
+BACKUP=$(mktemp $(dirname ${MOUNT_JSON})/mount.json.$(date +%Y%m%d_%H%M%S).XXXXXXX)
+TEMP=$(mktemp $(dirname ${MOUNT_JSON})/.mount.$$.json.XXXXXXX)
+
+if [ -f ${MOUNT_JSON} ] ; then
+  cp ${MOUNT_JSON} ${BACKUP} || die "Error backing up ${MOUNT_JSON}"
+else
+  echo "{}" > ${MOUNT_JSON} || die "Error initializing ${MOUNT_JSON}"
+fi
+
+FOLDER="${ACCOUNT}-InfiniteDrive"
+if [ "${ACCOUNT}" == "all" ] ; then
+  FOLDER="Shared-InfiniteDrive"
+fi
+
+# Add json config block for new user, write to temp file
+cos json --file ${MOUNT_JSON} --operation write --path user.${ACCOUNT} --outfile ${TEMP} \
+  --value "$(cat ${MOUNT_TEMPLATE} | sed -e "s,@@ACCOUNT@@,${ACCOUNT}," | sed -e "s,@@FOLDER@@,${FOLDER},")" \
+  || die "Error generating new mount.json that includes account ${ACCOUNT}"
+
+cat ${TEMP} > ${MOUNT_JSON} || die "Error writing to ${MOUNT_JSON}"
+chown <%=@app[:run_as]%> ${MOUNT_JSON} || die "Error chown'ing ${MOUNT_JSON} to <%=@app[:run_as]%>"
+chmod 600 ${MOUNT_JSON} || die "Error chmod'ing ${MOUNT_JSON} to 600"
+rm -f ${TEMP}
+
+if $(dirname $0)/user_exists.sh ${ACCOUNT} 2>&1 > /dev/null ; then
+  echo "true"
+  exit 0;
+fi
+exit 1

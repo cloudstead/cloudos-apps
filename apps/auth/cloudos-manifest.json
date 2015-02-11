@@ -52,7 +52,11 @@
 
     "restore": {
         "pre": [ {"exec": "@files/pre_restore.sh @backup_dir"} ],
-        "post": [ {"exec": "service slapd restart"} ]
+        "post": [
+            { "exec": "service slapd restart" },
+            { "exec": "service krb5-kdc restart" },
+            { "exec": "service krb5-admin-server restart" }
+        ]
     }
 
 }

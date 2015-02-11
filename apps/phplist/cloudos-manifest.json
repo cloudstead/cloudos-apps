@@ -12,6 +12,8 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
+    "assets": { "taskbarIconAltText": "mailing lists" },
+
     "tarball": {
         "url": "http://downloads.sourceforge.net/project/phplist/phplist/3.0.8/phplist-3.0.8.tgz?r=&ts=1412150382&use_mirror=softlayer-dal",
         "shasum": "4f3a8f7a219c312deb351c9bb902edae9e18ac6ae698451e8fcf4df89e23e98a"

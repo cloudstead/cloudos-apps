@@ -14,6 +14,8 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
+    "assets": { "taskbarIconAltText": "calendar" },
+
     "web": { "type": "apache", "mode": "service", "apache": { "vhost": "enable" } },
 
     "database": { "type": "postgresql", "unless": "calendars" },

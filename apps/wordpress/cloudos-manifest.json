@@ -1,0 +1,67 @@
+{
+  "version": "0.1.0",
+  "name": "wordpress",
+  "style": "php",
+  "interactive": true,
+
+  "publisher": {
+    "maintainer": "Jonathan Cobb",
+    "maintainer_email": "jonathan@cloudstead.io",
+    "license": "https://wordpress.org/about/license/",
+    "code_copyright": "Copyright 2014 by the contributors",
+    "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
+  },
+
+  "assets": { "taskbarIconAltText": "wordpress" },
+
+  "databags": [ {
+    "name": "init",
+    "items": [ "admin.login", "admin.password", "admin.email" ]
+  } ],
+
+  "tarball": {
+    "url": "http://cloudstead.io/downloads/wordpress-4.1.tar.gz",
+    "shasum": "3743d82698571903382dc223940e712f7bb5cfd20cedba7b7c32c97d470defab"
+  },
+
+  "database": { "type": "mysql" },
+
+  "copy": {
+    "@files/httpful.phar": "@doc_root/httpful.phar"
+  },
+
+  "templates": {
+    "@doc_root/wp-config.php": "_",
+    "@doc_root/wp-content/plugins/cos_auth.php": "_"
+  },
+
+  "web": {
+    "type": "apache",
+    "mode": "service",
+    "apache": { "mods": [ "rewrite" ] }
+  },
+
+  "perms": {
+    "@doc_root/wp-config.php": { "perms": "400" }
+  },
+
+  "post_install": [
+    { "exec": "@files/install_cos_auth_plugin.php @doc_root"},
+    { "exec": "@files/wp_dbinit.sh @dbname @dbuser @dbpass @files/wppass.php @doc_root @databag[init][admin][login] @databag[init][admin][password] @databag[init][admin][email] '@date(%Y-%m-%d %H:%m:%s)' @web_mode @name @mail_user @mail_password" }
+  ],
+
+  "auth": {
+    "home_path": "wp-admin",
+    "login_fields": {
+      "log": "{{account.name}}",
+      "pwd": "{{account.password}}",
+      "rememberme": "forever",
+      "wp-submit": "pass",
+      "redirect_to": "pass",
+      "testcookie": "pass"
+    },
+    "login_path": "wp-login.php",
+    "login_page_markers": [ "<form name=\"loginform\"", "<input name=\"rememberme\"" ]
+  }
+
+}
