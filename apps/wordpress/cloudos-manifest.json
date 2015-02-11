@@ -46,8 +46,8 @@
   },
 
   "post_install": [
-    { "exec": "@files/install_cos_auth_plugin.php @doc_root"},
-    { "exec": "@files/wp_dbinit.sh @dbname @dbuser @dbpass @files/wppass.php @doc_root @databag[init][admin][login] @databag[init][admin][password] @databag[init][admin][email] '@date(%Y-%m-%d %H:%m:%s)' @web_mode @name @mail_user @mail_password" }
+    { "exec": "@files/wp_dbinit.sh @dbname @dbuser @dbpass @files/wppass.php @doc_root @databag[init][admin][login] @databag[init][admin][password] @databag[init][admin][email] '@date(%Y-%m-%d %H:%m:%s)' @web_mode @name @mail_user @mail_password" },
+    { "exec": "@files/install_cos_auth_plugin.php @doc_root"}
   ],
 
   "auth": {
