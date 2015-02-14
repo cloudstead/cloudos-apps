@@ -42,7 +42,7 @@ if [ -z "${class}" ] ; then
 fi
 
 FIXED_ARGS=""
-if [ ${command} = "dns" ] ; then
+if [ ${command} = "cos-dns" ] ; then
   CONFIG=<%=@app[:chef_user_home]%>/chef/data_bags/cloudos/init.json
   CONFIG_NODE="dns"
   FIXED_ARGS="--config ${CONFIG} --config-node ${CONFIG_NODE}"
