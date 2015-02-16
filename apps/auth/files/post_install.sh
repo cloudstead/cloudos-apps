@@ -46,8 +46,17 @@ ${krb_master_password}
 ${krb_master_password}" | kadmin.local
 
 # stash ldap password for ldapscripts
-echo -n '${ldap_master_password}' > /etc/ldapscripts/ldapscripts.passwd
+echo -n "${ldap_master_password}" > /etc/ldapscripts/ldapscripts.passwd
 chmod 400 /etc/ldapscripts/ldapscripts.passwd
+
+# create the People and Group OU's
+echo "dn: ou=People,cn=cloudos,${ldap_domain_string}
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Groups,cn=cloudos,${ldap_domain_string}
+objectClass: organizationalUnit
+ou: Groups" | ldapadd -x -H ldapi:/// -D cn=admin,${ldap_domain_string} -w ${ldap_master_password}
 
 # touch marker file, this script should not run on future installs
 touch /etc/krb5kdc/setup.marker
