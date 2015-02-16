@@ -12,7 +12,7 @@
 
 #settings-sections {
 	position: absolute;
-	top: 0;
+	top: 42px;
 	left: 0;
 	width: 200px;
 	bottom: 0;
@@ -21,7 +21,7 @@
 #pluginbody,
 #settings-right {
 	position: absolute;
-	top: 0;
+	top: 42px;
 	left: 212px;
 	right: 0;
 	bottom: 0;

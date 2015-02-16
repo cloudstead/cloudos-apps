@@ -9,5 +9,7 @@ valet:      cloudos.main.ServiceKeyMain
 unlock:     cloudos.main.UnlockMain
 backup-key: cloudos.main.GetBackupKeyMain
 restore:    cloudos.main.RestoreCloudsteadMain
-dns:        cloudos.dns.main.DnsMain
+sysconfig:  cloudos.main.SysConfigMain
+dns:        cloudos.main.CloudOsDnsMain
+cos-dns:    cloudos.dns.main.DnsMain
 json:       org.cobbzilla.util.json.main.JsonEditor
