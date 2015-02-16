@@ -19,7 +19,7 @@
 
 ### Server settings: ###
 
-- Name: whatever you want
+- Name: CloudOS LDAP (or whatever you want)
 - Directory Type: OpenLDAP
 - Hostname: localhost
 - Port: 389
@@ -28,7 +28,7 @@
 
 ### LDAP Schema: ###
 
-- Base DN: cn=`domain`.`tld`,cn=cloudos,dc=`domain`,dc=`tld`
+- Base DN: cn=cloudos,dc=`domain`,dc=`tld`
 - Additional User DN: ou=People
 - Additional Group DN: ou=Groups
 
