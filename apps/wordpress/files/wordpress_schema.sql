@@ -204,16 +204,6 @@ CREATE TABLE `wp_posts` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `wp_posts`
---
-
-LOCK TABLES `wp_posts` WRITE;
-/*!40000 ALTER TABLE `wp_posts` DISABLE KEYS */;
-INSERT INTO `wp_posts` VALUES (1,1,'2015-02-05 23:53:40','2015-02-05 23:53:40','Welcome to WordPress. This is your first post. Edit or delete it, then start blogging!','Hello world!','','publish','open','open','','hello-world','','','2015-02-05 23:53:40','2015-02-05 23:53:40','',0,'https://css20.cloudstead.io/wordpress/?p=1',0,'post','',1),(2,1,'2015-02-05 23:53:40','2015-02-05 23:53:40','This is an example page. It\'s different from a blog post because it will stay in one place and will show up in your site navigation (in most themes). Most people start with an About page that introduces them to potential site visitors. It might say something like this:\n\n<blockquote>Hi there! I\'m a bike messenger by day, aspiring actor by night, and this is my blog. I live in Los Angeles, have a great dog named Jack, and I like pi&#241;a coladas. (And gettin\' caught in the rain.)</blockquote>\n\n...or something like this:\n\n<blockquote>The XYZ Doohickey Company was founded in 1971, and has been providing quality doohickeys to the public ever since. Located in Gotham City, XYZ employs over 2,000 people and does all kinds of awesome things for the Gotham community.</blockquote>\n\nAs a new WordPress user, you should go to <a href=\"https://css20.cloudstead.io/wordpress/wp-admin/\">your dashboard</a> to delete this page and create new pages for your content. Have fun!','Sample Page','','publish','open','open','','sample-page','','','2015-02-05 23:53:40','2015-02-05 23:53:40','',0,'https://css20.cloudstead.io/wordpress/?page_id=2',0,'page','',0);
-/*!40000 ALTER TABLE `wp_posts` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `wp_term_relationships`
 --
 
