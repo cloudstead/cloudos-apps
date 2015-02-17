@@ -31,7 +31,7 @@
 
     "groups": [ { "group": "rooty", "members": [ "@run_as", "@chef_user", "root" ] } ],
 
-    "passwords": [ "kerberos", "backup_key", "rooty", "rooty_queue" ],
+    "passwords": [ "kerberos", "ldap", "backup_key", "rooty", "rooty_queue" ],
 
     "packages": [ "memcached", "redis-server", "awscli" ],
 
