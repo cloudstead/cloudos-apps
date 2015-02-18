@@ -114,7 +114,7 @@ a.menuselector span.handle {
     color: #555;
 }
 
-.toolbar a.button.checkmail,.toolbar a.button.compose,.toolbar a.button.reply,.toolbar a.button.reply-all,.toolbar a.button.forward,.toolbar a.button.delete,.toolbar a.button.archive,.toolbar a.button.junk,.toolbar a.button.markmessage,.toolbar a.button.more,.toolbar a.button.back,.toolbar a.button.move,.toolbar a.button.print,.toolbar a.button.send,.toolbar a.button.savedraft,.toolbar a.button.spellcheck,.toolbar a.button.attach,.toolbar a.button.insertsig,.toolbar a.button.responses,.toolbar a.button.vcard_send,.toolbar a.button.import,.toolbar a.button.export,.toolbar a.button.search,.toolbar a.button.calneweventbut,.toolbar a.button.calswitchbut,.toolbar a.button.calexportbut,.toolbar a.button.calimportbut,.toolbar a.button.calprintprevbut {
+.toolbar a.button.checkmail,.toolbar a.button.compose,.toolbar a.button.reply,.toolbar a.button.reply-all,.toolbar a.button.forward,.toolbar a.button.delete,.toolbar a.button.archive,.toolbar a.button.junk,.toolbar a.button.markmessage,.toolbar a.button.more,.toolbar a.button.back,.toolbar a.button.move,.toolbar a.button.print,.toolbar a.button.send,.toolbar a.button.savedraft,.toolbar a.button.spellcheck,.toolbar a.button.attach,.toolbar a.button.insertsig,.toolbar a.button.responses,.toolbar a.button.vcard_send,.toolbar a.button.import,.toolbar a.button.export,.toolbar a.button.search,.toolbar a.button.calneweventbut,.toolbar a.button.calswitchbut,.toolbar a.button.calexportbut,.toolbar a.button.calimportbut,.toolbar a.button.calprintprevbut, .toolbar a.button.settings {
     height: 40px;
     background-image: none!important;
     padding-top: 0;
@@ -237,6 +237,10 @@ a.menuselector span.handle {
 
 .toolbar a.button.calprintprevbut:before {
     content: "\f02f";
+}
+
+.toolbar a.button.settings:before {
+    content: "\f013";
 }
 
 .dropbutton .dropbuttontip {

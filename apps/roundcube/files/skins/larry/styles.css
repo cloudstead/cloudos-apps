@@ -861,7 +861,7 @@ a.iconlink.upload {
 	border-width: 0 4px 4px;
 	border-color: #888 transparent;
 	/* reduce the damage in FF3.0 */
-	display: block; 
+	display: block;
 	width: 0;
 	z-index: 251;
 }
@@ -2331,7 +2331,7 @@ ul.toolbarmenu li span.copy {
 	border-width: 6px 6px 6px 0;
 	border-color: transparent #444;
 	/* reduce the damage in FF3.0 */
-	display: block; 
+	display: block;
 	width: 0;
 	z-index: 251;
 }
