@@ -8,9 +8,17 @@
         "maintainer": "Jonathan Cobb",
         "maintainer_email": "jonathan@cloudstead.io",
         "license": "https://www.atlassian.com/licensing/jira",
-        "code_copyright": "Copyright © 2002 - 2014 Atlassian Corporation Pty Ltd.",
-        "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+        "code_copyright": "Copyright © 2002 - 2015 Atlassian Corporation Pty Ltd.",
+        "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
     },
+
+    "databags": [ {
+        "name": "init",
+        "items": [ "admin.fullname", "admin.login", "admin.password", "admin.email",
+            "title", "email_prefix", "public_site" ]
+    } ],
+
+    "mailboxes": [ { "address": "jira", "alias_for": "postmaster" } ],
 
     "tarball": {
         "url": "http://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-6.3.3.tar.gz"
@@ -20,7 +28,48 @@
 
     "packages": [ "jsvc" ],
 
-    "web": { "type": "apache", "mode": "proxy" },
+    "web": { "type": "apache", "mode": "proxy_service", "local_mount": "@name",
+        "cookie": "JSESSIONID",
+        "filters": [ {
+            "uri": "secure/SetupApplicationProperties!default.jspa",
+            "filters": [
+                { "type": "field", "config": {"name": "title", "value": "{{databags.init.title}}" } },
+                { "type": "field", "config": {"name": "baseURL", "value": "{{app.path}}" } },
+
+                { "type": "radio",
+                    "config": {
+                        "checked": "jira-setupwizard-mode-private",
+                        "unchecked": "jira-setupwizard-mode-public",
+                        "swap_if": "{{databags.init.public_site}}" } },
+
+                { "type": "submit", "config": { "id": "jira-setupwizard" } }
+            ]
+        }, {
+            "uri": "regex:secure/SetupAdminAccount.+",
+            "filters": [
+                { "type": "field", "config": { "name":"fullname", "value": "{{databags.init.admin_fullname}}" } },
+                { "type": "field", "config": { "name":"email", "value": "{{databags.init.admin_email}}" } },
+                { "type": "field", "config": { "name":"username", "value": "{{databags.init.admin_login}}" } },
+                { "type": "field", "config": { "name":"password", "value": "{{databags.init.admin_password}}" } },
+                { "type": "field", "config": { "name":"confirm", "value": "{{databags.init.admin_password}}" } },
+
+                { "type": "radio",
+                    "config": { "checked": "jira-setupwizard-email-notifications-enabled", "unchecked": "jira-setupwizard-email-notifications-disabled" } },
+
+                { "type": "field", "config": { "name": "name", "value": "Local CloudOs SMTP Server" } },
+                { "type": "field", "config": { "name": "from", "value": "jira@{{config.hostname}}" } },
+                { "type": "field", "config": { "name": "prefix", "value": "{{databags.init.email_prefix}}" } },
+
+                { "type": "radio",
+                    "config": { "checked": "jira-setupwizard-email-notifications-jndi", "unchecked": "jira-setupwizard-email-notifications-smtp" } },
+
+                { "type": "field", "config": {"name":"type", "value": "jndi" } },
+                { "type": "field", "config": {"name":"jndiLocation", "value": "java:comp/env/mail/JiraMailServer" } },
+
+                { "type": "submit", "config": { "id": "jira-setupwizard" } }
+            ]
+        } ]
+    },
 
     "dirs": [ "jira-home" ],
 
@@ -34,6 +83,7 @@
     "templates": {
         "@name/atlassian-jira/WEB-INF/classes/jira-application.properties": "_",
         "@name/conf/server.xml": "_",
+        "@name/bin/setenv.sh": "_",
         "jira-home/dbconfig.xml": "_"
     },
 
@@ -42,6 +92,7 @@
         "@name": { "perms": "-R 500" },
         "@name/bin": { "perms": "755" },
         "@name/bin/daemon.sh": { "perms": "755" },
+        "@name/bin/setenv.sh": { "perms": "400" },
         "@name/logs": { "perms": "-R 700" },
         "@name/temp": { "perms": "-R 700" },
         "@name/work": { "perms": "-R 700" }
