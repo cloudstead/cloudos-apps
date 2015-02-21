@@ -1,7 +1,10 @@
 #!/bin/bash
 
-LOGIN=admin
-PASSWORD=foo
-EMAIL=jonathan@kyuss.org
-cos config -a jonathan -n wordpress -r 0.1.0 -c \
+LOGIN=${1}
+PASSWORD=${2}
+EMAIL=${3}
+
+THISDIR=$(cd $(dirname $0) && pwd)
+
+cos config -a jonathan -n wordpress -r $(cos json ${THISDIR}/../cloudos-manifest.json) -c \
 '{"categories":[{"name":"init", "values":{"admin.login":"'${LOGIN}'", "admin.password":"'${PASSWORD}'", "admin.email":"'${EMAIL}'"}}]}'
