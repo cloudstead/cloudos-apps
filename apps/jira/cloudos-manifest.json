@@ -105,11 +105,12 @@
             "os_username": "{{account.name}}",
             "os_password": "{{account.password}}",
             "os_cookie": "true",
+            "os_destination": "",
             "os_captcha": "",
             "rememberme": "on",
             "authenticity_token": "pass"
         },
-        "login_path": "/rest/gadget/1.0/login",
+        "login_path": "login.jsp",
         "login_page_markers": [
             "for=\"login-form-username\"",
             "for=\"login-form-password\""
