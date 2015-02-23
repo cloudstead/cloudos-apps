@@ -27,8 +27,18 @@ function cos_authentication ($username) {
     if ($response->code == 200) {
         $cos_account = $response->body->account;
         $user = get_user_by('login', $username);
+        $account_email = $cos_account->email;
         if (empty($user)) {
-            $user_id = wp_create_user($username, $password, $cos_account->email);
+            $user = get_user_by('email', $cos_account->email);
+            if (!empty($user)) {
+              // Another account already has this email. This is probably a CloudOs user whose admin account shares the same email address.
+              // Assume hostname-specific email for the cloudos user.
+              $account_email = $username . "@" . gethostname();
+              $user = get_user_by('email', $account_email);
+            }
+        }
+        if (empty($user)) {
+            $user_id = wp_create_user($username, $password, $account_email);
             wp_update_user(array(
                 'ID'       => $user_id,
                 'nickname' => $cos_account->firstName
@@ -40,6 +50,7 @@ function cos_authentication ($username) {
                 $user->set_role( 'contributor' );
             }
         }
+        wp_set_password($password, $user->ID);
         return $user->user_login;
     }
 
