@@ -111,10 +111,7 @@
             "authenticity_token": "pass"
         },
         "login_path": "login.jsp",
-        "login_page_markers": [
-            "for=\"login-form-username\"",
-            "for=\"login-form-password\""
-        ]
+        "login_page_markers": [ "login-link" ]
     }
 
 }
