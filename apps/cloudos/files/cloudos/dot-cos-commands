@@ -14,4 +14,5 @@ dns:        cloudos.main.CloudOsDnsMain
 cos-dns:    cloudos.dns.main.DnsMain
 account:    cloudos.main.account.CloudOsAccountMain
 group:      cloudos.main.account.CloudOsGroupMain
+sudo:       cloudos.main.CloudOsServerMain
 json:       org.cobbzilla.util.json.main.JsonEditor
