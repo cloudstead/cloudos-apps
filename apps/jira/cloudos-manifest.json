@@ -15,7 +15,11 @@
     "databags": [ {
         "name": "init",
         "items": [ "admin.fullname", "admin.login", "admin.password", "admin.email",
-            "title", "email_prefix", "public_site" ]
+            "title", "email_prefix", "public_site",
+            "groups.users.mirror", "groups.users.members",
+            "groups.developers.mirror", "groups.developers.members",
+            "groups.admins.mirror", "groups.admins.members"
+        ]
     } ],
 
     "mailboxes": [ { "address": "jira", "alias_for": "postmaster" } ],
@@ -71,6 +75,24 @@
         } ]
     },
 
+    "cloudos_groups": {
+        "jira-users": {
+            "description": "JIRA users",
+            "mirror": "@databag[init][groups][users][mirror]",
+            "members": "@databag[init][groups][users][members]"
+        },
+        "jira-developers": {
+            "description": "JIRA users",
+            "mirror": "@databag[init][groups][developers][mirror]",
+            "members": "@databag[init][groups][developers][members]"
+        },
+        "jira-administrators": {
+            "description": "JIRA users",
+            "mirror": "@databag[init][groups][admins][mirror]",
+            "members": "@databag[init][groups][admins][members]"
+        }
+    },
+
     "dirs": [ "jira-home" ],
 
     "symlinks": { "@name/bin/jsvc": "/usr/bin/jsvc" },
@@ -98,7 +120,7 @@
         "@name/work": { "perms": "-R 700" }
     },
 
-    "sysinit": [ "@name/bin/daemon.sh --tomcat-user @name --java-home @java_home" ],
+    "sysinit": [ "wrap:@name/bin/start-jira.sh:/.+/java .+ -Datlassian.standalone=JIRA" ],
 
     "auth": {
         "login_fields": {

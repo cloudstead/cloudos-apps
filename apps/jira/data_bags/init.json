@@ -1,0 +1,13 @@
+{
+  "id": "init",
+
+  "title": "JIRA",
+  "email_prefix" : "[JIRA] ",
+  "public_site" : "false",
+
+  "groups": {
+    "users":      { "mirror": "cloudos-users",  "members": "" },
+    "developers": { "mirror": "cloudos-users",  "members": "" },
+    "admins":     { "mirror": "cloudos-admins", "members": "" }
+  }
+}
