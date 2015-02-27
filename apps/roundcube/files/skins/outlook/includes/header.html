@@ -5,7 +5,7 @@
     <div style='display:none'>
 <!--         <roundcube:object name="logo" src="/logo.png" id="rcs-logo" alt="Logo" onclick="if(window.rcmail)rcmail.command('switch-task','mail')" /> -->
     </div>
-    
+
 <roundcube:else />
 
     <roundcube:if condition="env:task == 'mail' && env:action == 'show'" />
@@ -15,12 +15,12 @@
             <a id='button-toolbar' href='javascript:void(0)' onclick='rcs_mobile.popup("messagetoolbar")'><span></span></a>
             <a id='button-format' href='javascript:void(0)' onclick='rcs_mobile.popup("popup-format")'><span></span></a>
         </div>
-        
+
         <div id="popup-format" class="popup-box">
               <h5><roundcube:label name="messageoptions" /></h5>
               <a href='javascript:void(0)' onclick="return rcmail.command('change-format','text',this,event)"><roundcube:label name="changeformattext" /></a>
               <a href='javascript:void(0)' onclick="return rcmail.command('change-format','html',this,event)"><roundcube:label name="changeformathtml" /></a>
-        </div>        
+        </div>
 
     <roundcube:elseif condition="env:task == 'mail' && env:action == 'compose'" />
 
@@ -49,7 +49,7 @@
             <a class='funnel-search' href='javascript:void(0)' onclick='rcs_mobile.popupHide(); rcs_mobile.popup("quicksearchbar")'>
                 <roundcube:label name="quicksearch" />
                 <span class="fa fa-lg fa-check"></span>
-            </a>              
+            </a>
         </div>
 
         <div id="popup-filter" class="popup-box">
@@ -81,11 +81,11 @@
         </div>
 
     <roundcube:else />
-    
+
         <div id='main-menu'>
             <a id='button-taskbar' href='javascript:void(0)' onclick='rcs_mobile.popup("header")'><span></span></a>
-        </div>    
-        
+        </div>
+
     <roundcube:endif />
 
 <roundcube:endif />
