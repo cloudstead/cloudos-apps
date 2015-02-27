@@ -40,7 +40,26 @@ echo "#{account}@#{domain}   #{domain}/#{deliver_to_account}/Maildir/" >> #{vmai
       chef.bash "create maildir symlink for #{account} -> #{deliver_to_account}" do
         user 'root'
         code <<-EOF
-ln -s /var/vmail/vhosts/#{domain}/#{deliver_to_account} /var/vmail/vhosts/#{domain}/#{account}
+
+mailbox="/var/vmail/vhosts/#{domain}/#{deliver_to_account}"
+dest="/var/vmail/vhosts/#{domain}/#{account}"
+
+if [ -f ${dest} ] ; then
+  echo "Cannot change existing mailbox into alias: ${dest}"
+  exit 1
+
+elif [ -L ${dest} ] ; then
+  if [ $(readlink ${dest}) == "${mailbox}" ] ; then
+    echo "Nothing to do, ${dest} already points to ${mailbox}"
+    exit 0
+  fi
+  echo "Changing alias ${dest} from -> $(readlink ${dest}) to -> ${mailbox}..."
+  rm ${dest} && ln -s ${mailbox} ${dest} || exit 1
+
+else
+  echo "Creating alias ${dest} -> ${mailbox}..."
+  ln -s /var/vmail/vhosts/#{domain}/#{deliver_to_account} ${dest} || exit 1
+fi
         EOF
       end
     end
@@ -69,7 +88,7 @@ postmap #{vmailbox}
   echo "
 #{account}  #{deliver_to_account}
 " >> #{virtual_file}  && \
-sed -e -i '/^ *$/d' #{virtual_file}  # strip blank lines
+sed -i '/^ *$/d' #{virtual_file}  # strip blank lines
         EOF
         not_if { %x(cat #{virtual_file} | grep #{account} | wc -l | tr -d '').strip.to_i > 0 }
       end
@@ -82,7 +101,7 @@ sed -e -i '/^ *$/d' #{virtual_file}  # strip blank lines
   echo "
 #{account}
 " >> #{vmailbox}.users && \
-sed -e -i '/^ *$/d' #{vmailbox}.users  # strip blank lines
+sed -i '/^ *$/d' #{vmailbox}.users  # strip blank lines
         EOF
         not_if { %x(cat #{vmailbox}.users | grep #{account} | wc -l | tr -d '').strip.to_i > 0 }
       end
