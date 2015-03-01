@@ -1,7 +1,13 @@
 #!/bin/bash
 
-PORT=$(cat $(bash -c "cd ~$(cat /etc/chef-user) && pwd")/chef/data_bags/jira/ports.json | cos json -o read -p primary)
-if [ -z ${PORT} ] ; then
+CHEF_DIR="${1}"
+if [ -z "${CHEF_DIR}" ] ; then
+  echo "No CHEF_DIR argument provided"
+  exit 1
+fi
+
+PORT=$(cat ${CHEF_DIR}/data_bags/jira/ports.json | cos json -o read -p primary)
+if [ -z "${PORT}" ] ; then
   echo "Error determining port"
   exit 1
 fi

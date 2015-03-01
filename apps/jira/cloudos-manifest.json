@@ -15,7 +15,7 @@
     "databags": [ {
         "name": "init",
         "items": [ "admin.fullname", "admin.login", "admin.password", "admin.email",
-            "title", "email_prefix", "public_site",
+            "title", "email_prefix", "public_site", "setup_filters_enabled", "auto_submit_forms",
             "groups.users.mirror", "groups.users.members",
             "groups.developers.mirror", "groups.developers.members",
             "groups.admins.mirror", "groups.admins.members"
@@ -35,7 +35,8 @@
     "web": { "type": "apache", "mode": "proxy_service", "local_mount": "@name",
         "cookie": "JSESSIONID",
         "filters": [ {
-            "uri": "secure/SetupApplicationProperties!default.jspa",
+            "uri": "regex:secure/SetupApplicationProperties.+",
+            "only_if": "{{databags.init.setup_filters_enabled}}",
             "filters": [
                 { "type": "field", "config": {"name": "title", "value": "{{databags.init.title}}" } },
                 { "type": "field", "config": {"name": "baseURL", "value": "{{app.path}}" } },
@@ -46,10 +47,11 @@
                         "unchecked": "jira-setupwizard-mode-public",
                         "swap_if": "{{databags.init.public_site}}" } },
 
-                { "type": "submit", "config": { "id": "jira-setupwizard" } }
+                { "type": "submit", "config": { "id": "jira-setupwizard", "only_if": "{{databags.init.auto_submit_forms}}"  } }
             ]
         }, {
             "uri": "regex:secure/SetupAdminAccount.+",
+            "only_if": "{{databags.init.setup_filters_enabled}}",
             "filters": [
                 { "type": "field", "config": { "name":"fullname", "value": "{{databags.init.admin_fullname}}" } },
                 { "type": "field", "config": { "name":"email", "value": "{{databags.init.admin_email}}" } },
@@ -70,7 +72,7 @@
                 { "type": "field", "config": {"name":"type", "value": "jndi" } },
                 { "type": "field", "config": {"name":"jndiLocation", "value": "java:comp/env/mail/JiraMailServer" } },
 
-                { "type": "submit", "config": { "id": "jira-setupwizard" } }
+                { "type": "submit", "config": { "id": "jira-setupwizard", "only_if": "{{databags.init.auto_submit_forms}}" } }
             ]
         } ]
     },

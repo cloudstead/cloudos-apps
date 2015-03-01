@@ -1,5 +1,6 @@
 queueName: <%=@app[:passwords]['rooty_queue']%>+chef
 secret: <%=@app[:passwords]['rooty']%> # used to encrypt messages and generate hashes in request filenames
+memcachedKey: <%=@app[:passwords]['backup_key']%> # status is put in memcached for a limited time
 
 handlers:
   rooty.toots.chef.ChefHandler:
