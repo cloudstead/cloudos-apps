@@ -20,6 +20,9 @@
             "groups.developers.mirror", "groups.developers.members",
             "groups.admins.mirror", "groups.admins.members"
         ]
+    }, {
+        "name": "blocker",
+        "items": [ "frame_css", "div_css", "div_content", "disabled" ]
     } ],
 
     "mailboxes": [ { "address": "jira", "alias_for": "postmaster" } ],
@@ -40,6 +43,13 @@
             "uri": "regex:secure/SetupApplicationProperties.+",
             "only_if": "{{databags.init.setup_filters_enabled}}",
             "filters": [
+                { "type": "blocker", "config": {
+                  "not_if": "{{databags.blocker.disabled}}",
+                  "frame_css": "{{databags.blocker.frame_css}}",
+                  "div_css": "{{databags.blocker.div_css}}",
+                  "div_content": "{{databags.blocker.div_content}}"
+                } },
+
                 { "type": "field", "config": {"name": "title", "value": "{{databags.init.title}}" } },
                 { "type": "field", "config": {"name": "baseURL", "value": "{{app.path}}" } },
 
@@ -55,6 +65,13 @@
             "uri": "regex:secure/SetupAdminAccount.+",
             "only_if": "{{databags.init.setup_filters_enabled}}",
             "filters": [
+                { "type": "blocker", "config": {
+                  "not_if": "{{databags.blocker.disabled}}",
+                  "frame_css": "{{databags.blocker.frame_css}}",
+                  "div_css": "{{databags.blocker.div_css}}",
+                  "div_content": "{{databags.blocker.div_content}}"
+                } },
+
                 { "type": "field", "config": { "name":"fullname", "value": "{{databags.init.admin_fullname}}" } },
                 { "type": "field", "config": { "name":"email", "value": "{{databags.init.admin_email}}" } },
                 { "type": "field", "config": { "name":"username", "value": "{{databags.init.admin_login}}" } },
