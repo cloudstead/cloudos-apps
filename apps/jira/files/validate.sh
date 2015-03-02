@@ -15,7 +15,7 @@ fi
 NUM_PROCS=$(ps auxwwww | grep jira | grep org.apache.catalina.startup.Bootstrap | grep -v grep  | wc -l)
 FOUND_PORT=$(netstat -nlp | grep jsvc | awk '{print $4}' | awk -F ':' '{print $2}' | grep ${PORT} | wc -l)
 
-TIMEOUT=$(expr 60 \* 20)
+TIMEOUT=$(expr 60 \* 30)
 
 LOG=/tmp/j.log
 cat /dev/null > ${LOG}

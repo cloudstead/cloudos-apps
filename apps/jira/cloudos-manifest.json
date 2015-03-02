@@ -28,9 +28,11 @@
         "url": "http://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-6.3.3.tar.gz"
     },
 
-    "database": { "type": "postgresql" },
+    "database": { "type": "postgresql", "dbpass": "@databag[init][admin][password]" },
 
     "packages": [ "jsvc" ],
+
+    "plugin": "cloudos.app.jira.JiraPlugin",
 
     "web": { "type": "apache", "mode": "proxy_service", "local_mount": "@name",
         "cookie": "JSESSIONID",
@@ -72,7 +74,9 @@
                 { "type": "field", "config": {"name":"type", "value": "jndi" } },
                 { "type": "field", "config": {"name":"jndiLocation", "value": "java:comp/env/mail/JiraMailServer" } },
 
-                { "type": "submit", "config": { "id": "jira-setupwizard", "only_if": "{{databags.init.auto_submit_forms}}" } }
+                { "type": "submit", "config": { "id": "jira-setupwizard", "only_if": "{{databags.init.auto_submit_forms}}" } },
+
+                { "type": "plugin", "config": { "name": "setupLdap" } }
             ]
         } ]
     },
