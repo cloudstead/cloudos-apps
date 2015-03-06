@@ -9,3 +9,16 @@
 .rcs-mobile #header {
 	display: none;
 }
+
+.rcs-mobile #mainscreen {
+	top: 60px;
+}
+
+.rcs-mobile #message.statusbar {
+	top: auto;
+	bottom: 0px;
+}
+
+.rcs-mobile #quicksearchbox {
+	padding: 12px;
+}

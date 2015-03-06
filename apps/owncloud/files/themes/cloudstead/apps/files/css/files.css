@@ -1,3 +1,11 @@
 .nav-trashbin {
 	position:relative !important;
 }
+
+.actions.creatable {
+	width: 100px;
+}
+
+#app-navigation + #app-content #controls {
+	width: 100%;
+}
