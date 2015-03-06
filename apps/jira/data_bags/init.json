@@ -1,6 +1,8 @@
 {
   "id": "init",
 
+  "admin": { "login": "admin" },
+
   "title": "JIRA",
   "email_prefix" : "[JIRA] ",
   "public_site" : "false",
@@ -9,8 +11,6 @@
     "users":      { "mirror": "cloudos-users",  "members": "" },
     "developers": { "mirror": "cloudos-users",  "members": "" },
     "admins":     { "mirror": "cloudos-admins", "members": "" }
-  },
+  }
 
-  "setup_filters_enabled": true,
-  "auto_submit_forms": true
 }

@@ -10,6 +10,7 @@ import java.util.Map;
 
 import static cloudos.appstore.model.app.filter.AppFilterHandler.FSCOPE_DATABAGS;
 import static cloudos.appstore.model.app.filter.AppFilterHandler.FSCOPE_METHOD;
+import static org.cobbzilla.util.mustache.MustacheUtil.render;
 
 @Slf4j
 public class JiraPlugin extends ConfigurableAppRuntime {
@@ -33,7 +34,7 @@ public class JiraPlugin extends ConfigurableAppRuntime {
             {"ldap.user.group", "memberOf" },
             {"ldap.user.filter", "(objectclass=inetorgperson)" },
             {"ldap.secure", "false" },
-            {"ldap.password", "faea41c393b715b0765c96a329be24ae37d2d4b33e3cbd952c114d20c6ddcc80" },
+            {"ldap.password", "{{config.ldap.password}}" },
             {"ldap.relaxed.dn.standardisation", "true" },
             {"ldap.user.username.rdn", "cn" },
             {"ldap.user.encryption", "sha" },
@@ -45,7 +46,7 @@ public class JiraPlugin extends ConfigurableAppRuntime {
             {"ldap.user.email", "mail" },
             {"autoAddGroups", "" },
             {"ldap.pool.prefsize", null },
-            {"ldap.basedn", "cn=cloudos,dc=cloudstead,dc=io" },
+            {"ldap.basedn", "{{config.ldap.baseDN}}" },
             {"ldap.propogate.changes", "false" },
             {"localUserStatusEnabled", "false" },
             {"ldap.roles.disabled", "true" },
@@ -55,7 +56,7 @@ public class JiraPlugin extends ConfigurableAppRuntime {
             {"ldap.usermembership.use.for.groups", "false" },
             {"ldap.pool.initsize", null },
             {"ldap.referral", "false" },
-            {"ldap.userdn", "cn=admin,dc=cloudstead,dc=io" },
+            {"ldap.userdn", "cn=admin,{{config.ldap.domain}}" },
             {"ldap.user.lastname", "sn" },
             {"ldap.pagedresults.size", "1000" },
             {"ldap.group.name", "cn" },
@@ -69,7 +70,7 @@ public class JiraPlugin extends ConfigurableAppRuntime {
     @Override public String applyCustomFilter(String filterName, String document, Map<String, Object> scope) {
 
         if (!filterName.equals("setupLdap")) return document;
-            if (!scope.get(FSCOPE_METHOD).equals(HttpMethods.GET)) return document;
+        if (!scope.get(FSCOPE_METHOD).equals(HttpMethods.GET)) return document;
         if (!shouldDoLdapSetup(document, scope)) return document;
 
         setupLdap(scope);
@@ -129,7 +130,7 @@ public class JiraPlugin extends ConfigurableAppRuntime {
                 index=1;
                 s2.setInt(index++, 9999);
                 s2.setString(index++, dir_attr[0]);
-                s2.setString(index++, dir_attr[1]);
+                s2.setString(index++, render(dir_attr[1], scope));
                 if (!tryInsertRow(s2)) s2.clearWarnings();
             }
 

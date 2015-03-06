@@ -1,0 +1,9 @@
+{
+  "id": "init",
+
+  "admin": { "login": "admin" },
+
+  "language": "@lang",
+  "title": "LimeSurvey"
+
+}

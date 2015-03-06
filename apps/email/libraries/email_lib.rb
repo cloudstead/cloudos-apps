@@ -72,17 +72,10 @@ fi
 #       EOF
 #     end
 
-    chef.bash "remap vmailbox file #{vmailbox} (sha #{sha_file vmailbox})" do
-      user 'root'
-      code <<-EOF
-postmap #{vmailbox}
-      EOF
-    end
-
     if is_alias
       # ensure aliases are in virtual file
       virtual_file='/etc/postfix/virtual'
-      chef.bash "add email alias #{account} to #{vmailbox}.alias" do
+      chef.bash "add email alias #{account} to #{virtual_file}" do
         user 'root'
         code <<-EOF
   echo "
@@ -107,7 +100,93 @@ sed -i '/^ *$/d' #{vmailbox}.users  # strip blank lines
       end
     end
 
-    # for some reason this directory ends up being owned by root (?)
+    chef.bash "remap #{vmailbox} #{virtual_file.nil? ? '' : "and #{virtual_file}"} after creating #{account}@#{domain} -> #{deliver_to_account}" do
+      user 'root'
+      code <<-EOF
+postmap #{vmailbox}
+if [ ! -z "#{virtual_file}" ] ; then
+  if [ -f #{virtual_file} ] ; then postmap #{virtual_file} ; fi
+fi
+EOF
+    end
+
+# for some reason this directory ends up being owned by root (?)
+    email_lib.permission chef, '/var/vmail', nil, 'vmail', 'vmail', nil, true
+  end
+
+  #
+  # Delete a mailbox. If new_owner is given, migrate mail to a subfolder of the new owner
+  #
+  def self.delete_mailbox(chef, account, domain, deliver_to_account = nil, new_owner = nil)
+    email_lib = Chef::Recipe::Email
+    base_lib = Chef::Recipe::Base
+    vmailbox = email_lib.vmailbox
+    deliver_to_account ||= account
+    is_alias = (deliver_to_account != account)
+    new_owner ||= ''
+
+    base_lib.remove_from_file(chef, vmailbox, "#{account}@#{domain}   #{domain}/#{deliver_to_account}/Maildir/")
+
+    chef.bash "remove email account for #{account} in email vhost #{domain}" do
+      user 'root'
+      cwd '/var/vmail'
+      code <<-EOF
+dest="/var/vmail/vhosts/#{domain}/#{account}"
+mailbox="/var/vmail/vhosts/#{domain}/#{deliver_to_account}"
+new_owner="#{new_owner}"
+
+if [[ #{is_alias} ]] ; then
+  # remove alias symlink or rename to new_owner
+  if [[ -L ${dest} ]] ; then
+    if [[ ! -z "${new_owner}" ]] ; then
+      echo "Changing alias ${dest} from -> $(readlink ${dest}) to -> ${new_owner}..."
+      rm ${dest} && ln -s ${new_owner} ${dest} || exit 1
+    else
+      rm ${dest}
+    fi
+  else
+    echo "Expected ${dest} to be a symlink (email alias) but it was not"
+    # exit 1 # should we bomb an uninstall just because an alias has become a mailbox?
+  fi
+else
+  # remove mailbox, sync files to new_owner
+  if [[ ! -z "${new_owner}" ]] ; then
+    new_owner_maildir="/var/vmail/vhosts/#{domain}/#{new_owner}"
+    archive_dir="${new_owner_maildir}/.archived-mail"
+    if [[ ! -d ${archive_dir} ]] ; then
+      maildirmake.dovecot ${archive_dir} && \
+      chown -R vmail.vmail ${archive_dir} && \
+      echo "archived-mail" >> ${new_owner_maildir}/subscriptions
+    fi
+    archive_user_dir="${archive_dir}.#{account}-$(date +%Y-%m-%d-%H-%M-%S)"
+    echo "Archving mailbox ${mailbox} -> ${archive_user_dir}"
+    mv ${mailbox} ${archive_user_dir}
+    fi
+
+  else
+    echo "Removing mailbox, no new owner: ${mailbox}"
+    rm -rf ${mailbox}
+  fi
+fi
+EOF
+    end
+
+    if is_alias
+      # remove alias from virtual file
+      virtual_file='/etc/postfix/virtual'
+      to_remove = "#{account}  #{deliver_to_account}"
+      base.remove_from_file(chef, virtual_file, to_remove)
+    end
+
+    chef.bash "remap #{vmailbox} #{virtual_file.nil? ? '' : "and #{virtual_file}"} after removing/archiving #{account}" do
+      user 'root'
+      code <<-EOF
+postmap #{vmailbox}
+if [[ ! -z "#{virtual_file}" && -f #{virtual_file} ]] ; then postmap #{virtual_file} ; fi
+      EOF
+    end
+
+# for some reason this directory ends up being owned by root (?)
     email_lib.permission chef, '/var/vmail', nil, 'vmail', 'vmail', nil, true
   end
 

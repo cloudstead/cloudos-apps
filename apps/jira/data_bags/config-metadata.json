@@ -1,0 +1,31 @@
+{
+  "id": "config-metadata",
+  "init": {
+    "fields": {
+      "admin.fullname": { "required": true },
+      "admin.login": { "required": true, "type": "login" },
+      "admin.password": { "required": true, "type": "password" },
+      "admin.email": { "required": true },
+      "title": { "required": true },
+      "email_prefix": { "required": true },
+      "public_site": { "required": true, "type": "yesno" },
+      "groups.users.mirror": { "required": true, "type": "cloudos_group" },
+      "groups.users.members": { "required": true, "type": "member_list" },
+      "groups.developers.mirror": { "required": true, "type": "cloudos_group" },
+      "groups.developers.members": { "required": true, "type": "member_list" },
+      "groups.admins.mirror": { "required": true, "type": "cloudos_group" },
+      "groups.admins.members": { "required": true, "type": "member_list" }
+    }
+  },
+  "installer": {
+    "advanced": true,
+    "fields": {
+      "auto_submit_forms": { "required": true, "type": "yesno" },
+      "setup_filters_enabled": { "required": true, "type": "yesno" },
+      "overlay_disabled": { "required": true, "type": "yesno" },
+      "frame_css": { "required": true },
+      "div_css": { "required": true },
+      "div_content": { "required": true }
+    }
+  }
+}

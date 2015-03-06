@@ -1,0 +1,25 @@
+{
+  "id": "translations",
+  "init": {
+    "admin.fullname": { "label": "Administrator Full Name", "info": "Full name of super-admin user" },
+    "admin.login": { "label": "Administrator Login", "info": "Login for the Jira super-admin user" },
+    "admin.password": { "label": "Administrator Password", "info": "Password for the Jira super-admin user" },
+    "admin.email": { "label": "Administrator Email", "info": "Email address for the Jira super-admin user" },
+    "title": { "label": "Title", "info": "Title of the Jira app. Shown at the top of the screen within Jira" },
+    "email_prefix": { "label": "Email Prefix", "info": "Emails sent by Jira will have a 'Subject' that starts with this" },
+    "public_site": { "label": "Public?", "info": "Should anyone on the Internet be able to create an account on this Jira?" },
+    "groups.users.mirror": { "label": "Jira Users Group", "info": "Members of this CloudOs group will also be in the jira-users group" },
+    "groups.users.members": { "label": "Jira Users", "info": "These specific accounts will be in the jira-users group" },
+    "groups.developers.mirror": { "label": "Jira Users Group", "info": "Members of this CloudOs group will also be in the jira-developers group" },
+    "groups.developers.members": { "label": "Jira Users", "info": "These specific accounts will be in the jira-developers group" },
+    "groups.admins.mirror": { "label": "Jira Users Group", "info": "Members of this CloudOs group will also be in the jira-administrators group" },
+    "groups.admins.members": { "label": "Jira Users", "info": "These specific accounts will be in the jira-administrators group" }
+  },
+  "installer": {
+    "auto_submit_forms": { "label": "Automatically submit forms during installation", "info": "If enabled, CloudOs will automate the Jira installation. Disable if you want to fine-tune Jira settings during installation" },
+    "setup_filters_enabled": { "label": "Enable auto-setup", "info": "If enabled, CloudOs will automatically fill in certain fields during installation. Disabling this is not recommended unless you are a Jira expert" },
+    "frame_css": { "label": "CSS for the setup overlay frame", "info": "Changing this setting is not recommended." },
+    "div_css": { "label": "CSS for the overlay div", "info": "Changing this setting is not recommended." },
+    "div_content": { "label": "HTML content of the overlay div", "info": "Changing this setting is not recommended." },
+  }
+}

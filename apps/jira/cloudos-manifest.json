@@ -15,14 +15,15 @@
     "databags": [ {
         "name": "init",
         "items": [ "admin.fullname", "admin.login", "admin.password", "admin.email",
-            "title", "email_prefix", "public_site", "setup_filters_enabled", "auto_submit_forms",
-            "groups.users.mirror", "groups.users.members",
-            "groups.developers.mirror", "groups.developers.members",
-            "groups.admins.mirror", "groups.admins.members"
+                   "title", "email_prefix", "public_site",
+                   "groups.users.mirror", "groups.users.members",
+                   "groups.developers.mirror", "groups.developers.members",
+                   "groups.admins.mirror", "groups.admins.members"
         ]
     }, {
-        "name": "blocker",
-        "items": [ "frame_css", "div_css", "div_content", "disabled" ]
+        "name": "installer",
+        "items": [ "setup_filters_enabled", "auto_submit_forms",
+                   "frame_css", "div_css", "div_content", "disabled" ]
     } ],
 
     "mailboxes": [ { "address": "jira", "alias_for": "postmaster" } ],
@@ -41,13 +42,13 @@
         "cookie": "JSESSIONID",
         "filters": [ {
             "uri": "regex:secure/SetupApplicationProperties.+",
-            "only_if": "{{databags.init.setup_filters_enabled}}",
+            "only_if": "{{databags.installer.setup_filters_enabled}}",
             "filters": [
-                { "type": "blocker", "config": {
-                  "not_if": "{{databags.blocker.disabled}}",
-                  "frame_css": "{{databags.blocker.frame_css}}",
-                  "div_css": "{{databags.blocker.div_css}}",
-                  "div_content": "{{databags.blocker.div_content}}"
+                { "type": "overlay", "config": {
+                  "only_if": "{{databags.installer.auto_submit_forms}}",
+                  "frame_css": "{{databags.installer.frame_css}}",
+                  "div_css": "{{databags.installer.div_css}}",
+                  "div_content": "{{databags.installer.div_content}}"
                 } },
 
                 { "type": "field", "config": {"name": "title", "value": "{{databags.init.title}}" } },
@@ -59,17 +60,17 @@
                         "unchecked": "jira-setupwizard-mode-public",
                         "swap_if": "{{databags.init.public_site}}" } },
 
-                { "type": "submit", "config": { "id": "jira-setupwizard", "only_if": "{{databags.init.auto_submit_forms}}"  } }
+                { "type": "submit", "config": { "id": "jira-setupwizard", "only_if": "{{databags.installer.auto_submit_forms}}"  } }
             ]
         }, {
             "uri": "regex:secure/SetupAdminAccount.+",
-            "only_if": "{{databags.init.setup_filters_enabled}}",
+            "only_if": "{{databags.installer.setup_filters_enabled}}",
             "filters": [
-                { "type": "blocker", "config": {
-                  "not_if": "{{databags.blocker.disabled}}",
-                  "frame_css": "{{databags.blocker.frame_css}}",
-                  "div_css": "{{databags.blocker.div_css}}",
-                  "div_content": "{{databags.blocker.div_content}}"
+                { "type": "overlay", "config": {
+                  "only_if": "{{databags.installer.auto_submit_forms}}",
+                  "frame_css": "{{databags.installer.frame_css}}",
+                  "div_css": "{{databags.installer.div_css}}",
+                  "div_content": "{{databags.installer.div_content}}"
                 } },
 
                 { "type": "field", "config": { "name":"fullname", "value": "{{databags.init.admin_fullname}}" } },
@@ -91,7 +92,7 @@
                 { "type": "field", "config": {"name":"type", "value": "jndi" } },
                 { "type": "field", "config": {"name":"jndiLocation", "value": "java:comp/env/mail/JiraMailServer" } },
 
-                { "type": "submit", "config": { "id": "jira-setupwizard", "only_if": "{{databags.init.auto_submit_forms}}" } },
+                { "type": "submit", "config": { "id": "jira-setupwizard", "only_if": "{{databags.installer.auto_submit_forms}}" } },
 
                 { "type": "plugin", "config": { "name": "setupLdap" } }
             ]
