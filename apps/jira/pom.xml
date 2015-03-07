@@ -11,7 +11,7 @@
     <dependencies>
         <dependency>
             <groupId>cloudstead</groupId>
-            <artifactId>cloudos-server</artifactId>
+            <artifactId>appstore-common</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

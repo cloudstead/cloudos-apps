@@ -10,7 +10,7 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
-    "databags": [
+    "config": [
         {
             "name": "base",
             "items": [ "hostname", "parent_domain", "ssl_cert_name" ]
@@ -35,14 +35,14 @@
 
     "packages": [ "memcached", "redis-server", "awscli" ],
 
-    "tarball": { "url": "@databag[init][server_tarball]" },
+    "tarball": { "url": "@config[init][server_tarball]" },
 
     "database": { "type": "postgresql" },
 
     "web": {
         "type": "apache", "apache": { "mods": ["@session_header"] },
         "mode": "proxy_root",
-        "ssl_cert_name": "@databag[base][ssl_cert_name]"
+        "ssl_cert_name": "@config[base][ssl_cert_name]"
     },
 
     "templates": {

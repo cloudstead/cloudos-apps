@@ -12,7 +12,7 @@
         "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
     },
 
-    "databags": [ {
+    "config": [ {
         "name": "init",
         "items": [ "admin.fullname", "admin.login", "admin.password", "admin.email",
                    "title", "email_prefix", "public_site",
@@ -32,7 +32,7 @@
         "url": "http://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-6.3.3.tar.gz"
     },
 
-    "database": { "type": "postgresql", "dbpass": "@databag[init][admin][password]" },
+    "database": { "type": "postgresql", "dbpass": "@config[init][admin][password]" },
 
     "packages": [ "jsvc" ],
 
@@ -102,18 +102,18 @@
     "cloudos_groups": {
         "jira-users": {
             "description": "JIRA users",
-            "mirror": "@databag[init][groups][users][mirror]",
-            "members": "@databag[init][groups][users][members]"
+            "mirror": "@config[init][groups][users][mirror]",
+            "members": "@config[init][groups][users][members]"
         },
         "jira-developers": {
             "description": "JIRA users",
-            "mirror": "@databag[init][groups][developers][mirror]",
-            "members": "@databag[init][groups][developers][members]"
+            "mirror": "@config[init][groups][developers][mirror]",
+            "members": "@config[init][groups][developers][members]"
         },
         "jira-administrators": {
             "description": "JIRA users",
-            "mirror": "@databag[init][groups][admins][mirror]",
-            "members": "@databag[init][groups][admins][members]"
+            "mirror": "@config[init][groups][admins][mirror]",
+            "members": "@config[init][groups][admins][members]"
         }
     },
 

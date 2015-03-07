@@ -1,0 +1,14 @@
+{
+  "id": "config-metadata",
+  "categories": {
+      "init": {
+      "fields": {
+        "admin.login": { "required": true, "type": "login" },
+        "admin.name": { "required": true },
+        "admin.password": { "required": true, "type": "password" },
+        "admin.email": { "required": true, "type": "email" },
+        "admin.bounce": { "required": true, "type": "email" }
+      }
+    }
+  }
+}

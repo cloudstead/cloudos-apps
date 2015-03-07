@@ -1,0 +1,30 @@
+{
+  "id": "translations",
+  "translations": {
+    "base": {
+      "hostname": { "label": "Hostname", "info": "First part of the public hostname of this system" },
+      "parent_domain": { "label": "Parent Domain", "info": "The remainder of the public hostname of this system" },
+      "ssl_cert_name": { "label": "SSL Certificate Name", "info": "The name of the SSL certificate to install" }
+    },
+    "init": {
+      "server_tarball": { "label": "CloudOs Server Bundle", "info": "URL of the CloudOs server bundle" },
+      "server_port": { "label": "CloudOs Server Port", "info": "CloudOs API will listen on this port (on localhost only)" },
+      "admin_initial_pass": { "label": "Admin Initial Password", "info": "This is a hash that is used to validate the correct password during first-time setup" },
+      "recovery_email": { "label": "Recovery Email", "info": "This is the email address that receives the first-time setup message when the cloudstead is ready to be unlocked" },
+      "aws_access_key": { "label": "AWS Access Key", "info": "This AWS access key is used to write to S3 for backups and other purposes" },
+      "aws_secret_key": { "label": "AWS Secret Key", "info": "This AWS access key is used to write to S3 for backups and other purposes" },
+      "aws_iam_user": { "label": "AWS IAM User", "info": "This IAM user ensures the cloudstead may only read/write to its own private slice of a shared S3 bucket" },
+      "s3_bucket": { "label": "S3 Bucket Nme", "info": "The S3 bucket for backups and other data storage" },
+      "authy.user": { "label": "Authy API Token", "info": "The Authy API Token to use for 2-factor authentication" },
+
+      "authy.base_uri": { "label": "Authy URL", "info": "The Authy API endpoint to use" },
+      "authy.base_uri.choice.https://api.authy.com": { "label": "Authy Production API (https://api.authy.com)" },
+      "authy.base_uri.choice.http://sandbox-api.authy.com": { "label": "Authy Sandbox API (http://sandbox-api.authy.com)" },
+
+      "dns.user": { "label": "Dyn User", "info": "Authenticate with this Dyn username" },
+      "dns.password": { "label": "Dyn User", "info": "Authenticate with this Dyn username" },
+      "dns.base_uri": { "label": "Dyn User", "info": "Authenticate with this Dyn username" },
+      "backup_cron_schedule": { "label": "Dyn User", "info": "Authenticate with this Dyn username" }
+    }
+  }
+}

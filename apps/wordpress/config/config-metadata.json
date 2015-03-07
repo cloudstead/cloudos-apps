@@ -1,0 +1,12 @@
+{
+  "id": "config-metadata",
+  "categories": {
+      "init": {
+      "fields": {
+        "admin.login": { "required": true, "type": "login" },
+        "admin.email": { "required": true, "type": "email" },
+        "admin.password": { "required": true, "type": "password" }
+      }
+    }
+  }
+}

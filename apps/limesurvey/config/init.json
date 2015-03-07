@@ -1,7 +1,7 @@
 {
   "id": "init",
 
-  "admin": { "login": "admin" },
+  "admin": { "login": "admin", "email": "postmaster@@hostname" },
 
   "language": "@lang",
   "title": "LimeSurvey"

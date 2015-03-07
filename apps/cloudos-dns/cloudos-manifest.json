@@ -10,7 +10,7 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
-    "databags": [ {
+    "config": [ {
         "name": "init",
         "items": [ "admin.name", "admin.password",
                    "dyndns.account", "dyndns.user", "dyndns.password", "dyndns.zone" ]
@@ -24,7 +24,7 @@
     "database": {
         "type": "postgresql",
         "inserts": [ {
-            "sql": "insert into dns_account (uuid, ctime, admin, name, hashed_password) VALUES ('@name', @now_millis, TRUE, '@databag[init][admin][name]', '@databag[init][admin][password]')",
+            "sql": "insert into dns_account (uuid, ctime, admin, name, hashed_password) VALUES ('@name', @now_millis, TRUE, '@config[init][admin][name]', '@config[init][admin][password]')",
             "unless": "select count(*) from dns_account where admin = true"
         } ]
     },

@@ -1,0 +1,13 @@
+{
+  "id": "config-metadata",
+  "categories": {
+      "init": {
+      "fields": {
+        "smtp_relay.user": { "required": true },
+        "smtp_relay.password": { "required": true, "type": "password" },
+        "smtp_relay.host": { "required": true, "type": "hostname" },
+        "smtp_relay.port": { "required": true, "type": "port" }
+      }
+    }
+  }
+}

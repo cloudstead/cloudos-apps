@@ -14,7 +14,7 @@
 
     "assets": { "taskbarIconAltText": "surveys" },
 
-    "databags": [ {
+    "config": [ {
         "name": "init",
         "items": [ "admin.login", "admin.password", "admin.name", "admin.email", "admin.bounce",
                    "language", "title" ]
@@ -30,17 +30,17 @@
     "database": {
         "type": "mysql",
         "inserts": [
-            { "sql": "INSERT INTO `lime_users` VALUES (1,'@databag[init][admin][login]','@sha256(@databag[init][admin][password])','@databag[init][admin][name]',0,'@lang','@databag[init][admin][email]','default','default','default',NULL,1,'@now(%Y-%m-%d %H:%M:%S)',NULL)",
-              "unless": "SELECT COUNT(*) FROM lime_users WHERE users_name='@databag[init][admin][login]'" },
+            { "sql": "INSERT INTO `lime_users` VALUES (1,'@config[init][admin][login]','@sha256(@config[init][admin][password])','@config[init][admin][name]',0,'@lang','@config[init][admin][email]','default','default','default',NULL,1,'@now(%Y-%m-%d %H:%M:%S)',NULL)",
+              "unless": "SELECT COUNT(*) FROM lime_users WHERE users_name='@config[init][admin][login]'" },
             { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('SessionName', '@uniq[0]_@uniq[1]')",
               "unless": "SELECT COUNT(*) FROM lime_settings_global WHERE stg_name='SessionName'" },
-            { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('sitename', '@databag[init][title]')",
+            { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('sitename', '@config[init][title]')",
               "unless": "SELECT COUNT(*) FROM lime_settings_global WHERE stg_name='sitename'" },
-            { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('siteadminname', '@databag[init][admin][name]')",
+            { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('siteadminname', '@config[init][admin][name]')",
               "unless": "SELECT COUNT(*) FROM lime_settings_global WHERE stg_name='siteadminname'" },
-            { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('siteadminemail', '@databag[init][admin][email]')",
+            { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('siteadminemail', '@config[init][admin][email]')",
               "unless": "SELECT COUNT(*) FROM lime_settings_global WHERE stg_name='siteadminemail'" },
-            { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('siteadminbounce', '@databag[init][admin][bounce]')",
+            { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('siteadminbounce', '@config[init][admin][bounce]')",
               "unless": "SELECT COUNT(*) FROM lime_settings_global WHERE stg_name='siteadminbounce'" },
             { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('defaultlang', '@lang')",
               "unless": "SELECT COUNT(*) FROM lime_settings_global WHERE stg_name='defaultlang'" }
@@ -59,8 +59,7 @@
     },
 
     "templates": {
-        "@doc_root/application/config/config.php": "_",
-        "@doc_root/application/config/ldap.php": "_"
+        "@doc_root/application/config/config.php": "_"
     },
 
     "perms": {

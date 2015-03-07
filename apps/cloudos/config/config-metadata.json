@@ -1,0 +1,31 @@
+{
+  "id": "config-metadata",
+  "categories": {
+    "base": {
+      "fields": {
+        "hostname": { "group": "system", "required": true, "type": "hostname_part" },
+        "parent_domain": { "group": "system", "required": true, "type": "hostname" },
+        "ssl_cert_name": { "group": "system", "required": true, "type": "filename" }
+      }
+    },
+    "init": {
+      "fields": {
+        "server_tarball": { "group": "cloudos", "required": true, "type": "url" },
+        "server_port": { "group": "cloudos", "required": true, "type": "port" },
+        "admin_initial_pass": { "group": "cloudos", "required": true, "type": "hash" },
+        "recovery_email": { "group": "cloudos", "required": true, "type": "email" },
+        "aws_access_key": { "group": "cloud", "required": true, "type": "field" },
+        "aws_secret_key": { "group": "cloud", "required": true, "type": "password" },
+        "aws_iam_user": { "group": "cloud", "required": true, "type": "field" },
+        "s3_bucket": { "group": "cloud", "required": true, "type": "hostname_part" },
+        "authy.user": { "group": "twofactor", "required": true, "type": "password" },
+        "authy.base_uri": { "group": "twofactor", "required": true,
+          "type": "pick_one", "choices": ["http://sandbox-api.authy.com", "https://api.authy.com"] },
+        "dns.user": { "group": "dns", "required": true, "type": "login" },
+        "dns.password": { "group": "dns", "required": true, "type": "password" },
+        "dns.base_uri": { "group": "dns", "required": true, "type": "http" },
+        "backup_cron_schedule": { "group": "backup", "required": true, "type": "cron" }
+      }
+    }
+  }
+}
