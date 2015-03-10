@@ -63,6 +63,10 @@
         "@doc_root/application/config/config.php": "_"
     },
 
+    "copy": {
+        "@files/AuthLDAP.php": "/var/www/limesurvey/application/core/plugins/AuthLDAP/AuthLDAP.php"
+    },
+
     "perms": {
          "@doc_root/tmp": { "perms": "770", "recursive": true },
          "@doc_root/upload": { "perms": "770", "recursive": true },
