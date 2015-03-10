@@ -17,7 +17,7 @@
     "packages" : [ "php5-imap", "php5-gd", "php5-json", "php5-curl",
                    "php5-intl", "php5-mcrypt", "php5-imagick" ],
 
-    "database": { "type": "postgresql" },
+    "database": { "type": "postgresql", "schema_version": "1.0" },
 
     "tarball": {
         "url": "http://kyuss.org/tmp2/roundcubemail-1.0.2.tar.gz",

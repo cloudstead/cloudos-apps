@@ -37,7 +37,7 @@
 
     "tarball": { "url": "@config[init][server_tarball]" },
 
-    "database": { "type": "postgresql" },
+    "database": { "type": "postgresql", "schema_version": "1.0" },
 
     "web": {
         "type": "apache", "apache": { "mods": ["@session_header"] },

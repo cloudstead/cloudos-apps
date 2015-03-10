@@ -19,7 +19,7 @@
     "shasum": "81b6a8741588ec2d0979e95e7862cd8a0e6272f37cb0c158a252460bfb3a67a7"
   },
 
-  "database": { "type": "mysql" },
+  "database": { "type": "mysql", "schema_version": "1.0" },
 
   "web": { "type": "apache", "mode": "service" },
 

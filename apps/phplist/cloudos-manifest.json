@@ -20,7 +20,7 @@
     },
 
     "database": {
-        "type": "mysql", "dbuser": "root",
+        "type": "mysql", "dbuser": "root", "schema_version": "1.0",
         "set_config": [ { "group": "mysqld", "name": "sql_mode", "value": "STRICT_ALL_TABLES" } ]
     },
 

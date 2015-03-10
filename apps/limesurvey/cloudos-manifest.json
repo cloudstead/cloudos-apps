@@ -29,6 +29,7 @@
 
     "database": {
         "type": "mysql",
+        "schema_version": "1.0",
         "inserts": [
             { "sql": "INSERT INTO `lime_users` VALUES (1,'@config[init][admin][login]','@sha256(@config[init][admin][password])','@config[init][admin][name]',0,'@lang','@config[init][admin][email]','default','default','default',NULL,1,'@now(%Y-%m-%d %H:%M:%S)',NULL)",
               "unless": "SELECT COUNT(*) FROM lime_users WHERE users_name='@config[init][admin][login]'" },

@@ -38,8 +38,10 @@
     "database": {
         "type": "mysql",
         "dbuser": "root",
+        "auto_migration": false,
         "set_config": [ { "group": "mysqld", "name": "sql_mode", "value": "STRICT_ALL_TABLES" } ],
         "init_command": { "exec": "phabricator/bin/storage upgrade --force" },
+        "upgrade_command": { "exec": "phabricator/bin/storage upgrade --force" },
         "inserts": [
             { "sql": "INSERT INTO `auth_providerconfig` VALUES (1,'PHID-AUTH-4lcuirex2wm4amih2uwp','PhabricatorCloudOsAuthProvider','cloudos','self',1,1,1,1,1,1,'[]',1407976572,1407976572)",
               "dbname": "phabricator_auth",

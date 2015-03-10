@@ -20,7 +20,7 @@
   },
 
   "database": {
-    "type": "mysql",
+    "type": "mysql", "schema_version": "1.0",
     "inserts": [ {
       "sql": "INSERT INTO piwik_option VALUES ('piwikUrl','https://@hostname/piwik/',1)",
       "unless": "SELECT COUNT(*) FROM piwik_option WHERE option_name='piwikUrl'"

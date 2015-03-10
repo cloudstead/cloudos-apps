@@ -18,7 +18,7 @@
 
     "web": { "type": "apache", "mode": "service", "apache": { "vhost": "enable" } },
 
-    "database": { "type": "postgresql", "unless": "calendars" },
+    "database": { "type": "postgresql", "unless": "calendars", "schema_version": "1.0" },
 
     "tarball": {
         "url": "http://git.kolab.org/roundcubemail-plugins-kolab/snapshot/roundcubemail-plugins-kolab-3.1.13.tar.gz",

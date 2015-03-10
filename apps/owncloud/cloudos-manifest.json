@@ -19,6 +19,7 @@
 
     "database": {
         "type": "postgresql",
+        "schema_version": "1.0",
         "inserts": [ {
             "sql": "insert into oc_preferences (userid, appid, configkey, configvalue) values ('admin', 'settings', 'email', 'root@@hostname');",
             "unless": "select count(*) from oc_preferences where userid='admin' and appid='settings' and configkey='email'"

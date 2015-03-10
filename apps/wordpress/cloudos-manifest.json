@@ -24,7 +24,7 @@
     "shasum": "3743d82698571903382dc223940e712f7bb5cfd20cedba7b7c32c97d470defab"
   },
 
-  "database": { "type": "mysql" },
+  "database": { "type": "mysql", "auto_migration": false },
 
   "copy": {
     "@files/httpful.phar": "@doc_root/httpful.phar"

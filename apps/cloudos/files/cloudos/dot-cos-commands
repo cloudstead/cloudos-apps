@@ -16,3 +16,4 @@ account:    cloudos.main.account.CloudOsAccountMain
 group:      cloudos.main.account.CloudOsGroupMain
 sudo:       cloudos.main.CloudOsServerMain
 json:       org.cobbzilla.util.json.main.JsonEditor
+db-migrate: cloudos.appstore.model.app.AppDatabaseMigration

@@ -32,7 +32,7 @@
         "url": "http://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-6.3.3.tar.gz"
     },
 
-    "database": { "type": "postgresql", "dbpass": "@config[init][admin][password]" },
+    "database": { "type": "postgresql", "dbpass": "@config[init][admin][password]", "auto_migration": false },
 
     "packages": [ "jsvc" ],
 
