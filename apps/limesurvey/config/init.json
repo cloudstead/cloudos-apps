@@ -1,7 +1,12 @@
 {
   "id": "init",
 
-  "admin": { "login": "admin", "email": "postmaster@@hostname" },
+  "admin": {
+    "login": "admin",
+    "name": "admin",
+    "email": "postmaster@@hostname",
+    "bounce": "postmaster@@hostname"
+  },
 
   "language": "@lang",
   "title": "LimeSurvey"

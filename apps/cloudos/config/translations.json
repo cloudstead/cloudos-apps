@@ -1,6 +1,6 @@
 {
   "id": "translations",
-  "translations": {
+  "categories": {
     "base": {
       "hostname": { "label": "Hostname", "info": "First part of the public hostname of this system" },
       "parent_domain": { "label": "Parent Domain", "info": "The remainder of the public hostname of this system" },

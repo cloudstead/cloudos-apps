@@ -1,6 +1,6 @@
 {
   "id": "translations",
-  "translations": {
+  "categories": {
     "init": {
       "admin.fullname": { "label": "Administrator Full Name", "info": "Full name of super-admin user" },
       "admin.login": { "label": "Administrator Login", "info": "Login for the Jira super-admin user" },

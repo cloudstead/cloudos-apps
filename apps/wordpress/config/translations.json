@@ -1,6 +1,6 @@
 {
   "id": "translations",
-  "translations": {
+  "categories": {
     "init": {
       "admin.name": { "label": "Admin Name", "info": "Full name of the person who is the admin" },
       "admin.email": { "label": "Admin Email", "info": "The email address associated with the admin account" },
