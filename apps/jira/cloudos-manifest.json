@@ -23,7 +23,7 @@
     }, {
         "name": "installer",
         "items": [ "setup_filters_enabled", "auto_submit_forms",
-                   "frame_css", "div_css", "div_content", "disabled" ]
+                   "frame_css", "div_css", "div_content" ]
     } ],
 
     "mailboxes": [ { "address": "jira", "alias_for": "postmaster" } ],

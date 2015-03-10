@@ -5,7 +5,7 @@
       "fields": {
         "admin.login": { "required": true, "type": "login" },
         "admin.email": { "required": true, "type": "email" },
-        "admin.password": { "required": true, "type": "password" }
+        "admin.password": { "required": true, "type": "password", "login": "admin.login" }
       }
     }
   }

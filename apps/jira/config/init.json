@@ -1,7 +1,11 @@
 {
   "id": "init",
 
-  "admin": { "login": "admin" },
+  "admin": {
+    "login": "admin",
+    "fullname": "admin",
+    "email": "postmaster@@hostname"
+  },
 
   "title": "JIRA",
   "email_prefix" : "[JIRA] ",

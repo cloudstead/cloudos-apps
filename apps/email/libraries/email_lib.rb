@@ -83,7 +83,7 @@ fi
 " >> #{virtual_file}  && \
 sed -i '/^ *$/d' #{virtual_file}  # strip blank lines
         EOF
-        not_if { %x(cat #{virtual_file} | grep #{account} | wc -l | tr -d '').strip.to_i > 0 }
+        not_if { %x(cat #{virtual_file} | grep #{account} | wc -l | tr -d '').to_i > 0 }
       end
 
     else
@@ -96,7 +96,7 @@ sed -i '/^ *$/d' #{virtual_file}  # strip blank lines
 " >> #{vmailbox}.users && \
 sed -i '/^ *$/d' #{vmailbox}.users  # strip blank lines
         EOF
-        not_if { %x(cat #{vmailbox}.users | grep #{account} | wc -l | tr -d '').strip.to_i > 0 }
+        not_if { %x(cat #{vmailbox}.users | grep #{account} | wc -l | tr -d '').to_i > 0 }
       end
     end
 

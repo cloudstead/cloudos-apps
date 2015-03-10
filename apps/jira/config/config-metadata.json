@@ -5,17 +5,17 @@
       "fields": {
         "admin.fullname": { "required": true },
         "admin.login": { "required": true, "type": "login" },
-        "admin.password": { "required": true, "type": "password" },
+        "admin.password": { "required": true, "type": "password", "login": "admin.login" },
         "admin.email": { "required": true },
         "title": { "required": true },
         "email_prefix": { "required": true },
         "public_site": { "required": true, "type": "yesno" },
         "groups.users.mirror": { "required": true, "type": "cloudos_group" },
-        "groups.users.members": { "required": true, "type": "member_list" },
+        "groups.users.members": { "required": false, "type": "member_list" },
         "groups.developers.mirror": { "required": true, "type": "cloudos_group" },
-        "groups.developers.members": { "required": true, "type": "member_list" },
+        "groups.developers.members": { "required": false, "type": "member_list" },
         "groups.admins.mirror": { "required": true, "type": "cloudos_group" },
-        "groups.admins.members": { "required": true, "type": "member_list" }
+        "groups.admins.members": { "required": false, "type": "member_list" }
       }
     },
     "installer": {
