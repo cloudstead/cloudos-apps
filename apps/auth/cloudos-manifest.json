@@ -12,7 +12,7 @@
 
     "pre_package": [ { "exec": "@files/pre_package.sh", "unless": "/etc/krb5kdc/setup.marker" } ],
 
-    "packages": [ "slapd", "ldap-utils", "krb5-kdc", "krb5-kdc-ldap", "krb5-admin-server", "ldapscripts" ],
+    "packages": [ "haveged", "slapd", "ldap-utils", "krb5-kdc", "krb5-kdc-ldap", "krb5-admin-server", "ldapscripts" ],
 
     "post_package": [ {
         "exec": "@files/post_package.sh @domain @password[ldap] @files/schema_convert.conf",
