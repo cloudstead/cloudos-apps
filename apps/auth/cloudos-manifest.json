@@ -39,7 +39,7 @@
     } ],
 
     "services": [
-        { "name": "krb5-kdc" },
+        { "name": "krb5-kdc", "pattern": "/usr/sbin/krb5kdc" },
         { "name": "krb5-admin-server", "pattern": "/usr/sbin/kadmind" }
     ],
 
