@@ -94,7 +94,7 @@
     },
 
     "copy": {
-        "@files/AuthLDAP.php": "/var/www/limesurvey/application/core/plugins/AuthLDAP/AuthLDAP.php"
+        "@files/AuthLDAP.php": "@doc_root/application/core/plugins/AuthLDAP/AuthLDAP.php"
     },
 
     "perms": {
