@@ -31,10 +31,10 @@
       "sql": "INSERT INTO piwik_option VALUES ('UpdateCheck_LastTimeChecked','@now(%s)',1)",
       "unless": "SELECT COUNT(*) FROM piwik_option WHERE option_name='UpdateCheck_LastTimeChecked'"
     }, {
-      "sql": "INSERT INTO piwik_site VALUES (1,'@hostname','https://@hostname','@now(%Y-%m-%d %H:%M:%S)',0,1,'','','@timezone','@currency_code','','','','','website',0)",
+      "sql": "INSERT INTO piwik_site VALUES (1,'@hostname','https://@hostname','@now(mysql)',0,1,'','','@timezone','@currency_code','','','','','website',0)",
       "unless": "SELECT COUNT(*) FROM piwik_site"
     }, {
-      "sql": "INSERT INTO piwik_user VALUES ('anonymous','','anonymous','anonymous@example.org','anonymous',0,'@now(%Y-%m-%d %H:%M:%S)');",
+      "sql": "INSERT INTO piwik_user VALUES ('anonymous','','anonymous','anonymous@example.org','anonymous',0,'@now(mysql)');",
       "unless": "SELECT COUNT(*) FROM piwik_user WHERE login='anonymous'"
     } ]
   },

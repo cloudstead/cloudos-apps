@@ -12,22 +12,54 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
+    "config": [ {
+        "name": "init",
+        "items": [ "organization", "locale", "admin.name", "admin.password", "admin.email" ]
+    }, {
+        "name": "bounce",
+        "items": [ "username", "password", "unsub_threshold" ]
+    } ],
+
+    "mailboxes": [ { "address": "@config[bounce][username]" } ],
+
     "assets": { "taskbarIconAltText": "mailing lists" },
 
     "tarball": {
-        "url": "http://downloads.sourceforge.net/project/phplist/phplist/3.0.8/phplist-3.0.8.tgz?r=&ts=1412150382&use_mirror=softlayer-dal",
-        "shasum": "4f3a8f7a219c312deb351c9bb902edae9e18ac6ae698451e8fcf4df89e23e98a"
+        "url": "http://cloudstead.io/downloads/phplist-3.0.8.tgz",
+        "shasum": "4f3a8f7a219c312deb351c9bb902edae9e18ac6ae698451e8fcf4df89e23e98a",
+        "copy": [ {"from": "public_html/lists/", "to": "@doc_root"} ]
     },
 
     "database": {
-        "type": "mysql", "dbuser": "root", "schema_version": "1.0",
-        "set_config": [ { "group": "mysqld", "name": "sql_mode", "value": "STRICT_ALL_TABLES" } ]
+        "type": "mysql", "auto_migration": false,
+        "set_config": [ { "group": "mysqld", "name": "sql_mode", "value": "STRICT_ALL_TABLES" } ],
+        "inserts": [ {
+          "sql": "INSERT INTO phplist_admin VALUES (NULL,'admin','@config[init][admin][name]','@config[init][admin][email]','@now(mysql)','@now(mysql)',NULL,'@md5(@config[init][admin][password])','@now(%Y-%m-%d)',1,0,NULL)",
+          "unless": "SELECT COUNT(*) FROM phplist_admin WHERE loginname='admin'"
+        }, {
+          "sql": "INSERT INTO phplist_config VALUES ('admin_address','@config[init][admin][email]',1,NULL)",
+          "unless": "SELECT COUNT(*) FROM phplist_config WHERE item='admin_address'"
+        }, {
+          "sql": "INSERT INTO phplist_config VALUES ('lastlanguageupdate-@config[init][locale]','@now(%s)',0,NULL)",
+          "unless": "SELECT COUNT(*) FROM phplist_config WHERE item='lastlanguageupdate-@config[init][locale]'"
+        }, {
+          "sql": "INSERT INTO phplist_config VALUES ('message_from_name','@config[init][admin][name]',1,NULL)",
+          "unless": "SELECT COUNT(*) FROM phplist_config WHERE item='message_from_name'"
+        }, {
+          "sql": "INSERT INTO phplist_config VALUES ('organisation_name','@config[init][organization]',1,NULL)",
+          "unless": "SELECT COUNT(*) FROM phplist_config WHERE item='organisation_name'"
+        }, {
+          "sql": "INSERT INTO phplist_config VALUES ('updatelastcheck','@now(mysql)',0,NULL)",
+          "unless": "SELECT COUNT(*) FROM phplist_config WHERE item='updatelastcheck'"
+        }, {
+          "sql": "INSERT INTO phplist_config VALUES ('version','3.0.8',0,NULL)",
+          "unless": "SELECT COUNT(*) FROM phplist_config WHERE item='version'"
+        } ]
     },
 
-    "web": {
-        "type": "apache",
-        "mode": "vhost"
-    },
+    "templates": { "@doc_root/config/config.php": "_" },
+
+    "web": { "type": "apache", "mode": "vhost" },
 
     "auth": {}
 }

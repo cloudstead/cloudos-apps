@@ -16,7 +16,7 @@
 
     "assets": { "taskbarIconAltText": "calendar" },
 
-    "web": { "type": "apache", "mode": "service", "apache": { "vhost": "enable" } },
+    "web": { "type": "apache", "mode": "service" },
 
     "database": { "type": "postgresql", "unless": "calendars", "schema_version": "1.0" },
 

@@ -31,7 +31,7 @@
         "type": "mysql",
         "schema_version": "1.0",
         "inserts": [
-            { "sql": "INSERT INTO `lime_users` VALUES (NULL,'@config[init][admin][login]','@sha256(@config[init][admin][password])','@config[init][admin][name]',0,'@lang','@config[init][admin][email]','default','default','default',NULL,1,'@now(%Y-%m-%d %H:%M:%S)',NULL)",
+            { "sql": "INSERT INTO `lime_users` VALUES (NULL,'@config[init][admin][login]','@sha256(@config[init][admin][password])','@config[init][admin][name]',0,'@lang','@config[init][admin][email]','default','default','default',NULL,1,'@now(mysql)',NULL)",
               "unless": "SELECT COUNT(*) FROM lime_users WHERE users_name='@config[init][admin][login]'" },
             { "sql": "INSERT INTO lime_settings_global (stg_name, stg_value) VALUES ('SessionName', '@uniq[0]_@uniq[1]')",
               "unless": "SELECT COUNT(*) FROM lime_settings_global WHERE stg_name='SessionName'" },

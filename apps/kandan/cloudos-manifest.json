@@ -9,7 +9,7 @@
         "maintainer_email": "jonathan@cloudstead.io",
         "license": "https://raw.githubusercontent.com/kandanapp/kandan/master/LICENSE",
         "code_copyright": "Copyright 2014 https://github.com/kandanapp/kandan#credits",
-        "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+        "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
     },
 
     "assets": { "taskbarIconAltText": "chat" },

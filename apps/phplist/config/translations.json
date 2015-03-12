@@ -1,0 +1,42 @@
+{
+  "id": "translations",
+  "categories": {
+    "init": {
+      "organization": { "label": "Organization", "info": "The name of the organization that uses this service" },
+      "admin.name": { "label": "Admin Name", "info": "Name of the administrator user" },
+      "admin.password": { "label": "Admin Password", "info": "The administrator password" },
+      "admin.email": { "label": "Admin Email", "info": "The administrator's email address" },
+      "locale": { "label": "Locale", "info": "Determines the local language that will be used" },
+      "locale.choice.ca": { "label": "Català" },
+      "locale.choice.da": { "label": "Danske" },
+      "locale.choice.de": { "label": "Deutsch" },
+      "locale.choice.en": { "label": "English" },
+      "locale.choice.es": { "label": "espa&ntilde;ol" },
+      "locale.choice.es_AR": { "label": "espa&ntilde;ol (Argentina)" },
+      "locale.choice.fr": { "label": "Française" },
+      "locale.choice.it": { "label": "Italiano" },
+      "locale.choice.hu": { "label": "Magyar" },
+      "locale.choice.nl": { "label": "Nederlands" },
+      "locale.choice.pl": { "label": "Polski" },
+      "locale.choice.pt_BR": { "label": "Portugu&ecirc;s (Brazil)" },
+      "locale.choice.sl": { "label": "Slovenian" },
+      "locale.choice.fi": { "label": "Suomi" },
+      "locale.choice.sv": { "label": "Svenska" },
+      "locale.choice.zh_TW": { "label": "Traditional Chinese" },
+      "locale.choice.vi": { "label": "Việt" },
+      "locale.choice.nl_BE": { "label": "Vlaams" },
+      "locale.choice.el": { "label": "ελληνικά" },
+      "locale.choice.ru": { "label": "русский" },
+      "locale.choice.he": { "label": "עברית" },
+      "locale.choice.ar": { "label": "العربية" },
+      "locale.choice.fa": { "label": "فارسی" },
+      "locale.choice.ja": { "label": "ææè" },
+      "locale.choice.zh_CN": { "label": "çääæ" }
+    },
+    "bounce": {
+      "username": { "label": "Bounce User Name", "info": "Bounced email messages will be delivered to this account's mailbox" },
+      "password": { "label": "Bounce User Password", "info": "The password to use when removing mail from the bounce user's mailbox" },
+      "unsub_threshold": { "label": "Unsubscribe Threshold", "info": "After this many bounced messages, the recipient will be automatically unsubscribed from the list" }
+    }
+  }
+}

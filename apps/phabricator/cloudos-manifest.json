@@ -53,10 +53,7 @@
         "type": "apache",
         "mode": "vhost",
         "doc_root": "phabricator/webroot",
-        "apache": {
-            "vhost": "enable",
-            "dir": [ "@doc_root" ]
-        }
+        "apache": { "dir": [ "@doc_root" ] }
     },
 
     "dirs": [ "/var/repo" ],

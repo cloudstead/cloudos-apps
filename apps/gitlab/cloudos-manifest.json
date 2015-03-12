@@ -31,7 +31,7 @@
     "web": {
         "type": "apache",
         "mode": "proxy",
-        "apache": { "vhost": "enable", "location": [ "/" ] }
+        "apache": { "location": [ "/" ] }
     },
 
     "dirs": [ "gitlab-satellites", "repositories", "repositories/root" ],

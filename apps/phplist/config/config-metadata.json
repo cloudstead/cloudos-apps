@@ -1,0 +1,24 @@
+{
+  "id": "config-metadata",
+  "categories": {
+    "init": {
+      "fields": {
+        "organization": { "required": true, "type": "field", "min": 1, "max": 100 },
+        "locale": {
+          "required": true, "type": "pick_one",
+          "choices": ["ca", "da", "de", "en", "es", "es_AR", "fr", "it", "hu", "nl", "pl", "pt_BR", "sl", "fi", "sv", "zh_TW", "vi", "nl_BE", "el", "ru", "he", "ar", "fa", "ja", "zh_CN"]
+        },
+        "admin.name": { "required": true, "type": "login" },
+        "admin.password": { "required": true, "type": "password", "login": "#admin", "min": 8 },
+        "admin.email": { "required": true, "type": "email" }
+      }
+    },
+    "bounce": {
+      "fields": {
+        "username": { "required": true, "type": "login" },
+        "password": { "required": true, "type": "password", "login": "username" },
+        "unsub_threshold": { "required": false, "type": "integer", "min": 1, "max": 100 }
+      }
+    }
+  }
+}
