@@ -34,10 +34,10 @@
         "type": "mysql", "auto_migration": false,
         "set_config": [ { "group": "mysqld", "name": "sql_mode", "value": "STRICT_ALL_TABLES" } ],
         "inserts": [ {
-          "sql": "INSERT INTO phplist_admin VALUES (NULL,'admin','@config[init][admin][name]','@config[init][admin][email]','@now(mysql)','@now(mysql)',NULL,'@md5(@config[init][admin][password])','@now(%Y-%m-%d)',1,0,NULL)",
+          "sql": "INSERT INTO phplist_admin VALUES (NULL,'admin','admin','postmaster@@hostname','@now(mysql)','@now(mysql)',NULL,'@md5(@rand[0])','@now(%Y-%m-%d)',1,0,NULL)",
           "unless": "SELECT COUNT(*) FROM phplist_admin WHERE loginname='admin'"
         }, {
-          "sql": "INSERT INTO phplist_config VALUES ('admin_address','@config[init][admin][email]',1,NULL)",
+          "sql": "INSERT INTO phplist_config VALUES ('admin_address','postmaster@@hostname',1,NULL)",
           "unless": "SELECT COUNT(*) FROM phplist_config WHERE item='admin_address'"
         }, {
           "sql": "INSERT INTO phplist_config VALUES ('lastlanguageupdate-@config[init][locale]','@now(%s)',0,NULL)",
@@ -58,6 +58,11 @@
     },
 
     "templates": { "@doc_root/config/config.php": "_" },
+
+    "copy": {
+        "@files/httpful.phar": "@doc_root/httpful.phar",
+        "@files/cloudos_auth.inc": "@doc_root/admin/auth/cloudos_auth.inc"
+    },
 
     "web": { "type": "apache", "mode": "vhost" },
 

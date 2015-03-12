@@ -3,9 +3,6 @@
   "categories": {
     "init": {
       "organization": { "label": "Organization", "info": "The name of the organization that uses this service" },
-      "admin.name": { "label": "Admin Name", "info": "Name of the administrator user" },
-      "admin.password": { "label": "Admin Password", "info": "The administrator password" },
-      "admin.email": { "label": "Admin Email", "info": "The administrator's email address" },
       "locale": { "label": "Locale", "info": "Determines the local language that will be used" },
       "locale.choice.ca": { "label": "Català" },
       "locale.choice.da": { "label": "Danske" },

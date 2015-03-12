@@ -1,9 +1,5 @@
 {
   "id": "init",
   "organization": "@hostname",
-  "locale": "@locale",
-  "admin": {
-    "name": "admin",
-    "email": "postmaster@@hostname"
-  }
+  "locale": "@locale"
 }
