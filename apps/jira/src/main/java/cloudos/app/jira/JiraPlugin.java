@@ -8,7 +8,7 @@ import org.cobbzilla.util.http.HttpMethods;
 import java.sql.*;
 import java.util.Map;
 
-import static cloudos.appstore.model.app.filter.AppFilterHandler.FSCOPE_APP_CONFIG;
+import static cloudos.appstore.model.app.filter.AppFilterHandler.FSCOPE_CONFIG;
 import static cloudos.appstore.model.app.filter.AppFilterHandler.FSCOPE_METHOD;
 import static org.cobbzilla.util.mustache.MustacheUtil.render;
 
@@ -81,7 +81,7 @@ public class JiraPlugin extends ConfigurableAppRuntime {
     private boolean shouldDoLdapSetup(String document, Map<String, Object> scope) {
 
         try {
-            final Map<String, Map<String, String>> databags = (Map<String, Map<String, String>>) scope.get(FSCOPE_APP_CONFIG);
+            final Map<String, Map<String, String>> databags = (Map<String, Map<String, String>>) scope.get(FSCOPE_CONFIG);
             final Map<String, String> initBag = databags.get("init");
             if (initBag != null) {
                 @Cleanup Connection conn = getConnection(details.getName(), initBag);
@@ -105,7 +105,7 @@ public class JiraPlugin extends ConfigurableAppRuntime {
     }
 
     private void setupLdap(Map<String, Object> scope) {
-        final Map<String, Map<String, String>> databags = (Map<String, Map<String, String>>) scope.get(FSCOPE_APP_CONFIG);
+        final Map<String, Map<String, String>> databags = (Map<String, Map<String, String>>) scope.get(FSCOPE_CONFIG);
         final Map<String, String> initBag = databags.get("init");
         try {
             @Cleanup Connection conn = getConnection(details.getName(), initBag);

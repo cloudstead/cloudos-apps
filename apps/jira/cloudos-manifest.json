@@ -42,49 +42,49 @@
         "cookie": "JSESSIONID",
         "filters": [ {
             "uri": "regex:secure/SetupApplicationProperties.+",
-            "only_if": "{{databags.installer.setup_filters_enabled}}",
+            "only_if": "{{config.installer.setup_filters_enabled}}",
             "filters": [
                 { "type": "overlay", "config": {
-                  "only_if": "{{databags.installer.auto_submit_forms}}",
-                  "frame_css": "{{databags.installer.frame_css}}",
-                  "div_css": "{{databags.installer.div_css}}",
-                  "div_content": "{{databags.installer.div_content}}"
+                  "only_if": "{{config.installer.auto_submit_forms}}",
+                  "frame_css": "{{config.installer.frame_css}}",
+                  "div_css": "{{config.installer.div_css}}",
+                  "div_content": "{{config.installer.div_content}}"
                 } },
 
-                { "type": "field", "config": {"name": "title", "value": "{{databags.init.title}}" } },
+                { "type": "field", "config": {"name": "title", "value": "{{config.init.title}}" } },
                 { "type": "field", "config": {"name": "baseURL", "value": "{{app.path}}" } },
 
                 { "type": "radio",
                     "config": {
                         "checked": "jira-setupwizard-mode-private",
                         "unchecked": "jira-setupwizard-mode-public",
-                        "swap_if": "{{databags.init.public_site}}" } },
+                        "swap_if": "{{config.init.public_site}}" } },
 
-                { "type": "submit", "config": { "id": "jira-setupwizard", "only_if": "{{databags.installer.auto_submit_forms}}"  } }
+                { "type": "submit", "config": { "id": "jira-setupwizard", "only_if": "{{config.installer.auto_submit_forms}}"  } }
             ]
         }, {
             "uri": "regex:secure/SetupAdminAccount.+",
-            "only_if": "{{databags.installer.setup_filters_enabled}}",
+            "only_if": "{{config.installer.setup_filters_enabled}}",
             "filters": [
                 { "type": "overlay", "config": {
-                  "only_if": "{{databags.installer.auto_submit_forms}}",
-                  "frame_css": "{{databags.installer.frame_css}}",
-                  "div_css": "{{databags.installer.div_css}}",
-                  "div_content": "{{databags.installer.div_content}}"
+                  "only_if": "{{config.installer.auto_submit_forms}}",
+                  "frame_css": "{{config.installer.frame_css}}",
+                  "div_css": "{{config.installer.div_css}}",
+                  "div_content": "{{config.installer.div_content}}"
                 } },
 
-                { "type": "field", "config": { "name":"fullname", "value": "{{databags.init.admin_fullname}}" } },
-                { "type": "field", "config": { "name":"email", "value": "{{databags.init.admin_email}}" } },
-                { "type": "field", "config": { "name":"username", "value": "{{databags.init.admin_login}}" } },
-                { "type": "field", "config": { "name":"password", "value": "{{databags.init.admin_password}}" } },
-                { "type": "field", "config": { "name":"confirm", "value": "{{databags.init.admin_password}}" } },
+                { "type": "field", "config": { "name":"fullname", "value": "{{config.init.admin_fullname}}" } },
+                { "type": "field", "config": { "name":"email", "value": "{{config.init.admin_email}}" } },
+                { "type": "field", "config": { "name":"username", "value": "{{config.init.admin_login}}" } },
+                { "type": "field", "config": { "name":"password", "value": "{{config.init.admin_password}}" } },
+                { "type": "field", "config": { "name":"confirm", "value": "{{config.init.admin_password}}" } },
 
                 { "type": "radio",
                     "config": { "checked": "jira-setupwizard-email-notifications-enabled", "unchecked": "jira-setupwizard-email-notifications-disabled" } },
 
                 { "type": "field", "config": { "name": "name", "value": "Local CloudOs SMTP Server" } },
                 { "type": "field", "config": { "name": "from", "value": "jira@{{config.hostname}}" } },
-                { "type": "field", "config": { "name": "prefix", "value": "{{databags.init.email_prefix}}" } },
+                { "type": "field", "config": { "name": "prefix", "value": "{{config.init.email_prefix}}" } },
 
                 { "type": "radio",
                     "config": { "checked": "jira-setupwizard-email-notifications-jndi", "unchecked": "jira-setupwizard-email-notifications-smtp" } },
@@ -92,7 +92,7 @@
                 { "type": "field", "config": {"name":"type", "value": "jndi" } },
                 { "type": "field", "config": {"name":"jndiLocation", "value": "java:comp/env/mail/JiraMailServer" } },
 
-                { "type": "submit", "config": { "id": "jira-setupwizard", "only_if": "{{databags.installer.auto_submit_forms}}" } },
+                { "type": "submit", "config": { "id": "jira-setupwizard", "only_if": "{{config.installer.auto_submit_forms}}" } },
 
                 { "type": "plugin", "config": { "name": "setupLdap" } }
             ]
