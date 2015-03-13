@@ -6,7 +6,7 @@
         "admin.fullname": { "required": true },
         "admin.login": { "required": true, "type": "login" },
         "admin.password": { "required": true, "type": "password", "login": "admin.login" },
-        "admin.email": { "required": true },
+        "admin.email": { "required": true, "type": "email" },
         "title": { "required": true },
         "email_prefix": { "required": true },
         "public_site": { "required": true, "type": "yesno" },

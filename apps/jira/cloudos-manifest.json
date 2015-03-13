@@ -83,7 +83,7 @@
                     "config": { "checked": "jira-setupwizard-email-notifications-enabled", "unchecked": "jira-setupwizard-email-notifications-disabled" } },
 
                 { "type": "field", "config": { "name": "name", "value": "Local CloudOs SMTP Server" } },
-                { "type": "field", "config": { "name": "from", "value": "jira@{{config.hostname}}" } },
+                { "type": "field", "config": { "name": "from", "value": "jira@{{system.hostname}}" } },
                 { "type": "field", "config": { "name": "prefix", "value": "{{config.init.email_prefix}}" } },
 
                 { "type": "radio",
