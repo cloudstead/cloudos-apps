@@ -174,6 +174,14 @@ class AuthLDAP extends AuthPluginBase
      */
     public function newUserSession()
     {
+
+        // Do nothing if this user is not supposed to be authenticated through ldap
+        $identity = $this->getEvent()->get('identity');
+        if ($identity->plugin != 'AuthLDAP')
+        {
+            return;
+        }
+
         // Here we do the actual authentication       
         $username = $this->getUsername();
         $password = $this->getPassword();
