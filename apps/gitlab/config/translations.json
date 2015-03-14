@@ -1,0 +1,17 @@
+{
+  "id": "translations",
+  "categories": {
+    "init": {
+      "email_sender": { "label": "Email From", "info": "Emails sent by gitlab will come from this email address" },
+      "email_sender_alias": { "label": "Email From Alias", "info": "Messages sent to the Email From address will be delivered to this account or group" },
+      "default_project.visibility_level": { "label": "Visibility Level", "info": "How visible should your gitlab application be to the world?" },
+      "default_project.visibility_level.choice.private": { "label": "Private", "info": "Gitlab will be in private mode" },
+      "default_project.visibility_level.choice.public": { "label": "Public", "info": "Gitlab will be in public mode" },
+      "default_project.visibility_level.choice.internal": { "label": "Internal", "info": "Gitlab will be in internal mode" },
+      "default_project.snippets": { "label": "Enable snippets", "info": "Enable snippets" },
+      "default_project.wiki": { "label": "Enable wiki", "info": "Enable wiki" },
+      "default_project.merge_requests": { "label": "Enable merge requests", "info": "Enable merge requests" },
+      "default_project.issues": { "label": "Enable issues", "info": "Enable issues" }
+    }
+  }
+}

@@ -7,6 +7,11 @@
 # 2. Replace gitlab -> host with your domain
 # 3. Replace gitlab -> email_from
 
+<%
+base = Chef::Recipe::Base
+default_project = @app[:databag][:init]['default_project']
+%>
+
 production: &base
   #
   # 1. GitLab app settings
@@ -33,7 +38,7 @@ production: &base
 
     ## Email settings
     # Email address used in the "From" field in mails sent by GitLab
-    email_from: <%=@app[:name]%>@<%=@app[:hostname]%>
+    email_from: <%=@app[:databag][:init]['email_sender']%>@<%=@app[:hostname]%>
 
     # Email server smtp settings are in [a separate file](initializers/smtp_settings.rb.sample).
 
@@ -71,11 +76,11 @@ production: &base
 
     ## Default project features settings
     default_projects_features:
-      issues: true
-      merge_requests: true
-      wiki: true
-      snippets: false
-      visibility_level: "private"  # can be "private" | "internal" | "public"
+      issues: <%=default_project['issues']%>
+      merge_requests: <%=default_project['merge_requests']%>
+      wiki: <%=default_project['wiki']%>
+      snippets: <%=default_project['snippets']%>
+      visibility_level: "<%=default_project['visibility_level']%>"  # can be "private" | "internal" | "public"
 
     ## Repository downloads directory
     # When a user clicks e.g. 'Download zip' on a project, a temporary zip file is created in the following directory.
@@ -126,13 +131,13 @@ production: &base
   # You can inspect a sample of the LDAP users with login access by running:
   #   bundle exec rake gitlab:ldap:check RAILS_ENV=production
   ldap:
-    enabled: false
-    host: '_your_ldap_server'
-    port: 636
-    uid: 'sAMAccountName'
-    method: 'ssl' # "tls" or "ssl" or "plain"
-    bind_dn: '_the_full_dn_of_the_user_you_will_bind_with'
-    password: '_the_password_of_the_bind_user'
+    enabled: true
+    host: '127.0.0.1'
+    port: 389
+    uid: 'uid'
+    method: 'plain' # "tls" or "ssl" or "plain"
+    bind_dn: 'cn=cloudos,<%=@app[:ldap_domain]%>'
+    password: '<%=base.password('ldap')%>'
     # If allow_username_or_email_login is enabled, GitLab will ignore everything
     # after the first '@' in the LDAP username submitted by the user on login.
     #
@@ -148,14 +153,14 @@ production: &base
     #
     #   Ex. ou=People,dc=gitlab,dc=example
     #
-    base: ''
+    base: 'ou=People,cn=cloudos,dc=cloudstead,dc=io'
 
     # Filter LDAP users
     #
     #   Format: RFC 4515
     #   Ex. (employeeType=developer)
     #
-    user_filter: ''
+    user_filter: '(objectClass=inetOrgPerson)'
 
 
   ## OmniAuth settings

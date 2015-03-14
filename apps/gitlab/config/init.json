@@ -1,0 +1,12 @@
+{
+  "id": "init",
+  "email_sender": "gitlab",
+  "email_sender_alias": "postmaster",
+  "default_project": {
+    "visibility_level": "private",
+    "snippets": false,
+    "wiki": true,
+    "merge_requests": true,
+    "issues": true
+  }
+}

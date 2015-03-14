@@ -2,7 +2,7 @@
     "version": "0.1.0",
     "name": "gitlab",
     "style": "rails",
-    "run_as": { "user": "git" },
+    "run_as": { "user": "git", "can_login": true },
     "interactive": true,
 
     "publisher": {
@@ -17,10 +17,19 @@
                   "libssl-dev", "libgdbm-dev", "libreadline-dev", "libmysqlclient-dev",
                   "libncurses5-dev", "libffi-dev", "curl", "git-core", "redis-server" ],
 
+    "config": [ {
+      "name": "init",
+      "items": [ "email_sender", "email_sender_alias",
+                 "default_project.visibility_level", "default_project.snippets",
+                 "default_project.wiki", "default_project.merge_requests", "default_project.issues" ]
+    } ],
+
+    "mailboxes": [ { "address": "@config[init][email_sender]", "alias_for": "@config[init][email_sender_alias]" } ],
+
     "database": {
         "type": "postgresql",
         "dbname": "gitlabhq_production",
-        "options": { "rake_tasks": [ "gitlab:setup" ] }
+        "options": { "rake_create_tasks": [ "gitlab:setup" ] }
     },
 
     "repo": {
@@ -44,12 +53,15 @@
 
     "symlinks": { "@repo/@name": "@repo" },
 
+    "copy": { "@repo/lib/support/init.d/gitlab": "/etc/init.d/gitlab" },
+
     "perms": {
         "@repo/log": { "perms": "-R u+rwX" },
         "@repo/tmp": { "perms": "-R u+rwX" },
         "@repo/public/uploads": { "perms": "-R u+rwX" },
         "gitlab-satellites": { "perms": "u+rwx,g=rx,o-rwx" },
-        "@repo/config/database.yml": { "perms": "o-rwx" }
+        "@repo/config/database.yml": { "perms": "o-rwx" },
+        "/etc/init.d/gitlab": { "chown": "root", "perms": "755" }
     },
 
     "post_install": [
@@ -61,8 +73,17 @@
 
     "logrotate": [ "gitlab-shell/gitlab-shell.log" ],
 
-    "sysinit": [ "@repo/lib/support/init.d/gitlab" ],
+    "services": [ { "name": "gitlab", "pattern": "unicorn_rails (.+ )?-D -c @repo/config/unicorn.rb" } ],
 
-    "auth": {}
+    "auth": {
+      "login_path": "users/auth/ldap/callback",
+      "login_fields": {
+        "utf8": "✓",
+        "username": "{{account.name}}",
+        "password": "{{account.password}}",
+        "authenticity_token": "pass"
+      },
+      "login_page_markers": [ "<div class=\"login-box ", "id=\"password\"", "name=\"password\"", "value=\"LDAP Sign in\"" ]
+    }
 
 }

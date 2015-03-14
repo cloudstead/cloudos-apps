@@ -1,0 +1,17 @@
+{
+  "id": "config-metadata",
+  "categories": {
+    "init": {
+      "fields": {
+        "email_sender": { "required": true, "type": "email_name" },
+        "email_sender_alias": { "required": true, "type": "email_name" },
+        "default_project.visibility_level":  { "required": true, "type": "pick_one",
+          "choices": ["public", "private", "internal"] },
+        "default_project.snippets": { "required": true, "type": "yesno" },
+        "default_project.wiki": { "required": true, "type": "yesno" },
+        "default_project.merge_requests": { "required": true, "type": "yesno" },
+        "default_project.issues": { "required": true, "type": "yesno" }
+      }
+    }
+  }
+}
