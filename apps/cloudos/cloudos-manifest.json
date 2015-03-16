@@ -97,7 +97,7 @@
     ],
 
     "post_validate": [
-        { "exec": "@home/validate_services.sh" },
+        { "exec": "@files/validate_services.sh" },
         { "exec": "@home/first_time_setup.sh" }
     ],
 
