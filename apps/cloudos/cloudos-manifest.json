@@ -93,7 +93,8 @@
         { "exec": "cos cos-dns --operation add --record a  --fqdn @hostname    --value @ipaddress   --ttl 14400" },
         { "exec": "cos cos-dns --operation add --record a  --fqdn mx.@hostname --value @ipaddress   --ttl 14400" },
         { "exec": "cos cos-dns --operation add --record mx --fqdn @hostname    --value mx.@hostname --ttl 14400 --options rank=1" },
-        { "exec": "service cron restart" }
+        { "exec": "service cron restart" },
+        { "exec": "service apache2 restart" }
     ],
 
     "post_validate": [
