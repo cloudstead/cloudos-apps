@@ -78,7 +78,11 @@ fi
       chef.bash "add email alias #{account} to #{virtual_file}" do
         user 'root'
         code <<-EOF
-  echo "
+if [ ! -f #{virtual_file} ] ; then
+  touch #{virtual_file}
+fi
+chown root.root #{virtual_file} && chmod 700 #{virtual_file} && \
+echo "
 #{account}  #{deliver_to_account}
 " >> #{virtual_file}  && \
 sed -i '/^ *$/d' #{virtual_file}  # strip blank lines
@@ -105,7 +109,9 @@ sed -i '/^ *$/d' #{vmailbox}.users  # strip blank lines
       code <<-EOF
 postmap #{vmailbox}
 if [ ! -z "#{virtual_file}" ] ; then
-  if [ -f #{virtual_file} ] ; then postmap #{virtual_file} ; fi
+  if [ -f #{virtual_file} ] ; then
+    chown root.root #{virtual_file} &&  chmod 700 #{virtual_file} &&  postmap #{virtual_file}
+  fi
 fi
 EOF
     end
