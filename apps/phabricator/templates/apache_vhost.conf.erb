@@ -1,4 +1,5 @@
 RewriteEngine on
+RewriteRule ^/__cloudos__/(.*) - [END]
 RewriteRule ^/rsrc/(.*)     -                       [L,QSA]
 RewriteRule ^/favicon.ico   -                       [L,QSA]
 RewriteRule ^(.*)$          /index.php?__path__=$1  [B,L,QSA]
