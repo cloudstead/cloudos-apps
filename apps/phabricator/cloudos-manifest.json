@@ -14,20 +14,15 @@
 
     "packages": [ "php-pear", "php5-curl", "php5-gd", "libpcre3-dev", "g++" ],
 
-    "repo": {
-        "url": "https://github.com/cobbzilla/phabricator.git",
-        "branch": "cloudstead"
-    },
+    "repo": { "url": "https://github.com/cobbzilla/phabricator.git", "branch": "cloudstead" },
 
-    "supporting_repos": [
-        {
-            "url": "https://github.com/phacility/libphutil.git",
-            "branch": "master"
-        }, {
-            "url": "https://github.com/phacility/arcanist.git",
-            "branch": "master"
-        }
-    ],
+    "supporting_repos": [ {
+        "url": "https://github.com/phacility/libphutil.git",
+        "branch": "master"
+    }, {
+        "url": "https://github.com/phacility/arcanist.git",
+        "branch": "master"
+    } ],
 
     "prep_code": [
         { "exec": "/var/www/phabricator/libphutil/scripts/build_xhpast.sh", "dir": "@repo",
@@ -43,7 +38,7 @@
         "init_command": { "exec": "phabricator/bin/storage upgrade --force" },
         "upgrade_command": { "exec": "phabricator/bin/storage upgrade --force" },
         "inserts": [
-            { "sql": "INSERT INTO `auth_providerconfig` VALUES (1,'PHID-AUTH-4lcuirex2wm4amih2uwp','PhabricatorCloudOsAuthProvider','cloudos','self',1,1,1,1,1,1,'[]',1407976572,1407976572)",
+            { "sql": "INSERT INTO auth_providerconfig VALUES (1,'PHID-AUTH-4lcuirex2wm4amih2uwp','PhabricatorCloudOsAuthProvider','cloudos','self',1,1,1,1,1,1,'[]',1407976572,1407976572,1)",
               "dbname": "phabricator_auth",
               "unless": "SELECT COUNT(*) FROM auth_providerconfig WHERE providerClass='PhabricatorCloudOsAuthProvider'" }
         ]
@@ -60,11 +55,10 @@
 
     "post_install": [
         { "exec": "@repo/bin/config set phabricator.base-uri 'https://@name-@hostname/'" },
-        { "exec": "@repo/bin/config set auth.require-approval false" },
-        { "exec": "@repo/bin/config set storage.upload-size-limit '10M'" }
+        { "exec": "@repo/bin/config set auth.require-approval false" }
     ],
 
-    "sysinit": [ "@repo/bin/phd" ],
+    "sysinit": [ "@home/phabricator/bin/phd:php ./phd-daemon" ],
 
     "auth": {
         "login_fields": {
