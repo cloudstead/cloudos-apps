@@ -1,0 +1,19 @@
+#!/bin/bash
+
+function die {
+  echo 1>&2 "${1}"
+  exit 1
+}
+
+SIEVE_DIR=/var/lib/dovecot/sieve
+
+if [ ! -d ${SIEVE_DIR} ] ; then
+  mkdir /var/lib/dovecot/sieve || die "Error creating sieve dir: ${SIEVE_DIR}"
+fi
+
+if [ ! -f ${SIEVE_DIR} ] ; then
+  touch ${SIEVE_DIR}/default.sieve
+  sievec /var/lib/dovecot/sieve/default.sieve
+fi
+
+chown -R <%=@app[:users]['vmail'][:name]%>:<%=@app[:users]['vmail'][:group]%> ${SIEVE_DIR}/*

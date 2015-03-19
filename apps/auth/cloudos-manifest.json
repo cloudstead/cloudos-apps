@@ -39,8 +39,9 @@
     } ],
 
     "services": [
-        { "name": "krb5-kdc", "pattern": "/usr/sbin/krb5kdc" },
-        { "name": "krb5-admin-server", "pattern": "/usr/sbin/kadmind" }
+        { "name": "krb5-kdc",          "pattern": "/usr/sbin/krb5kdc" },
+        { "name": "krb5-admin-server", "pattern": "/usr/sbin/kadmind", "ports": [ "464", "749" ] },
+        { "name": "slapd",             "pattern": "/usr/sbin/slapd",   "ports": [ "389", "31113" ] }
     ],
 
     "backup": {

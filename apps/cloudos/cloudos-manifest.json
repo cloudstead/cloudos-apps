@@ -97,10 +97,9 @@
         { "exec": "service apache2 restart" }
     ],
 
-    "post_validate": [
-        { "exec": "@files/validate_services.sh" },
-        { "exec": "@home/first_time_setup.sh" }
-    ],
+    "validation": {
+        "post_scripts": [ { "exec": "@home/first_time_setup.sh" } ]
+    },
 
     "sysinit": [
         "jrun",

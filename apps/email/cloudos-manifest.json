@@ -12,10 +12,12 @@
 
     "config": [ {
         "name": "init",
-        "items": [ "smtp_relay.user", "smtp_relay.password", "smtp_relay.host", "smtp_relay.port" ]
+        "items": [ "smtp_relay.user", "smtp_relay.password", "smtp_relay.host", "smtp_relay.port",
+                   "vmail_user", "postmaster_user" ]
     } ],
 
     "packages": [ "dovecot-core", "dovecot-imapd", "dovecot-pop3d", "dovecot-gssapi",
+                  "dovecot-lmtpd", "dovecot-sieve", "dovecot-managesieved",
                   "libpam-krb5", "postfix", "amavisd-new", "spamassassin",
                   "clamav-daemon", "clamav-freshclam", "re2c", "pyzor", "razor", "spamc" ],
 
@@ -27,24 +29,33 @@
     "groups": [ { "group": "vmail", "members": ["vmail", "postfix"] } ],
 
     "templates": {
+        "/etc/dovecot/dovecot.conf": "_",
         "/etc/dovecot/conf.d/01-mail-stack-delivery.conf": "_",
-        "/etc/dovecot/conf.d/10-mail.conf": "_",
         "/etc/dovecot/conf.d/10-auth.conf": "_",
+        "/etc/dovecot/conf.d/10-mail.conf": "_",
+        "/etc/dovecot/conf.d/10-master.conf": "_",
         "/etc/dovecot/conf.d/10-ssl.conf": "_",
         "/etc/dovecot/conf.d/10-logging.conf": "_",
+        "/etc/dovecot/conf.d/20-lmtp.conf": "_",
+        "/etc/dovecot/conf.d/90-sieve.conf": "_",
         "/etc/postfix/main.cf": "_",
         "/etc/postfix/master.cf": "_",
         "/etc/postfix/virtual": "_",
         "/etc/pam.d/dovecot": "_",
-        "/etc/mailname": "_"
+        "/etc/mailname": "_",
+        "/usr/local/bin/setup_sieve.sh": "_"
     },
 
     "perms": {
         "/etc/postfix/main.cf": { "perms": "644" },
-        "/etc/mailname": { "perms": "644" }
+        "/etc/mailname": { "perms": "644" },
+        "/usr/local/bin/setup_sieve.sh": { "chown": "root", "perms": "500" }
     },
 
-    "post_install": [ { "exec": "/usr/sbin/postmap virtual", "dir": "/etc/postfix" } ],
+    "post_install": [
+        { "exec": "/usr/sbin/postmap virtual", "dir": "/etc/postfix" },
+        { "exec": "/usr/local/bin/setup_sieve.sh" }
+    ],
 
     "mailboxes": [
         { "address": "postmaster" },
@@ -52,10 +63,16 @@
         { "address": "amaviz", "alias_for": "postmaster" }
     ],
 
-    "services": [
-        { "name": "postfix", "pattern": "/usr/lib/postfix/master" },
-        { "name": "dovecot", "pattern": "/usr/sbin/dovecot", "provider": "upstart" }
-    ],
+    "services": [ {
+        "name": "postfix",
+        "pattern": "/usr/lib/postfix/master",
+        "ports": [ "25", "587" ]
+    }, {
+        "name": "dovecot",
+        "pattern": "/usr/sbin/dovecot",
+        "ports": [ "110", "143", "993", "995" ],
+        "provider": "upstart"
+    } ],
 
     "backup": {
         "files": [

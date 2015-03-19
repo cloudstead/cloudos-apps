@@ -37,7 +37,10 @@
         "@doc_root/logs"
     ],
 
-    "templates": { "@doc_root/config/config.inc.php": "config.inc.php" },
+    "templates": {
+        "@doc_root/config/config.inc.php": "_",
+        "@doc_root/plugins/managesieve/config.inc.php": "managesieve_config.inc.php"
+    },
 
     "append": {
         "@doc_root/config/config.inc.php": "array_unshift($config['plugins'],'rcs_skins','rcs_skins'); $config['skin']='outlook';"

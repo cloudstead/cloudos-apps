@@ -98,10 +98,10 @@ auth_gssapi_hostname ="$ALL"
 # NOTE: See also disable_plaintext_auth setting.
 #auth_mechanisms = plain
 auth_mechanisms = plain gssapi
-<% base_lib = Chef::Recipe::Base %>
+
 userdb {
   driver = static
-  args = uid=<%=base_lib.uid(@app[:users]['vmail'][:name])%> gid=<%=base_lib.gid(@app[:groups]['vmail'][:name])%> home=<%=@app[:users]['vmail'][:home]%>/%u
+  args = uid=<%=@app[:users]['vmail'][:name]%> gid=<%=@app[:users]['vmail'][:group]%> home=<%=@app[:users]['vmail'][:home]%>/%n
 }
 passdb {
   driver = pam

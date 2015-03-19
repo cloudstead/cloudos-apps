@@ -1,0 +1,6 @@
+{
+  "id": "init",
+  "vmail_user": "vmail",
+  "postmaster_user": "postmaster",
+  "smtp_relay": {}
+}
