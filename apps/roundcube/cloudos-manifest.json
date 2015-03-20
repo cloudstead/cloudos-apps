@@ -20,7 +20,7 @@
     "database": { "type": "postgresql", "schema_version": "1.0" },
 
     "tarball": {
-        "url": "http://kyuss.org/tmp2/roundcubemail-1.0.2.tar.gz",
+        "url": "http://cloudstead.io/downloads/roundcubemail-1.0.2.tar.gz",
         "shasum": "1c1560a7a56e6884b45c49f52961dbbb3f6bacbc7e7c755440750a1ab027171c"
     },
 
