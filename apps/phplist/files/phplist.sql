@@ -1014,7 +1014,7 @@ CREATE TABLE `phplist_user_user` (
 
 LOCK TABLES `phplist_user_user` WRITE;
 /*!40000 ALTER TABLE `phplist_user_user` DISABLE KEYS */;
-INSERT INTO `phplist_user_user` VALUES (1,'jonathan@kyuss.org',1,0,0,0,'2015-03-12 06:21:59','2015-03-12 10:21:59','474763a61b0d54316fa95f84f965a153',1,NULL,NULL,'0192023a7bbd73250516f069df18b500','2015-03-12',0,NULL,NULL);
+INSERT INTO `phplist_user_user` VALUES (1,'postmaster@localhost',1,0,0,0,'2015-03-12 06:21:59','2015-03-12 10:21:59','',1,NULL,NULL,'','2015-03-12',0,NULL,NULL);
 /*!40000 ALTER TABLE `phplist_user_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
