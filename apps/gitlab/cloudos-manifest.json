@@ -83,7 +83,7 @@
         "password": "{{account.password}}",
         "authenticity_token": "pass"
       },
-      "login_page_markers": [ "<div class=\"login-box ", "id=\"password\"", "name=\"password\"", "value=\"LDAP Sign in\"" ]
+      "login_page_markers": [ "login-box", "value=\"LDAP Sign in\"" ]
     }
 
 }

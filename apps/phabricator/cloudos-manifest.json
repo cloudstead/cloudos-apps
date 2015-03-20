@@ -68,7 +68,7 @@
             "__dialog__": "pass",
             "__csrf__": "pass"
         },
-        "login_path": "/auth/login/cloudos:self/",
+        "login_path": "auth/login/cloudos:self/",
 
         "login_redirect": "/auth/validate/\\?expect=.+",
         "registration_redirect": "/auth/register/[a-z0-9]+/",
