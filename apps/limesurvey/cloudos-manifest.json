@@ -111,9 +111,10 @@
     "mailboxes": [ { "address": "surveys", "alias_for": "postmaster" } ],
 
     "auth": {
-        "home_path": "/admin",
-        "login_path": "/index.php/admin/authentication/sa/login",
+        "home_path": "admin",
+        "login_path": "index.php/admin/authentication/sa/login",
         "login_fields": {
+            "YII_CSRF_TOKEN": "pass",
             "authMethod": "AuthLDAP",
             "user": "{{account.name}}",
             "password": "{{account.password}}",

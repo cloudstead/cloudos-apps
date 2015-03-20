@@ -1,5 +1,8 @@
+RewriteEngine On
+RewriteRule ^/__cloudos__/(.*) - [END]
+RewriteRule ^/lists/(.*) /$1 [R]
 
-<Directory "<%=@app[:doc_root]%>">
+<Directory "<%=@config[:doc_root]%>">
 
     DirectoryIndex index.php
 
@@ -26,7 +29,7 @@
 
 </Directory>
 
-<Directory "<%=@app[:doc_root]%>/admin">
+<Directory "<%=@config[:doc_root]%>/admin">
 
     DirectoryIndex index.php
 

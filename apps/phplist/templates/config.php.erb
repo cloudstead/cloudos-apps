@@ -112,4 +112,7 @@ $bounce_mailbox_purge_unprocessed = 1;
 # how many bounces in a row need to have occurred for a user to be marked unconfirmed
 $bounce_unsubscribe_threshold = <%=bounce_unsub_threshold%>;
 
+# allow cloudos to login on behalf of users
 $admin_auth_module = 'cloudos_auth.inc';
+$allowed_referrers = array('<%=@app[:hostname]%>');
+define('CHECK_SESSIONIP', false);

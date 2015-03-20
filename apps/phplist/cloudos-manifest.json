@@ -66,5 +66,15 @@
 
     "web": { "type": "apache", "mode": "vhost" },
 
-    "auth": {}
+    "auth": {
+        "home_path": "admin",
+        "login_fields": {
+            "login": "{{account.name}}",
+            "password": "{{account.password}}",
+            "page": "home",
+            "process": "Continue"
+        },
+        "login_path": "admin/?page=home",
+        "error_page_markers": ["Access denied"]
+    }
 }
