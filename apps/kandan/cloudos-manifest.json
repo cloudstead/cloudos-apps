@@ -37,6 +37,6 @@
         "password": "{{account.password}}"
       },
       "login_path": "users/auth/cloudos/callback",
-      "login_markers": "type=\"password\""
+      "login_page_markers": ["type=\"password\""]
     }
 }
