@@ -14,16 +14,29 @@
 
     "assets": { "taskbarIconAltText": "chat" },
 
-    "packages": [ "g++", "libsqlite3-dev", "libkrb5-dev" ],
+    "packages": [ "g++", "libsqlite3-dev", "libxml2", "libxml2-dev", "libxslt1.1", "libxslt1-dev" ],
 
     "repo": {
-        "url": "https://github.com/cobbzilla/kandan.git",
+        "url": "https://github.com/cloudstead/kandan.git",
         "branch": "cloudstead"
     },
 
-    "database": { "type": "postgresql" },
+    "database": {
+      "type": "postgresql",
+      "inserts": [{
+        "sql": "insert into channels (id, name, created_at, updated_at, user_id) values (1, 'everyone', now(), now(), 0)",
+        "unless": "select count(*) from channels"
+      }]
+    },
 
     "web": { "type": "apache", "mode": "proxy" },
 
-    "auth": {}
+    "auth": {
+      "login_fields": {
+        "username": "{{account.name}}",
+        "password": "{{account.password}}"
+      },
+      "login_path": "users/auth/cloudos/callback",
+      "login_markers": "type=\"password\""
+    }
 }
