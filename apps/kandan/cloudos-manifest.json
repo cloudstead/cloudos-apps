@@ -14,7 +14,7 @@
 
     "assets": { "taskbarIconAltText": "chat" },
 
-    "packages": [ "g++", "libsqlite3-dev", "libxml2", "libxml2-dev", "libxslt1.1", "libxslt1-dev" ],
+    "packages": [ "g++", "libsqlite3-dev" ],
 
     "repo": {
         "url": "https://github.com/cloudstead/kandan.git",
