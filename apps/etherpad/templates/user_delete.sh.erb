@@ -5,6 +5,20 @@ function die () {
   exit 1
 }
 
+function restart_etherpad () {
+  service <%=@app[:service_name]%> restart > /dev/null
+  start=$(date +%s)
+  while [ $(expr $(date +%s) - ${start}) -lt 10 ] ; do
+    if [[ $(service <%=@app[:service_name]%> status) =~ "is running" ]] ; then
+      sleep 2s
+      return
+    fi
+    sleep 0.25
+  done
+  die "Timeout restarting <%=@app[:service_name]%>"
+  exit 1
+}
+
 ACCOUNT="${1}"
 if [ -z "${ACCOUNT}" ] ; then
   die "No account name provided"
@@ -21,4 +35,4 @@ cos json --file ${SETTINGS_JSON} \
 cp ${SETTINGS_JSON} ${BACKUP} && \
 cat ${TEMP} > ${SETTINGS_JSON} && \
 rm ${TEMP} && \
-service <%=@app[:service_name]%> restart
+restart_etherpad
