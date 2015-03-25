@@ -1,0 +1,100 @@
+#!/bin/bash
+
+<%
+token_auth = Digest::MD5.hexdigest(@app[:uniq][0])
+site = "#{@app[:name]}-#{@app[:hostname]}"
+%>
+
+function die () {
+  echo >&2 "${1}"
+  exit 1
+}
+
+function urlencode() {
+    echo -n "$1" | perl -MURI::Escape -ne 'print uri_escape($_)'
+}
+
+if [ $(whoami) != 'root' ] ; then
+  die "Must be root"
+fi
+
+API_BASE="https://<%=site%>/?token_auth=<%=token_auth%>&module=API&format=JSON"
+
+APACHE_HOME="/etc/apache2"
+SITES_CONF="${APACHE_HOME}/sites-enabled/*.conf"
+GET_ALL_SITES_URL="${API_BASE}&method=SitesManager.getAllSites"
+
+JSON="<%=@app[:chef_user_home]%>/chef/JSON.sh"
+CURL="curl -s"
+
+# Get all piwik sites
+parsed=$(${CURL} ''"${GET_ALL_SITES_URL}"'' | ${JSON})
+piwik_sites=$(echo -n ''"${parsed}"'' | grep -- '\"main_url\"]' | awk '{print $2}' | sed -e 's,https:\\/\\/,,g' | tr -d '"')
+
+# Get all apache sites
+apache_sites=$(cat ${SITES_CONF} | grep ServerName  | awk '{print $2}')
+
+for apache_site in ${apache_sites} ; do
+
+  echo "Checking piwik to see if Apache site ${apache_site} exists there"
+  piwik_exists=$(echo -n "${piwik_sites}" | egrep "^${apache_site}$" | wc -l | tr -d ' ')
+
+  if [ ${piwik_exists} -eq 0 ] ; then
+    # Site does not exist in piwik: create it
+    site="$(urlencode "${apache_site}")"
+    ADD_SITE_URL="${API_BASE}&method=SitesManager.addSite&siteName=${site}&urls\[0\]=https://${site}&urls\[1\]=http://${site}"
+    echo ${CURL} ''"${ADD_SITE_URL}"''
+    exit 1
+
+    # Refresh list of piwik sites, ensure the site was added
+    parsed=$(${CURL} ''"${GET_ALL_SITES_URL}"'' | ${JSON})
+    piwik_sites=$(echo -n ''"${parsed}"'' | grep -- '\"main_url\"]' | awk '{print $2}' | sed -e 's,https:\\/\\/,,g' | tr -d '"')
+    piwik_exists=$(echo -n "${piwik_sites}" | egrep "^${apache_site}$" | wc -l | tr -d ' ')
+    if [ ${piwik_exists} -eq 0 ] ; then
+      echo "Error creating site for ${site} in piwik: ${parsed}, skipping"
+      continue
+    fi
+  fi
+
+  # Ensure app-specific piwik_tag.html file exists, with piwik idsite set correctly
+  app=$(egrep "ServerName[[:blank:]]+${apache_site}" ${SITES_CONF} | awk -F ':' '{print $1}' | xargs -n 1 basename | sed -e 's/\.conf$//')
+  if [ -z "${app}" ] ; then
+    echo "No app name could be discerned from ${apache_site}, skipping"
+    continue
+  fi
+
+  tag_file="/var/www/__piwik/${app}/tag.html"
+  if [ ! -f ${tag_file} ] ; then
+    # tag file does not exist. determine idsite
+    idsite=$(echo -n ''"${parsed}"'' | grep 'main_url\"\]' | grep "/${apache_site}" | tr '"' ' ' | awk '{print $2}')
+    if [[ -z "${idsite}" || ! "${idsite}" =~ [[:digit:]]+ ]] ; then
+      echo "Invalid idsite (${idsite}) for ${apache_site}, skipping"
+    else
+      tag_dir=$(dirname ${tag_file})
+      echo "Ensuring ${tag_dir} exists"
+      mkdir -p ${tag_dir} && chown www-data ${tag_dir} && chmod 755 ${tag_dir}
+
+      echo "Writing ${tag_file} with idsite=${idsite}"
+      cat <%=@app[:doc_root]%>/misc/piwik_tag_template.html | sed -e "s/@@IDSITE@@/${idsite}/g" > ${tag_file} && \
+      chown www-data ${tag_file} && chmod 644 ${tag_file}
+    fi
+  fi
+
+  if [[ ! -f ${tag_file} || $(stat -c '%s' ${tag_file}) -eq 0 ]] ; then
+    echo "Error writing tag file (still does not exist): ${tag_file}"
+    rm -f ${tag_file}
+  fi
+
+  conf_file="${APACHE_HOME}/mixins/${app}/piwik_tag.conf"
+  if [ ! -f ${conf_file} ] ; then
+    # per-app conf does not exist, create it
+    echo "Alias /piwik_tag.html ${tag_file}" > ${conf_file} && \
+    chown www-data ${conf_file} && chmod 644 ${conf_file}
+  fi
+
+  if [[ ! -f ${conf_file} || $(stat -c '%s' ${conf_file}) -eq 0 ]] ; then
+    echo "Error writing conf file (still does not exist): ${conf_file}"
+    rm -f ${tag_file}
+  fi
+
+done

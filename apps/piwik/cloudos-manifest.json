@@ -12,6 +12,8 @@
     "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
   },
 
+  "packages": [ "php5-geoip", "php5-dev", "libgeoip-dev" ],
+
   "assets": { "taskbarIconAltText": "web analytics" },
 
   "tarball": {
@@ -34,12 +36,25 @@
       "sql": "INSERT INTO piwik_site VALUES (1,'@hostname','https://@hostname','@now(mysql)',0,1,'','','@timezone','@currency_code','','','','','website',0)",
       "unless": "SELECT COUNT(*) FROM piwik_site"
     }, {
-      "sql": "INSERT INTO piwik_user VALUES ('anonymous','','anonymous','anonymous@example.org','anonymous',0,'@now(mysql)');",
+      "sql": "INSERT INTO piwik_user VALUES ('__cloudos','','cloudos system user','postmaster@@hostname','@md5(@uniq[0])',1,'@now(mysql)');",
+      "unless": "SELECT COUNT(*) FROM piwik_user WHERE login='__cloudos'"
+    }, {
+      "sql": "INSERT INTO piwik_user VALUES ('anonymous','','anonymous','anonymous@example.org','@md5(@rand[1])',0,'@now(mysql)');",
       "unless": "SELECT COUNT(*) FROM piwik_user WHERE login='anonymous'"
     } ]
   },
 
-  "web": { "type": "apache", "mode": "service" },
+  "web": {
+      "type": "apache",
+      "mode": "vhost",
+      "apache": {
+        "mixins": [ "piwik_tag_template.conf" ],
+        "php_set": [
+          { "name": "extension", "value": "geoip.so" },
+          { "name": "geoip.custom_directory", "value": "@doc_root" }
+        ]
+      }
+  },
 
   "copy": {
     "@files/httpful.phar": "@doc_root/httpful.phar",
@@ -47,12 +62,19 @@
   },
 
   "templates": {
-    "@doc_root/config/config.ini.php": "_"
+    "@doc_root/config/config.ini.php": "_",
+    "@doc_root/misc/piwik_sync_sites.sh": "_",
+    "@doc_root/misc/piwik_tag_template.html": "_"
   },
 
   "perms": {
-    "@doc_root/config/config.ini.php": { "chown": "@run_as.root", "perms": "400" }
+    "@doc_root/config/config.ini.php": { "chown": "@run_as.root", "perms": "600" },
+    "/usr/local/bin/piwik_sync_sites.sh": { "chown": "root.root", "perms": "700" }
   },
+
+  "post_install": [
+    { "exec": "@doc_root/misc/piwik_sync_sites.sh" }
+  ],
 
   "auth": {
     "login_fields": {

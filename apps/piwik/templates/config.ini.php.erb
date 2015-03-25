@@ -11,6 +11,8 @@ charset = "utf8"
 [General]
 salt = "<%=@app[:uniq][0]%>"
 trusted_hosts[] = "<%=@app[:hostname]%>"
+trusted_hosts[] = "<%=@app[:name]%>-<%=@app[:hostname]%>"
+trusted_hosts[] = "<%=@app[:name]%>.<%=@app[:hostname]%>"
 assume_secure_protocol = 1
 proxy_client_headers[] = HTTP_X_FORWARDED_FOR
 proxy_host_headers[] = HTTP_X_FORWARDED_HOST
