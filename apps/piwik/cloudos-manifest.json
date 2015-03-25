@@ -72,9 +72,7 @@
     "/usr/local/bin/piwik_sync_sites.sh": { "chown": "root.root", "perms": "700" }
   },
 
-  "post_install": [
-    { "exec": "@doc_root/misc/piwik_sync_sites.sh" }
-  ],
+  "validation": { "pre_scripts": [ { "exec": "@doc_root/misc/piwik_sync_sites.sh" } ] },
 
   "auth": {
     "login_fields": {
