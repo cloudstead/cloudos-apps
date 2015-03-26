@@ -3,7 +3,7 @@
 
     FilterDeclare PIWIK_SUBST
     FilterProvider PIWIK_SUBST SUBSTITUTE "%{CONTENT_TYPE} =~ m|^text/html|"
-    SUBSTITUTE 's|</body>|<!--#include virtual="/piwik_tag.html" --></body>|ni'
+    SUBSTITUTE 's|</body>|<!--#include virtual="/__tag.html" --></body>|ni'
 
     FilterDeclare PIWIK_TAG
     FilterProvider PIWIK_TAG INCLUDES "%{CONTENT_TYPE} =~ m|^text/html|"
@@ -11,4 +11,4 @@
     FilterChain PIWIK_SUBST PIWIK_TAG
 </Location>
 
-ProxyPass /piwik_tag.html !
+ProxyPass /__tag.html !

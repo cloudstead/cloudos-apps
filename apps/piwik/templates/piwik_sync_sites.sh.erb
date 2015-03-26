@@ -64,7 +64,7 @@ for apache_site in ${apache_sites} ; do
     continue
   fi
 
-  tag_file="/var/www/__piwik/${app}/tag.html"
+  tag_file="/var/www/__piwik/${app}/__tag.html"
   if [ ! -f ${tag_file} ] ; then
     # tag file does not exist. determine idsite
     idsite=$(echo -n ''"${parsed}"'' | grep 'main_url\"\]' | grep "/${apache_site}" | tr '"' ' ' | awk '{print $2}')
@@ -90,24 +90,33 @@ for apache_site in ${apache_sites} ; do
   conf_file="${APACHE_HOME}/mixins/${app}/piwik_tag.conf"
   if [ ! -f ${conf_file} ] ; then
     # per-app conf does not exist, create it
-    echo "Alias /piwik_tag.html ${tag_file}" > ${conf_file} && \
+    echo "Alias /__tag.html ${tag_file}" > ${conf_file} && \
     chown www-data ${conf_file} && chmod 644 ${conf_file}
     changes_made=1
   fi
 
   if [[ ! -f ${conf_file} || $(stat -c '%s' ${conf_file}) -eq 0 ]] ; then
     echo "Error writing conf file (still does not exist): ${conf_file}"
-    rm -f ${tag_file}
+    rm -f ${conf_file}
   fi
 
 done
+
+rewrite_rule="${APACHE_HOME}/rewrite-rules-available/piwik_tag.conf"
+rewrite_rule_enabled="${APACHE_HOME}/rewrite-rules-enabled/piwik_tag.conf"
+if [ ! -f ${rewrite_rule} ] ; then
+  echo "RewriteCond expr \"! %{REQUEST_URI} -strmatch '*/__tag.html*'\""  > ${rewrite_rule} || die "Error writing ${rewrite_rule}"
+  changes_made=1
+fi
+if [ ! -e ${rewrite_rule_enabled} ] ; then
+  ln -sf ${rewrite_rule} ${rewrite_rule_enabled} || die "failed: ln -sf ${rewrite_rule} ${rewrite_rule_enabled}"
+  changes_made=1
+fi
 
 if [ ${changes_made} -ne 0 ] ; then
   if apachectl configtest ; then
     service apache2 reload
   else
-    echo "Apache config error:"
-    echo "$(apachectl configtest)"
-    exit 1
+    die "Apache config error: $(apachectl configtest)"
   fi
 fi

@@ -1,4 +1,7 @@
-<% site = "#{@app[:name]}-#{@app[:hostname]}" %>
+<%
+apache = Chef::Recipe::Apache
+site = apache.get_server_name(@app[:server_name], @app[:web][:mode], @app[:hostname], @app[:name])
+%>
 
 <!-- Piwik -->
 <script type="text/javascript">
