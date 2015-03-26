@@ -34,6 +34,8 @@ piwik_sites=$(echo -n ''"${parsed}"'' | grep -- '\"main_url\"]' | awk '{print $2
 # Get all apache sites
 apache_sites=$(cat ${SITES_CONF} | grep ServerName  | awk '{print $2}')
 
+changes_made=0
+
 for apache_site in ${apache_sites} ; do
 
   echo "Checking piwik to see if Apache site ${apache_site} exists there"
@@ -43,8 +45,7 @@ for apache_site in ${apache_sites} ; do
     # Site does not exist in piwik: create it
     site="$(urlencode "${apache_site}")"
     ADD_SITE_URL="${API_BASE}&method=SitesManager.addSite&siteName=${site}&urls\[0\]=https://${site}&urls\[1\]=http://${site}"
-    echo ${CURL} ''"${ADD_SITE_URL}"''
-    exit 1
+    ${CURL} ''"${ADD_SITE_URL}"''
 
     # Refresh list of piwik sites, ensure the site was added
     parsed=$(${CURL} ''"${GET_ALL_SITES_URL}"'' | ${JSON})
@@ -77,6 +78,7 @@ for apache_site in ${apache_sites} ; do
       echo "Writing ${tag_file} with idsite=${idsite}"
       cat <%=@app[:doc_root]%>/misc/piwik_tag_template.html | sed -e "s/@@IDSITE@@/${idsite}/g" > ${tag_file} && \
       chown www-data ${tag_file} && chmod 644 ${tag_file}
+      changes_made=1
     fi
   fi
 
@@ -90,6 +92,7 @@ for apache_site in ${apache_sites} ; do
     # per-app conf does not exist, create it
     echo "Alias /piwik_tag.html ${tag_file}" > ${conf_file} && \
     chown www-data ${conf_file} && chmod 644 ${conf_file}
+    changes_made=1
   fi
 
   if [[ ! -f ${conf_file} || $(stat -c '%s' ${conf_file}) -eq 0 ]] ; then
@@ -98,3 +101,13 @@ for apache_site in ${apache_sites} ; do
   fi
 
 done
+
+if [ ${changes_made} -ne 0 ] ; then
+  if service apache2 configtest ; then
+    service apache2 reload
+  else
+    echo "Apache config error:"
+    echo "$(service apache2 configtest)"
+    exit 1
+  fi
+fi
