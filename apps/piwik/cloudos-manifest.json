@@ -12,7 +12,7 @@
     "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
   },
 
-  "packages": [ "php5-geoip", "php5-dev", "libgeoip-dev" ],
+  "packages": [ "php5-geoip", "php5-dev", "libgeoip-dev", "pecl/geoip" ],
 
   "assets": { "taskbarIconAltText": "web analytics" },
 
@@ -51,7 +51,7 @@
         "mixins": [ "piwik_tag_template.conf" ],
         "php_set": [
           { "name": "extension", "value": "geoip.so" },
-          { "name": "geoip.custom_directory", "value": "@doc_root" }
+          { "name": "geoip.custom_directory", "value": "/opt/cloudos/geoip" }
         ]
       }
   },
