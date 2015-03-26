@@ -103,11 +103,11 @@ for apache_site in ${apache_sites} ; do
 done
 
 if [ ${changes_made} -ne 0 ] ; then
-  if service apache2 configtest ; then
+  if apachectl configtest ; then
     service apache2 reload
   else
     echo "Apache config error:"
-    echo "$(service apache2 configtest)"
+    echo "$(apachectl configtest)"
     exit 1
   fi
 fi
