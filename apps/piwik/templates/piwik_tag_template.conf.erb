@@ -8,7 +8,13 @@
     FilterDeclare PIWIK_TAG
     FilterProvider PIWIK_TAG INCLUDES "%{CONTENT_TYPE} =~ m|^text/html|"
 
-    FilterChain PIWIK_SUBST PIWIK_TAG
+    FilterDeclare INFLATE
+    FilterDeclare DEFLATE
+
+    FilterProvider INFLATE INFLATE "%{req:Accept-Encoding} =~ /gzip/"
+    FilterProvider DEFLATE DEFLATE "%{req:Accept-Encoding} =~ /gzip/"
+
+    FilterChain INFLATE PIWIK_SUBST PIWIK_TAG DEFLATE
 </Location>
 
 ProxyPass /__tag.html !
