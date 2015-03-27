@@ -34,7 +34,7 @@
       "unless": "SELECT COUNT(*) FROM piwik_option WHERE option_name='UpdateCheck_LastTimeChecked'"
     }, {
       "sql": "INSERT INTO piwik_option VALUES ('usercountry.location_provider','geoip_pecl',0)",
-      "unless": "SELECT COUNT(*) FROM piwik_option WHERE option_name='UpdateCheck_LastTimeChecked'"
+      "unless": "SELECT COUNT(*) FROM piwik_option WHERE option_name='usercountry.location_provider'"
     }, {
       "sql": "INSERT INTO piwik_site VALUES (1,'@hostname','https://@hostname','@now(mysql)',0,1,'','','@timezone','@currency_code','','','','','website',0)",
       "unless": "SELECT COUNT(*) FROM piwik_site"
