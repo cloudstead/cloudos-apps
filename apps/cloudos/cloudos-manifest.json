@@ -98,7 +98,11 @@
     ],
 
     "validation": {
-        "post_scripts": [ { "exec": "@home/first_time_setup.sh" } ]
+        "post_scripts": [
+          { "exec": "@home/first_time_setup.sh" },
+          { "exec": "cos sync-apps -e @home/.cloudos.env" },
+          { "exec": "cos refresh-apps --account ignored --key @uniq[0]" }
+        ]
     },
 
     "sysinit": [
