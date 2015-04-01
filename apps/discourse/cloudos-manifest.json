@@ -1,0 +1,32 @@
+{
+  "version": "0.1.0",
+  "name": "discourse",
+  "style": "rails",
+  "interactive": true,
+
+  "publisher": {
+    "maintainer": "Jonathan Cobb",
+    "maintainer_email": "jonathan@cloudstead.io",
+    "license": "http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt",
+    "code_copyright": "Copyright 2014 Civilized Discourse Construction Kit, Inc.",
+    "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+  },
+
+  "repo": {
+    "url": "https://github.com/discourse/discourse.git",
+    "branch": "stable"
+  },
+
+  "database": { "type": "postgresql" },
+
+  "packages": ["g++", "libsqlite3-dev"],
+
+  "web": { "type": "apache", "mode": "proxy" },
+
+  "templates": {
+    "@name/config/discourse.conf": "_"
+  },
+
+  "auth": {}
+
+}
