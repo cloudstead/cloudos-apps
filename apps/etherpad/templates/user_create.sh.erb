@@ -33,7 +33,7 @@ shopt -s nocasematch
 [[ ! -z "${ADMIN}" && "${ADMIN}" == "true" ]] && ADMIN="true" || ADMIN="false"
 shopt -u nocasematch
 
-$(dirname $0)/user_exists.sh ${ACCOUNT} 2>&1 > /dev/null
+$(dirname $0)/user_exists.sh "${ACCOUNT}" "${PASSWORD}" 2>&1 > /dev/null
 if [ $? -eq 0 ] ; then
   # Account already exists
   echo "true"
@@ -44,11 +44,17 @@ SETTINGS_JSON="<%=@app[:run_as_home]%>/<%=@app[:name]%>/settings.json"
 BACKUP=$(mktemp $(dirname ${SETTINGS_JSON})/settings.json.$(date +%Y%m%d_%H%M%S).XXXXXXX)
 TEMP=$(mktemp $(dirname ${SETTINGS_JSON})/.settings.json.XXXXXXX)
 
-cos json --file ${SETTINGS_JSON} \
-  --operation write \
-  --path users.${ACCOUNT} \
-  --value "{\"password\": \"${PASSWORD}\", \"is_admin\": ${ADMIN} }" > ${TEMP} || die "Error editing ${SETTINGS_JSON}"
+# Backup settings
 cp ${SETTINGS_JSON} ${BACKUP} || die "Error backing up ${SETTINGS_JSON}"
+
+# Remove any existing entry, write to temp file
+cat ${SETTINGS_JSON} | cos json --operation delete --path users.${ACCOUNT} > ${TEMP} || die "Error removing existing entry"
+
+# Create the new entry in temp file
+cat ${TEMP} | cos json --operation write  --path users.${ACCOUNT} --outfile ${TEMP} \
+  --value "{\"password\": \"${PASSWORD}\", \"is_admin\": ${ADMIN} }" || die "Error editing ${SETTINGS_JSON}"
+
+# Everything worked, write temp file to settings.json
 cat ${TEMP} > ${SETTINGS_JSON} || die "Error writing to ${SETTINGS_JSON}"
 rm -f ${TEMP}
 

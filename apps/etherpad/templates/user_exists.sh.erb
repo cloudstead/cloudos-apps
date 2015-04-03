@@ -10,12 +10,17 @@ if [ -z "${ACCOUNT}" ] ; then
   die "No account name provided"
 fi
 
-# Exits with zero status if path is found, non-zero status if path is not found
-cos json --file <%=@app[:run_as_home]%>/<%=@app[:name]%>/settings.json \
-  --operation read \
-  --path users.${ACCOUNT} 2>&1 > /dev/null
+PASSWORD="${2}"
+if [ -z "${PASSWORD}" ] ; then
+  die "No password provided"
+fi
 
-if [ $? -eq 0 ] ; then
+# Exits with zero status if path is found, non-zero status if path is not found
+found_password=$(cos json --file <%=@app[:run_as_home]%>/<%=@app[:name]%>/settings.json \
+  --operation read \
+  --path users.${ACCOUNT}.password | tr -d '"')
+
+if [ ${found_password} = "${PASSWORD}" ] ; then
   echo "true"
   exit 0
 else
