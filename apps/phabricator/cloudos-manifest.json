@@ -81,6 +81,9 @@
             "__csrf__": "pass"
         },
         "registration_path": "self"
-    }
+    },
 
+    "backup": {
+        "databases": [ "@name_*" ]
+    }
 }
