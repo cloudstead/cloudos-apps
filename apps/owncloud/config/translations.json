@@ -1,0 +1,10 @@
+{
+  "id": "translations",
+  "categories": {
+    "init": {
+      "admin.login": { "label": "Admin Login", "info": "This login will have full admin privileges for this app" },
+      "admin.password": { "label": "Admin Password", "info": "The admin account will login with this password" },
+      "admin.email": { "label": "Admin Email", "info": "Email address to associate with the admin account" }
+    }
+  }
+}

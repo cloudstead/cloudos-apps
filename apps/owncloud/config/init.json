@@ -1,0 +1,9 @@
+{
+  "id": "init",
+
+  "admin": {
+    "login": "admin",
+    "name": "admin",
+    "email": "postmaster@@hostname"
+  }
+}
