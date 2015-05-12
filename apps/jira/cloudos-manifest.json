@@ -146,7 +146,7 @@
 
     "sysinit": [ "wrap:@name/bin/start-jira.sh:/.+/java .+ -Datlassian.standalone=JIRA" ],
 
-    "validation": { "timeout": 1800 },
+    "validation": { "timeout": 2400 },
 
     "auth": {
         "login_fields": {

@@ -24,6 +24,7 @@
         "dns.user": { "group": "dns", "required": true, "type": "login" },
         "dns.password": { "group": "dns", "required": true, "type": "secret_key" },
         "dns.base_uri": { "group": "dns", "required": true, "type": "http" },
+        "dns.enabled": { "group": "dns", "required": false, "type": "yesno" },
         "backup_cron_schedule": { "group": "backup", "required": true, "type": "cron" }
       }
     }

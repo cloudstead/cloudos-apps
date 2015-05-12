@@ -39,25 +39,18 @@
     } ],
 
     "services": [
+        { "name": "slapd",             "pattern": "/usr/sbin/slapd",   "ports": [ "389", "31113" ] },
         { "name": "krb5-kdc",          "pattern": "/usr/sbin/krb5kdc" },
-        { "name": "krb5-admin-server", "pattern": "/usr/sbin/kadmind", "ports": [ "464", "749" ] },
-        { "name": "slapd",             "pattern": "/usr/sbin/slapd",   "ports": [ "389", "31113" ] }
+        { "name": "krb5-admin-server", "pattern": "/usr/sbin/kadmind", "ports": [ "464", "749" ] }
     ],
 
     "backup": {
         "files": [ "/etc/krb*" ],
-        "pre": [
-            { "exec": "@files/pre_backup.sh @backup_dir" }
-        ]
+        "pre": [ { "exec": "@files/pre_backup.sh @backup_dir" } ]
     },
 
     "restore": {
-        "pre": [ {"exec": "@files/pre_restore.sh @backup_dir"} ],
-        "post": [
-            { "exec": "service slapd restart" },
-            { "exec": "service krb5-kdc restart" },
-            { "exec": "service krb5-admin-server restart" }
-        ]
+        "pre": [ {"exec": "@files/pre_restore.sh @backup_dir"} ]
     }
 
 }

@@ -94,7 +94,7 @@ class CloudosAuthentication extends \Piwik\Plugin implements \Piwik\Auth {
         if ($this->login == "anonymous" || $this->password == null) return null;
 
         $model = new Model();
-        $uri = 'http://127.0.0.1:3001/api/accounts';
+        $uri = 'http://127.0.0.1:<%=@app[:cloudos_port]%>/api/accounts';
         $auth_json = '{"name":"' . $this->login . '", "password": "' . $this->password . '"}';
         Log::info('cos:: cloudos_auth: starting with auth_json=' . $auth_json);
         $response = \Httpful\Request::post($uri)->sendsJson()->body($auth_json)->send();

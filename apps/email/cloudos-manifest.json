@@ -79,25 +79,6 @@
             "/etc/dovecot",
             "/etc/postfix",
             "/var/vmail"
-        ],
-        "pre": [
-            { "exec": "@bash service postfix stop || echo 'postfix not running'" },
-            { "exec": "@bash service dovecot stop || echo 'dovecot not running'" }
-        ],
-        "post": [
-            { "exec": "service postfix restart" },
-            { "exec": "service dovecot restart" }
-        ]
-    },
-
-    "restore": {
-        "pre": [
-            { "exec": "@bash service postfix stop || echo 'postfix not running'" },
-            { "exec": "@bash service dovecot stop || echo 'dovecot not running'" }
-        ],
-        "post": [
-            { "exec": "service postfix restart" },
-            { "exec": "service dovecot restart" }
         ]
     }
 

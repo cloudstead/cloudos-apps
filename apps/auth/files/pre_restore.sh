@@ -6,10 +6,26 @@ if [ -z "${BACKUP_DIR}" ] ; then
   exit 1
 fi
 
-service krb5-admin-server stop || echo "krb5-admin-server not running"
-service krb5-kdc stop || echo "krb5-kdc not running"
-service slapd stop || echo "slapd not running"
-
 FILES_DIR=${BACKUP_DIR}/tmp
 
-slapadd -F /etc/ldap/slapd.d -n 1 -l ${FILES_DIR}/data.ldif
+rec=""
+while read line ; do
+  if [ $(echo -n ${line} | tr -d [[:blank:]] | wc -c) -eq 0 ] ; then
+    echo "${rec}" | slapadd -F /etc/ldap/slapd.d -n 1 -l ${FILES_DIR}/data.ldif || echo "Error adding record: ${rec}"
+    rec=""
+  else
+    if [ -z "${rec}" ] ; then
+      rec="${line}"
+    else
+      rec="${rec}
+${line}"
+    fi
+  fi
+done < ${FILES_DIR}/data.ldif
+
+# Unlikely, but just in case the ldif file does not end with a blank line...
+if [ ! -z "${rec}" ] ; then
+  echo "${rec}" | slapadd -F /etc/ldap/slapd.d -n 1 -l ${FILES_DIR}/data.ldif || echo "Error adding record: ${rec}"
+fi
+
+# slapadd -F /etc/ldap/slapd.d -n 1 -l ${FILES_DIR}/data.ldif

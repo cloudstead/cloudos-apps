@@ -30,6 +30,8 @@
         "@name/settings.json": { "chown": "@run_as.root", "perms": "660" }
     },
 
+    "post_install": [ { "exec": "./bin/installDeps.sh", "dir": "@name", "user": "@run_as", "unless": "@name/src/node_modules" } ],
+
     "sysinit": [ "wrap:@name/bin/run.sh:@name/node_modules/ep_etherpad-lite/node/server.js" ],
 
     "auth": {

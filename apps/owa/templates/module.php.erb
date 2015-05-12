@@ -48,7 +48,7 @@ function owa_cosAuthUser($auth_status) {
         $password = owa_coreAPI::getRequestParam('password');
         if (!isset($password)) return false;
 
-        $uri = 'http://127.0.0.1:3001/api/accounts';
+        $uri = 'http://127.0.0.1:<%=@app[:cloudos_port]%>/api/accounts';
         $auth_json = '{"name":"' . $userid . '", "password": "' . $password . '"}';
 
         $response = \Httpful\Request::post($uri)->sendsJson()->body($auth_json)->send();

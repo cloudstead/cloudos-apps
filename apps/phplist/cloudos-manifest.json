@@ -57,12 +57,12 @@
         } ]
     },
 
-    "templates": { "@doc_root/config/config.php": "_" },
-
-    "copy": {
-        "@files/httpful.phar": "@doc_root/httpful.phar",
-        "@files/cloudos_auth.inc": "@doc_root/admin/auth/cloudos_auth.inc"
+    "templates": {
+      "@doc_root/config/config.php": "_",
+      "@doc_root/admin/auth/cloudos_auth.inc": "_"
     },
+
+    "copy": { "@files/httpful.phar": "@doc_root/httpful.phar" },
 
     "web": { "type": "apache", "mode": "vhost" },
 

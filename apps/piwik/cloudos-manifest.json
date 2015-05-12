@@ -64,10 +64,13 @@
     "@files/CloudosAuthentication": "@doc_root/plugins/"
   },
 
+  "dirs": [ "@doc_root/plugins/CloudosAuthentication" ],
+
   "templates": {
     "@doc_root/config/config.ini.php": "_",
     "@doc_root/misc/piwik_sync_sites.sh": "_",
-    "@doc_root/misc/piwik_tag_template.html": "_"
+    "@doc_root/misc/piwik_tag_template.html": "_",
+    "@doc_root/plugins/CloudosAuthentication/CloudosAuthentication.php": "_"
   },
 
   "perms": {

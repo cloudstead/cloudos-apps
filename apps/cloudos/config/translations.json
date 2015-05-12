@@ -24,6 +24,7 @@
       "dns.user": { "label": "Dyn User", "info": "Authenticate with this Dyn username" },
       "dns.password": { "label": "Dyn User", "info": "Authenticate with this Dyn username" },
       "dns.base_uri": { "label": "Dyn User", "info": "Authenticate with this Dyn username" },
+      "dns.enabled": { "label": "Enable DNS", "info": "If disabled, no changes to DNS will be made" },
       "backup_cron_schedule": { "label": "Dyn User", "info": "Authenticate with this Dyn username" }
     }
   }

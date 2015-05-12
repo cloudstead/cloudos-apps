@@ -21,7 +21,7 @@
                 "admin_initial_pass", "recovery_email",
                 "aws_access_key", "aws_secret_key", "aws_iam_user", "s3_bucket",
                 "authy.user", "authy.base_uri",
-                "dns.user", "dns.password", "dns.base_uri",
+                "dns.user", "dns.password", "dns.base_uri", "dns.enabled",
                 "backup_cron_schedule"
             ]
         }
@@ -35,12 +35,14 @@
 
     "packages": [ "memcached", "redis-server", "awscli" ],
 
-    "tarball": { "url": "@config[init][server_tarball]" },
+    "tarball": { "url": "@config[init][server_tarball]", "to": "@name" },
 
     "database": { "type": "postgresql", "schema_version": "1.0" },
 
     "web": {
-        "type": "apache", "apache": { "mods": ["@session_header"] },
+        "type": "apache",
+        "apache": { "mods": ["@session_header"] },
+        "doc_root": "@name/site",
         "mode": "proxy_root",
         "ssl_cert_name": "@config[base][ssl_cert_name]"
     },
@@ -70,9 +72,11 @@
     "perms": {
         "@home": { "chgrp": "@group[rooty]", "perms": "770" },
         "@name": { "chgrp": "@group[rooty]", "perms": "770" },
+        ".cloudos.env": { "chown": "@run_as.root", "perms": "700" },
         "@name/jrun_prestart.sh": { "chown": "@run_as.@group[rooty]", "perms": "770" },
         "@name/logs": { "chgrp": "@group[rooty]", "perms": "770" },
         "@name/logs/cloudos-RootyMain-chef.log": { "chown": "@chef_user.@group[rooty]", "perms": "600" },
+        "@name/target": { "chgrp": "@group[rooty]", "perms": "750" },
         "@name/target/*.jar": { "chgrp": "@group[rooty]", "perms": "640" },
         "/etc/chef-user": { "chgrp": "@group[rooty]", "perms": "640" },
         "/etc/rooty.yml": { "chown": "root.root", "perms": "600" },
