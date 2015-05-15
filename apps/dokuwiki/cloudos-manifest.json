@@ -1,0 +1,49 @@
+{
+  "version": "0.1.0",
+  "name": "dokuwiki",
+  "style": "php",
+  "interactive": true,
+
+  "publisher": {
+    "maintainer": "Jonathan Cobb",
+    "maintainer_email": "jonathan@cloudstead.io",
+    "license": "https://www.dokuwiki.org/faq:license",
+    "code_copyright": "DokuWiki - 2004-2014 (c) Andreas Gohr <andi@splitbrain.org> and the DokuWiki Community",
+    "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
+  },
+
+  "assets": { "taskbarIconAltText": "wiki" },
+
+  "config": [ {
+    "name": "init",
+    "items": [ "admin.login", "admin.password", "admin.name", "admin.email",
+               "wiki.title", "wiki.lang", "wiki.license", "wiki.disable_registration" ]
+  } ],
+
+  "tarball": {
+    "url": "http://cloudstead.io/downloads/dokuwiki-2014-09-29d-Hrun.tar.gz",
+    "shasum": "6fc6794e13c8e3fe07f5e02bd09cc3a167486a676e9822fa17aab0a45b094794"
+  },
+
+  "packages": [ "php5-gd" ],
+
+  "web": { "type": "apache", "mode": "service" },
+
+  "perms": {
+    "@doc_root/data":        { "perms": "770", "recursive": true },
+    "@doc_root/bin":         { "perms": "770", "recursive": true },
+    "@doc_root/conf":        { "perms": "770", "recursive": true },
+    "@doc_root/inc":         { "perms": "770", "recursive": true },
+    "@doc_root/data/tmp":    { "perms": "770", "recursive": true },
+    "@doc_root/lib/plugins": { "perms": "770", "recursive": true },
+    "@doc_root/lib/tpl":     { "perms": "770", "recursive": true }
+  },
+
+  "templates": {
+    "@doc_root/conf/users.auth.php": "_",
+    "@doc_root/conf/acl.auth.php": "_",
+    "@doc_root/conf/local.php": "_",
+    "@doc_root/conf/plugins.local.php": "_"
+  }
+
+}

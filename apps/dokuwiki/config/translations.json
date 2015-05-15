@@ -1,0 +1,24 @@
+{
+  "id": "translations",
+  "categories": {
+    "init": {
+      "admin.login": { "label": "Admin Login", "info": "Login for the admin user" },
+      "admin.name": { "label": "Admin Name", "info": "Name of the admin user" },
+      "admin.password": { "label": "Admin Password", "info": "Password for the admin user" },
+      "admin.email": { "label": "Admin Email", "info": "Email for the admin user" },
+      "wiki.title": { "label": "Title", "info": "Main title for the entire wiki" },
+      "wiki.lang": { "label": "Language", "info": "Language" },
+      "wiki.license": { "label": "License", "info": "License for content created on this wiki" },
+      "wiki.disable_registration": { "label": "Disable Registration?", "info": "If set, anonymous users will not be able to register accounts on the wiki" },
+
+      "wiki.license.choice.cc-zero": { "label": "Creative Commons Zero License", "info": "As close to Public Domain as you can get with a license" },
+      "wiki.license.choice.publicdomain": { "label": "Public Domain", "info": "Anyone can do anything with it" },
+      "wiki.license.choice.cc-by": { "label": "Creative Commons BY License", "info": "Attribution required. https://creativecommons.org/licenses/by/4.0" },
+      "wiki.license.choice.cc-by-sa": { "label": "Creative Commons BY SA License", "info": "Attribution + ShareAlike. https://creativecommons.org/licenses/by-sa/4.0" },
+      "wiki.license.choice.gnufdl": { "label": "GNU FDL", "info": "GNU Free Documentation License. https://gnu.org/licenses/fdl.html" },
+      "wiki.license.choice.cc-by-nc": { "label": "Creative Commons BY NC License", "info": "Attribution + Noncommercial. https://creativecommons.org/licenses/by-nc/4.0" },
+      "wiki.license.choice.cc-by-nc-sa": { "label": "Creative Commons BY NC SA License", "info": "Attribution + Noncommercial + ShareAlike. https://creativecommons.org/licenses/by-nc-sa/4.0" },
+      "wiki.license.choice.0": { "label": "No License", "info": "Do not specify any license" }
+   }
+  }
+}

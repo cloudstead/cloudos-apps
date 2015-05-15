@@ -1,0 +1,19 @@
+{
+  "id": "config-metadata",
+  "categories": {
+    "init": {
+      "fields": {
+        "admin.login": { "required": true, "type": "login" },
+        "admin.name": { "required": true },
+        "admin.password": { "required": true, "type": "password", "login": "admin.login" },
+        "admin.email": { "required": true, "type": "email" },
+        "wiki.title": { "required": true, "type": "field" },
+        "wiki.lang": { "required": true, "type": "locale",
+          "choices": ["af", "ar", "az", "bg", "bn", "ca", "ca-valencia", "cs", "da", "de", "de-informal", "el", "en", "eo", "es", "et", "eu", "fa", "fi", "fo", "fr", "gl", "he", "hi", "hr", "hu", "hu-formal", "ia", "id", "id-ni", "is", "it", "ja", "ka", "kk", "km", "ko", "ku", "la", "lb", "lt", "lv", "mg", "mk", "mr", "ms", "ne", "nl", "no", "pl", "pt", "pt-br", "ro", "ru", "sk", "sl", "sq", "sr", "sv", "ta", "th", "tr", "uk", "vi", "zh", "zh-tw"]},
+        "wiki.license": { "required": true, "type": "pick_one",
+          "choices": ["cc-zero", "publicdomain", "cc-by", "cc-by-sa", "gnufdl", "cc-by-nc", "cc-by-nc-sa", "0"] },
+        "wiki.disable_registration": { "required": true, "type": "yesno" }
+      }
+    }
+  }
+}

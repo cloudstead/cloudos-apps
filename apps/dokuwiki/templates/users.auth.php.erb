@@ -1,0 +1,15 @@
+# users.auth.php
+# <?php exit()?>
+# Don't modify the lines above
+#
+# Userfile
+#
+# Format:
+#
+# login:passwordhash:Real Name:email:groups,comma,seperated
+<%
+admin = @app[:databag][:init]['admin']
+hashed_password = Chef::Recipe::Base.bcrypt(admin['password'], 12)
+%>
+
+<%=admin['login']%>:<%=hashed_password%>:<%=admin['name']%>:<%=admin['email']%>:admin,user

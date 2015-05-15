@@ -1,0 +1,14 @@
+{
+  "id": "init",
+  "admin": {
+    "login": "admin",
+    "name": "admin",
+    "email": "postmaster@@hostname"
+  },
+  "wiki": {
+    "title": "@hostname wiki",
+    "lang": "@lang",
+    "license": "0",
+    "disable_registration": true
+  }
+}
