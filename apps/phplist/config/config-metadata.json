@@ -5,7 +5,7 @@
       "fields": {
         "organization": { "required": true, "type": "field", "min": 1, "max": 100 },
         "locale": {
-          "required": true, "type": "pick_one",
+          "required": true, "type": "locale",
           "choices": ["ca", "da", "de", "en", "es", "es_AR", "fr", "it", "hu", "nl", "pl", "pt_BR", "sl", "fi", "sv", "zh_TW", "vi", "nl_BE", "el", "ru", "he", "ar", "fa", "ja", "zh_CN"]
         }
       }
