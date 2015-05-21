@@ -12,6 +12,15 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
+    "assets" : {
+        "blurb" : "An open source software engineering platform",
+        "description" : "An open source software engineering platform",
+        "smallIconUrl" : "http://cloudstead.io/downloads/icons/phabricator-small.png",
+        "smallIconUrlSha" : "3694043aa420ad88d601e5427bc150f574a873529090b2a050710962a3410a01",
+        "largeIconUrl" : "http://cloudstead.io/downloads/icons/phabricator-large.png",
+        "largeIconUrlSha" : "3694043aa420ad88d601e5427bc150f574a873529090b2a050710962a3410a01"
+    },
+
     "packages": [ "php-pear", "php5-curl", "php5-gd", "libpcre3-dev", "g++" ],
 
     "repo": { "url": "https://github.com/cobbzilla/phabricator.git", "branch": "cloudstead" },

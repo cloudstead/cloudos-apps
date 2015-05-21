@@ -10,6 +10,15 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
+    "assets": {
+        "blurb": "Provides services for sending and receiving Internet email",
+        "description": "Provides secure SMTP and IMAP services",
+        "smallIconUrl": "http://cloudstead.io/downloads/icons/email-small.png",
+        "smallIconUrlSha": "9b66a778c51de8e58e3649697f18b59086108085a6f0e834c73164064633555c",
+        "largeIconUrl": "http://cloudstead.io/downloads/icons/email-large.png",
+        "largeIconUrlSha": "9b66a778c51de8e58e3649697f18b59086108085a6f0e834c73164064633555c"
+    },
+
     "config": [ {
         "name": "init",
         "items": [ "smtp_relay.user", "smtp_relay.password", "smtp_relay.host", "smtp_relay.port",

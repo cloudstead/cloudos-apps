@@ -12,6 +12,15 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
+    "data" : {
+        "blurb" : "Email list manager. Great for marketing and communications.",
+        "description" : "Email list manager. Great for marketing and communications.",
+        "smallIconUrl" : "http://cloudstead.io/downloads/icons/phplist-small.png",
+        "smallIconUrlSha" : "e5a3a7f53bbd56fd00ea3a1d9f5eb67f4d1b5ebb643479c19f2cbf8cd1f7f498",
+        "largeIconUrl" : "http://cloudstead.io/downloads/icons/phplist-large.png",
+        "largeIconUrlSha" : "e5a3a7f53bbd56fd00ea3a1d9f5eb67f4d1b5ebb643479c19f2cbf8cd1f7f498"
+    },
+
     "config": [ {
         "name": "init",
         "items": [ "organization", "locale", "admin.name", "admin.password", "admin.email" ]

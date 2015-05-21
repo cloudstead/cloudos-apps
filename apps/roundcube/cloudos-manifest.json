@@ -12,7 +12,15 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
-    "assets": { "taskbarIconAltText": "email" },
+    "assets" : {
+        "blurb" : "Webmail for your cloudstead",
+        "description" : "Webmail for your cloudstead",
+        "taskbarIconAltText": "email",
+        "smallIconUrl" : "http://cloudstead.io/downloads/icons/roundcube-small.png",
+        "smallIconUrlSha" : "9b66a778c51de8e58e3649697f18b59086108085a6f0e834c73164064633555c",
+        "largeIconUrl" : "http://cloudstead.io/downloads/icons/roundcube-large.png",
+        "largeIconUrlSha" : "9b66a778c51de8e58e3649697f18b59086108085a6f0e834c73164064633555c"
+    },
 
     "packages" : [ "php5-imap", "php5-gd", "php5-json", "php5-curl",
                    "php5-intl", "php5-mcrypt", "php5-imagick" ],

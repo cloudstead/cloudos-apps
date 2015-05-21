@@ -12,6 +12,15 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
+    "assets" : {
+        "blurb" : "Cloud file storage, similar to DropBox",
+        "description" : "Cloud file storage, similar to DropBox",
+        "smallIconUrl" : "http://cloudstead.io/downloads/icons/owncloud-small.png",
+        "smallIconUrlSha" : "81af6cad4b691dbca672a7475e4a54acdf6ba9a8b3b91d06d7226ae08c018c46",
+        "largeIconUrl" : "http://cloudstead.io/downloads/icons/owncloud-large.png",
+        "largeIconUrlSha" : "81af6cad4b691dbca672a7475e4a54acdf6ba9a8b3b91d06d7226ae08c018c46"
+    },
+
     "config": [ {
         "name": "init",
         "items": [ "admin.login", "admin.password", "admin.email" ]

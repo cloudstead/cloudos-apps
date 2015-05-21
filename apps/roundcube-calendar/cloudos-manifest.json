@@ -14,7 +14,15 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
-    "assets": { "taskbarIconAltText": "calendar" },
+    "assets" : {
+        "blurb" : "Web calendar for your cloudstead",
+        "description" : "Web calendar for your cloudstead",
+        "taskbarIconAltText": "calendar",
+        "smallIconUrl" : "http://cloudstead.io/downloads/icons/roundcube-calendar-small.png",
+        "smallIconUrlSha" : "0aaba50b427087d2ea5b0407fa32ad4e9af44becf17522666d6e05b6492d0f70",
+        "largeIconUrl" : "http://cloudstead.io/downloads/icons/roundcube-calendar-large.png",
+        "largeIconUrlSha" : "0aaba50b427087d2ea5b0407fa32ad4e9af44becf17522666d6e05b6492d0f70"
+    },
 
     "web": { "type": "apache", "mode": "service" },
 

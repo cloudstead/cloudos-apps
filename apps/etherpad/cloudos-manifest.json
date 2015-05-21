@@ -12,6 +12,15 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
+    "assets" : {
+        "blurb" : "Collaborative document editing.",
+        "description" : "Create documents and let multiple people work on them together",
+        "smallIconUrl" : "http://cloudstead.io/downloads/icons/etherpad-small.png",
+        "smallIconUrlSha" : "6de8876ad4e74c057ebe20f15ccf36b67350b62f8d9421b0a054277b9ea4f1c8",
+        "largeIconUrl" : "http://cloudstead.io/downloads/icons/etherpad-large.png",
+        "largeIconUrlSha" : "6de8876ad4e74c057ebe20f15ccf36b67350b62f8d9421b0a054277b9ea4f1c8"
+    },
+
     "tarball": {
         "url": "http://cloudstead.io/downloads/ether-etherpad-lite-1.4.1-0-g1932d24.tar.gz",
         "shasum": "b2d5d9453f410a3b6c9233f7ec57877a8fe9099341b3f5500370a5a190adde61"

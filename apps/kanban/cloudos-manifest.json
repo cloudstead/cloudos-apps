@@ -12,6 +12,15 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
+    "assets" : {
+        "blurb" : "Simple project management with Kanban boards",
+        "description" : "Simple project management with Kanban boards",
+        "smallIconUrl" : "http://cloudstead.io/downloads/icons/kanban-small.png",
+        "smallIconUrlSha" : "8243aca0e8223d1f4413c41c562e22a362eb473808b6eeb0762fe369a30c58c6",
+        "largeIconUrl" : "http://cloudstead.io/downloads/icons/kanban-large.png",
+        "largeIconUrlSha" : "8243aca0e8223d1f4413c41c562e22a362eb473808b6eeb0762fe369a30c58c6"
+    },
+
     "repo": {
         "url": "https://github.com/cobbzilla/kanban.git",
         "branch": "cloudstead"

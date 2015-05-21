@@ -12,7 +12,15 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
-    "assets": { "taskbarIconAltText": "surveys" },
+    "assets" : {
+        "blurb" : "Web surveys, made easy.",
+        "description" : "Create surveys, send them out and view reports on the responses",
+        "taskbarIconAltText": "surveys",
+        "smallIconUrl" : "http://cloudstead.io/downloads/icons/limesurvey-small.png",
+        "smallIconUrlSha" : "e861f1ddf8521de5ef3578fa1131f225707790b3ab467ee2af2b45f87ba714c7",
+        "largeIconUrl" : "http://cloudstead.io/downloads/icons/limesurvey-large.png",
+        "largeIconUrlSha" : "e861f1ddf8521de5ef3578fa1131f225707790b3ab467ee2af2b45f87ba714c7"
+    },
 
     "config": [ {
         "name": "init",

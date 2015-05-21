@@ -12,6 +12,15 @@
         "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
     },
 
+    "data" : {
+        "blurb" : "An instant messenger that's great for groups",
+        "description" : "An instant messenger that's great for groups",
+        "smallIconUrl" : "http://cloudstead.io/downloads/icons/kandan-small.png",
+        "smallIconUrlSha" : "b7bafbfe8544327489da3774c1f40a6a96a2f8522e9956559f3db4580408f8b7",
+        "largeIconUrl" : "http://cloudstead.io/downloads/icons/kandan-large.png",
+        "largeIconUrlSha" : "b7bafbfe8544327489da3774c1f40a6a96a2f8522e9956559f3db4580408f8b7"
+    },
+
     "assets": { "taskbarIconAltText": "chat" },
 
     "packages": [ "g++", "libsqlite3-dev" ],

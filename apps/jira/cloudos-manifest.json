@@ -12,6 +12,15 @@
         "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
     },
 
+    "assets" : {
+        "blurb" : "A popular issue tracker from Atlassian",
+        "description" : "A popular issue tracker from Atlassian",
+        "smallIconUrl" : "http://cloudstead.io/downloads/icons/jira-small.png",
+        "smallIconUrlSha" : "ce50cb2d891a4801b45d68ff2cb84ff77981d8f1e5f7a2d54b124f071190c552",
+        "largeIconUrl" : "http://cloudstead.io/downloads/icons/jira-large.png",
+        "largeIconUrlSha" : "ce50cb2d891a4801b45d68ff2cb84ff77981d8f1e5f7a2d54b124f071190c552"
+    },
+
     "config": [ {
         "name": "init",
         "items": [ "admin.fullname", "admin.login", "admin.password", "admin.email",
