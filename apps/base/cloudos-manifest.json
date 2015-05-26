@@ -1,0 +1,14 @@
+{
+  "name": "base",
+  "version": "0.1.0",
+  "style": "chef",
+  "level": "init",
+  "publisher": {
+    "maintainer": "Jonathan Cobb",
+    "maintainer_email": "jonathan@cloudstead.io",
+    "license": "https://www.gnu.org/licenses/agpl-3.0.txt",
+    "code_copyright": "Copyright 2015 Cloudstead, Inc.",
+    "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
+  }
+
+}

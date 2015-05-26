@@ -1,0 +1,12 @@
+{
+  "name": "kestrel",
+  "version": "0.1.0",
+  "style": "chef",
+  "publisher": {
+    "maintainer": "Jonathan Cobb",
+    "maintainer_email": "jonathan@cloudstead.io",
+    "license": "https://raw.githubusercontent.com/twitter/kestrel/master/LICENSE",
+    "code_copyright": "Copyright 2009 Twitter, Inc., Copyright 2009 Robey Pointer",
+    "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
+  }
+}

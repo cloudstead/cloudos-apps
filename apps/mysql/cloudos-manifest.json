@@ -1,0 +1,13 @@
+{
+  "name": "mysql",
+  "version": "0.1.0",
+  "style": "chef",
+  "level": "system",
+  "publisher": {
+    "maintainer": "Jonathan Cobb",
+    "maintainer_email": "jonathan@cloudstead.io",
+    "license": "https://www.mysql.com/about/legal/",
+    "code_copyright": "Copyright 2015 Oracle, Inc.",
+    "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
+  }
+}

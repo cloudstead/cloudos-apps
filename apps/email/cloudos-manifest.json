@@ -2,6 +2,7 @@
     "name": "email",
     "version": "0.1.0",
     "style": "system",
+    "level": "system",
     "publisher": {
         "maintainer": "Jonathan Cobb",
         "maintainer_email": "jonathan@cloudstead.io",

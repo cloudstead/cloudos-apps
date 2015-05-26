@@ -1,0 +1,13 @@
+{
+  "name": "apache",
+  "version": "0.1.0",
+  "style": "chef",
+  "level": "system",
+  "publisher": {
+    "maintainer": "Jonathan Cobb",
+    "maintainer_email": "jonathan@cloudstead.io",
+    "license": "https://www.apache.org/licenses/",
+    "code_copyright": "Copyright © 2015 The Apache Software Foundation",
+    "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
+  }
+}

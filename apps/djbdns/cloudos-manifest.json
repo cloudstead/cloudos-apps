@@ -1,0 +1,13 @@
+{
+  "name": "djbdns",
+  "version": "0.1.0",
+  "style": "chef",
+  "level": "init",
+  "publisher": {
+    "maintainer": "Jonathan Cobb",
+    "maintainer_email": "jonathan@cloudstead.io",
+    "license": "Public Domain",
+    "code_copyright": "Copyright Daniel J. Bernstein",
+    "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
+  }
+}

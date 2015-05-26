@@ -1,0 +1,13 @@
+{
+  "name": "git",
+  "version": "0.1.0",
+  "style": "chef",
+  "level": "system",
+  "publisher": {
+    "maintainer": "Jonathan Cobb",
+    "maintainer_email": "jonathan@cloudstead.io",
+    "license": "https://git-scm.com/about/free-and-open-source",
+    "code_copyright": "https://github.com/git/git/blob/master/README",
+    "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
+  }
+}

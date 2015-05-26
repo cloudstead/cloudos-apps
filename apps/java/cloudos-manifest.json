@@ -1,0 +1,13 @@
+{
+  "name": "java",
+  "version": "0.1.0",
+  "style": "chef",
+  "level": "system",
+  "publisher": {
+    "maintainer": "Jonathan Cobb",
+    "maintainer_email": "jonathan@cloudstead.io",
+    "license": "http://openjdk.java.net/legal/gplv2+ce.html",
+    "code_copyright": "http://openjdk.java.net/faq/",
+    "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
+  }
+}
