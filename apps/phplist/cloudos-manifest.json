@@ -12,7 +12,7 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
-    "data" : {
+    "assets" : {
         "blurb" : "Email list manager. Great for marketing and communications.",
         "description" : "Email list manager. Great for marketing and communications.",
         "smallIconUrl" : "http://cloudstead.io/downloads/icons/phplist-small.png",

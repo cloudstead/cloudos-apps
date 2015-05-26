@@ -12,7 +12,7 @@
         "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
     },
 
-    "data" : {
+    "assets" : {
         "blurb" : "An instant messenger that's great for groups",
         "description" : "An instant messenger that's great for groups",
         "smallIconUrl" : "http://cloudstead.io/downloads/icons/kandan-small.png",
