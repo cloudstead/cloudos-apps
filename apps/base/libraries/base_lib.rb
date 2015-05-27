@@ -309,17 +309,20 @@ echo "
 
   def self.bcrypt (password, rounds = nil)
     bcrypt_script='/usr/bin/bcrypt-password'
+    init_bcrypt unless File.exist?(bcrypt_script)
+    rounds ||= 10
+    %x(echo '#{password}' | #{bcrypt_script} #{rounds}).strip
+  end
+
+  def self.init_bcrypt()
+    bcrypt_script='/usr/bin/bcrypt-password'
     lib = self
-    unless File.exist?(bcrypt_script)
-      %x(
+    %x(
       apt-get install -y make unzip gcc &&
       yes | cpan App::cpanminus && cpanm --notest Crypt::Random && cpanm --notest Crypt::Eksblowfish &&
       cp #{lib.chef_files('base')}/#{File.basename(bcrypt_script)} #{bcrypt_script} &&
       chown root.root #{bcrypt_script} && chmod 755 #{bcrypt_script}
     )
-    end
-    rounds ||= 10
-    %x(echo '#{password}' | #{bcrypt_script} #{rounds}).strip
   end
 
 end
