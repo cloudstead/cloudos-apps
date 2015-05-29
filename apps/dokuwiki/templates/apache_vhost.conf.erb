@@ -1,4 +1,4 @@
-<LocationMatch "/<%=@app[:name]%>/(data|conf|bin|inc)/">
+<LocationMatch "<%=@mount%>/(data|conf|bin|inc)/">
   Order allow,deny
   Deny from all
   Satisfy All
