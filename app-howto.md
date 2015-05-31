@@ -56,9 +56,11 @@ Next we look at what the app expects the system to look like. For DokuWiki, this
 
 Reading the link above, we see that DokuWiki wants PHP and some associated modules. By setting the "style" to "php" above, we've taken care of the PHP requirement.
 
-For resizing images, they recommend the PHP GD extension or ImageMagick. We can ensure the GD extension is installed by adding the following block to the manifest:
+For resizing images, they recommend the PHP GD extension or ImageMagick. 
+We will also (later on), use DokuWiki's LDAP plugin to enable single-signon.
+We can ensure the the appropriate PHP extensions are installed by adding the following block to the manifest:
 
-    "packages": [ "php5-gd" ],
+    "packages": [ "php5-gd", "php5-ldap" ],
 
 DokuWiki also requires a web server, noting that most users use Apache. That's great, because CloudOs is built heavily around Apache. We add the following block to the manifest:
 
@@ -141,7 +143,8 @@ This file contains the user database. Mine looks like this:
 
 Later on, we'll show how to hook up authentication so that logins will be checked against the CloudOs user database. In addition to this, it's often useful to have one "superadmin" user that can login even without CloudOs. The user created during the installation process can be this user.
 
-Instead of letting the installer setup this user, we can write to the file directly when CloudOs is installing the app. Let's create a template file. In your development environment, create a directory called "templates", and edit a file called "users.auth.php.erb" (note the .erb extension, which is required). Put this in the template file:
+Instead of letting the installer create this user, we can write the file directly when CloudOs installs the app. 
+Let's create a template file. In your development environment, create a directory called "templates", and edit a file called "users.auth.php.erb" (note the .erb extension, which is required). Put this in the template file:
 
     # users.auth.php
     # <?php exit()?>
@@ -235,7 +238,10 @@ In your manifest file, add the following block to define the configuration:
                  "wiki.title", "wiki.lang", "wiki.license", "wiki.disable_registration" ]
     } ],
 
-In the same directory as your manifest file, create a directory called "config". Within the config directory, create a file named `init.json`, this will provide default values for the configuration options declared in your manifest:
+The above block declares the variables that can be used in the bundle, referenced either in the manifest or in a template file. 
+
+In the same directory as your manifest file, create a directory called `config`. 
+Within the `config` directory, create a file named `init.json`, this provides default values for the configuration options declared in your manifest:
 
     {
       "id": "init",
@@ -252,7 +258,10 @@ In the same directory as your manifest file, create a directory called "config".
       }
     }
 
-To make the configuration more user-friendly to edit in the CloudOs admin console, we can also define metadata for it. Create a file called config-metadata.json (also in the config directory), its contents will be:
+##### Declaring configuration metadata
+
+To make the configuration more user-friendly to edit in the CloudOs admin console, we can also define metadata for it. 
+Create a file called `config-metadata.json` (also in the `config` directory), its contents will be:
 
     {
       "id": "config-metadata",
@@ -276,42 +285,112 @@ To make the configuration more user-friendly to edit in the CloudOs admin consol
 
 In the above you can see each databag is represented as a category under the main "categories" object. Within each category, we have declared the fields. We've made them all required, and chosen an appropriate type for each field. To read all about every option available in describing a field, head here (link TBD) 
 
-* For the `wiki.lang` field with type `locale`, where did that list of choices come from? With a little poking around the source, you find that DokuWiki maintains its locale-specific files in inc/lang, one directory per locale. So we can easily list all of them with `find inc/lang -maxdepth 1 -type d -exec basename {} \;` and put that list here. The type 'locale'
+For the `wiki.lang` field with type `locale`, where did that list of choices come from? 
+With a little poking around the source, you find that DokuWiki maintains its locale-specific files in inc/lang, one directory per locale. 
+So we can easily list all of them with `find inc/lang -maxdepth 1 -type d -exec basename {} \;` and put that list here. 
 
 To get the choices for `wiki.license` a little more poking around the source leads us to `conf/license.php`, which contains all the valid values. 
 
 The above metadata will allow CloudOs to present an appropriate UI (and perform validation) to cloudstead administrators when installing the app. But the field names and options will still be pretty raw, so we can add translation files that allow localization of the field labels and choices.
 
-Create a file called `translations.json` in the config directory. This will be the "default" translations and must exist. To create translations of the field names for other locales, create more files anamed translations_locale.json. For example, translations_es.json would contain translations in Spanish.
+##### Locale-specific translation files
+
+Without translation files, when CloudOs presents the 'Edit Settings' page for your app, end users will see a form with the raw field names.
+For example, things like 'admin.login' and 'wiki.license'. This is not too user-friendly.
+
+CloudOs allows you to supply translation files that tell CloudOs what to display for each field, based on a locale (language + optional country)
+
+Create a file called `translations.json` in the config directory. This will be the "default" translations file. 
+
+To create translations of the field names for other locales, create more files named translations_locale.json. 
+For example, `translations_es.json` would contain translations in Spanish and 
+`translations_fr_CA.json` would contain translations for the French language as spoken in Canada. 
+
+When creating translation files, ensure that the 2-letter language code is lowercase and the 2-letter country code is uppercase.  
 
 Here's what our default (English) translation file looks like:
 
-{
-  "id": "translations",
-  "categories": {
-    "init": {
-      "admin.login": { "label": "Admin Login", "info": "Login for the admin user" },
-      "admin.name": { "label": "Admin Name", "info": "Name of the admin user" },
-      "admin.password": { "label": "Admin Password", "info": "Password for the admin user" },
-      "admin.email": { "label": "Admin Email", "info": "Email for the admin user" },
-      "wiki.title": { "label": "Title", "info": "Main title for the entire wiki" },
-      "wiki.lang": { "label": "Language", "info": "Language" },
-      "wiki.license": { "label": "License", "info": "License for content created on this wiki" },
-      "wiki.disable_registration": { "label": "Disable Registration?", "info": "If set, anonymous users will not be able to register accounts on the wiki" },
+    {
+      "id": "translations",
+      "categories": {
+        "init": {
+          "admin.login": { "label": "Admin Login", "info": "Login for the admin user" },
+          "admin.name": { "label": "Admin Name", "info": "Name of the admin user" },
+          "admin.password": { "label": "Admin Password", "info": "Password for the admin user" },
+          "admin.email": { "label": "Admin Email", "info": "Email for the admin user" },
+          "wiki.title": { "label": "Title", "info": "Main title for the entire wiki" },
+          "wiki.lang": { "label": "Language", "info": "Language" },
+          "wiki.license": { "label": "License", "info": "License for content created on this wiki" },
+          "wiki.disable_registration": { "label": "Disable Registration?", "info": "If set, anonymous users will not be able to register accounts on the wiki" },
+          "wiki.license.choice.cc-zero": { "label": "Creative Commons Zero License", "info": "As close to Public Domain as you can get with a license" },
+          "wiki.license.choice.publicdomain": { "label": "Public Domain", "info": "Anyone can do anything with it" },
+          "wiki.license.choice.cc-by": { "label": "Creative Commons BY License", "info": "Attribution required. https://creativecommons.org/licenses/by/4.0" },
+          "wiki.license.choice.cc-by-sa": { "label": "Creative Commons BY SA License", "info": "Attribution + ShareAlike. https://creativecommons.org/licenses/by-sa/4.0" },
+          "wiki.license.choice.gnufdl": { "label": "GNU FDL", "info": "GNU Free Documentation License. https://gnu.org/licenses/fdl.html" },
+          "wiki.license.choice.cc-by-nc": { "label": "Creative Commons BY NC License", "info": "Attribution + Noncommercial. https://creativecommons.org/licenses/by-nc/4.0" },
+          "wiki.license.choice.cc-by-nc-sa": { "label": "Creative Commons BY NC SA License", "info": "Attribution + Noncommercial + ShareAlike. https://creativecommons.org/licenses/by-nc-sa/4.0" },
+          "wiki.license.choice.0": { "label": "No License", "info": "Do not specify any license" }
+       }
+      }
+    }
 
-      "wiki.license.choice.cc-zero": { "label": "Creative Commons Zero License", "info": "As close to Public Domain as you can get with a license" },
-      "wiki.license.choice.publicdomain": { "label": "Public Domain", "info": "Anyone can do anything with it" },
-      "wiki.license.choice.cc-by": { "label": "Creative Commons BY License", "info": "Attribution required. https://creativecommons.org/licenses/by/4.0" },
-      "wiki.license.choice.cc-by-sa": { "label": "Creative Commons BY SA License", "info": "Attribution + ShareAlike. https://creativecommons.org/licenses/by-sa/4.0" },
-      "wiki.license.choice.gnufdl": { "label": "GNU FDL", "info": "GNU Free Documentation License. https://gnu.org/licenses/fdl.html" },
-      "wiki.license.choice.cc-by-nc": { "label": "Creative Commons BY NC License", "info": "Attribution + Noncommercial. https://creativecommons.org/licenses/by-nc/4.0" },
-      "wiki.license.choice.cc-by-nc-sa": { "label": "Creative Commons BY NC SA License", "info": "Attribution + Noncommercial + ShareAlike. https://creativecommons.org/licenses/by-nc-sa/4.0" },
-      "wiki.license.choice.0": { "label": "No License", "info": "Do not specify any license" }
-   }
-  }
-}
+In the translations file, we have a main `categories` block, with each category corresponding to the contents of one data bag.
+For the `wiki.license` field, we have also defined translations for each of the valid values it can hold.
+You might notice that there are no translations for the `wiki.lang` field. 
+Because it was declared as type `locale`, the translations for the various permitted choices will automatically be generated.
 
-In the translations file, we have a main "categories" block, with each category corresponding to the contents of one data bag.
+##### Installing the app
+
+At this point the app itself should be able to install and function. We haven't yet hooked up to CloudOs Authentication to enable
+ single signon, but the installer creates an admin user that we can login with and play around.
+ 
+ To do the next step (connecting to single signon), it's helpful to have DokuWiki installed and running, so let's do that.
+ 
+###### Bundling the app
+
+The CloudOs bundler comes with some scripts to make app bundling easy. 
+First, let's get the bundler itself. Download the cloudos-dist repository from https://github.com/cloudstead/cloudos-dist.git
+
+Ensure that the cloudos-dist/bin directory is on your PATH:
+
+    export PATH="/path/to/cloudos-dist/bin:${PATH}"
+    
+If your `cloudos-manifest.json` for the DokuWiki app is in `~/my-apps/dokuwiki`, you would run the bundler like so:
+
+    cbundle_app ~/myapps/dokuwiki
+    
+This will produce an app bundle in:
+
+    ~/myapps/dokuwiki/target/dokuwiki-bundle.tar.gz
+
+###### Installing the app
+
+To install the app, you'll need a running CloudOs instance. Follow the instructions here (TBD) to create one.
+ 
+The "quick and dirty" way to test out your app on a CloudOs that's already been set up is to bypass CloudOs and install
+directly via chef. To do this, use the `patch_app` utility from `cloudos-dist/bin`
+
+    patch_app ~/myapps/dokuwiki user@your-cloudstead-hostname.example.com
+    
+The `user` should be the chef-user (has passwordless sudo, can run chef-client).
+ 
+The command above will run the bundler and then copy the app files directly into the chef repository on your server.
+Now login to your server and manually install the app:
+
+    ssh user@your-cloudstead-hostname.example.com
+    cd chef && bash install.sh dokuwiki
+    
+Now dokuwiki should be installed. Navigate to `https://your-cloudstead-hostname.example.com/dokuwiki/`
+Did the app load? Excellent! You should see a login page.
+If something went wrong, take a look at the (TBD) troubleshooting guide for help on debugging app installs. 
+
+How can we login? 
+In `config-metadata.json`. we defined `admin.password` as the login field for `admin.login`. 
+When the installer ran, it looked in `chef/data_bags/dokuwiki/init.json` for these configuration values. 
+Since there was no value for `admin.password` found there, it automatically generated one and wrote it back to the `init.json` file.
+Now you can look in `chef/data_bags/dokuwiki/init.json` to see the login credentials.
+
+Login as an admin to DokuWiki. Now we can move on to setting up single signon. 
 
 ##### Hooking up CloudOs Authentication
 
@@ -323,16 +402,33 @@ Following the instructions in the link above, we enable the LDAP plugin.
 
 In the Configuration Settings screen, enter the following for the LDAP configuration:
 
-server: ldap://127.0.0.1:389
-usertree: ou=People,cn=cloudos,dc=cloudstead,dc=io
-grouptree: ou=Groups,cn=cloudos,dc=cloudstead,dc=io
-userfilter: (objectclass=inetorgperson)
-groupfiler: (objectclass=groupOfUniqueNames)
-version: 3
-starttls: unchecked
-referrals: unchecked
-binddn: cn=admin,dc=cloudstead,dc=io
-bindpw: Use the value of LDAP_PASS found in ~cloudos/.cloudos.env
+    server: ldap://127.0.0.1:389
+    usertree: ou=People,cn=cloudos,dc=cloudstead,dc=io
+    grouptree: ou=Groups,cn=cloudos,dc=cloudstead,dc=io
+    userfilter: (objectclass=inetorgperson)
+    groupfiler: (objectclass=groupOfUniqueNames)
+    version: 3
+    starttls: unchecked
+    referrals: unchecked
+    binddn: cn=admin,dc=cloudstead,dc=io
+    bindpw: Use the value of LDAP_PASS found in ~cloudos/.cloudos.env
+    
+These are the default settings for the LDAP server running on a CloudOs instance. 
+If you have changed your LDAP settings, please adjust accordingly.
+ 
+Before we click 'save', 
+
+
+    <% ldap = @app[:auth][:ldap] %>
+    $conf['plugin']['authldap']['server'] = '<%=ldap.server%>';
+    $conf['plugin']['authldap']['usertree'] = '<%=ldap.user_dn%>';
+    $conf['plugin']['authldap']['grouptree'] = '<%=ldap.group_dn%>';
+    $conf['plugin']['authldap']['userfilter'] = '<%=ldap.user_filter%>';
+    $conf['plugin']['authldap']['groupfilter'] = '<%=ldap.group_filter%>';
+    $conf['plugin']['authldap']['version'] = <%=ldap.version%>;
+    $conf['plugin']['authldap']['binddn'] = '<%=ldap.admin_dn%>';
+    $conf['plugin']['authldap']['bindpw'] = '<%=ldap.password%>';
+    $conf['plugin']['authldap']['debug'] = 0;
 
 ##### Adding a taskbar icon
 
