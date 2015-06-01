@@ -10,13 +10,9 @@ else
 echo "$(date): starting $0 $@" >> /tmp/kerb.log
 echo "$(date): contents of /etc/krb5.conf: $(cat /etc/krb5.conf)" >> /tmp/kerb.log
 
-parent_domain="<%=@app[:domain]%>"
 realm="<%=ldap.realm%>"
 adminDN="<%=ldap.admin_dn%>"
 baseDN="<%=ldap.base_dn%>"
-parentCN="<%=ldap.parent_cn%>"
-people="<%=ldap.user_class%>"
-groups="<%=ldap.group_class%>"
 
 krb_master_password="${KRB_PASSWORD?no KRB_PASSWORD found in env}"
 ldap_master_password="${LDAP_PASSWORD?no LDAP_PASSWORD found in env}"
