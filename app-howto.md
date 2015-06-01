@@ -392,15 +392,26 @@ Now you can look in `chef/data_bags/dokuwiki/init.json` to see the login credent
 
 Login as an admin to DokuWiki. Now we can move on to setting up single signon. 
 
-##### Hooking up CloudOs Authentication
+##### Using CloudOs Single Sign-On
 
-Fortunately, DokuWiki supports LDAP authentication. Documentation is here: https://www.dokuwiki.org/plugin:authldap
+There are two parts to connecting an app to CloudOs SSO:
+
+ * Adjusting the app configuration so logins are authenticated against a CloudOs service
+ * Telling CloudOs how to automatically login CloudOs users to the app
+
+For the first part, CloudOs offers a variety of authentication means: LDAP, Kerberos, IMAP, and a REST API.
+
+DokuWiki supports LDAP authentication, so we'll use that for this app.
+
+###### Enabling LDAP
+Documentation for DokuWiki's LDAP plugin is here: https://www.dokuwiki.org/plugin:authldap
 
 Just like with the installation, let's walk through a manual set up of LDAP, see what it does, then update our manifest to make sure that stuff gets done.
 
 Following the instructions in the link above, we enable the LDAP plugin.
 
-In the Configuration Settings screen, enter the following for the LDAP configuration:
+Head over to the the Configuration Settings screen. In the Authentication section, select 'authldap' for the authentication type.
+In the LDAP section, enter these fields (leave the rest unchanged)
 
     server: ldap://127.0.0.1:389
     usertree: ou=People,cn=cloudos,dc=cloudstead,dc=io
@@ -416,8 +427,10 @@ In the Configuration Settings screen, enter the following for the LDAP configura
 These are the default settings for the LDAP server running on a CloudOs instance. 
 If you have changed your LDAP settings, please adjust accordingly.
  
-Before we click 'save', 
+Before we click 'save', we'll take an MD5 of all the files (see above for an example), so we can tell which files get updated.
+Click save, take another MD5 snapshot, and check the difference. Take a look at `local.php`, these are the settings we're looking for!
 
+So we update our `local.php.erb` template and add this at the end:
 
     <% ldap = @app[:auth][:ldap] %>
     $conf['plugin']['authldap']['server'] = '<%=ldap.server%>';
@@ -427,12 +440,66 @@ Before we click 'save',
     $conf['plugin']['authldap']['groupfilter'] = '<%=ldap.group_filter%>';
     $conf['plugin']['authldap']['version'] = <%=ldap.version%>;
     $conf['plugin']['authldap']['binddn'] = '<%=ldap.admin_dn%>';
-    $conf['plugin']['authldap']['bindpw'] = '<%=ldap.password%>';
-    $conf['plugin']['authldap']['debug'] = 0;
+    $conf['plugin']['authldap']['bindpw'] = $_SERVER['LDAP_PASSWORD'];
+
+An LDAP utility is available in the `@app[:auth][:ldap]` variable, and we use it here to fill out the configuration fields.
+Note that the password comes in via the environment. This allows us to avoid storing an important password in plaintext in this configuration file.
+
+At this point you should be able to start the app and log in using your CloudOs credentials.
+Head to http://your-hostname/dokuwiki/ and try it out. If you encounter problems, check the Apache logs in `/var/log/apache2`
+
+###### Enabling Automatic Login
+
+If you're logged in to your cloudstead and you select the DokuWiki app, you should be automatically logged in.
+CloudOs does this by keeping your login credentials (encrypted) in memory.
+When you activate an app, behing the scenes CloudOs automatically logs in for you, then passes your browser the
+authenticated session.
+
+To enable auto-login, you'll need to add an `auth` section to your app's `cloudos-manifest.json` file.
+
+Before we do this, let's look at how the app itself handles logins. Navigate to `/dokuwiki/` on your cloudstead.
+Now open up your browser's network inspector.
+
+On Firefox menu, choose Tools->Web Developer->Network, on Chrome use View->Developer->Developer Tools
+
+Now login, and look at the request and response. The username is passed via the `u` parameter, the password via `p`.
+The "Remember Me" button is `r`, and there are two fixed fields, `id` and `do`. Lastly, a random secure token appears
+int the `sectok` parameter.
+
+We also note that, unlike many apps, the default home page is not `/`, but `/doku.php`. This is also the URL that the
+login POST request is sent to.
+
+Based on this information, we add the `auth` block like so:
+
+    "auth": {
+    "home_path": "doku.php",
+    "login_fields": {
+        "id": "start",
+        "do": "login",
+        "u": "{{account.name}}",
+        "p": "{{account.password}}",
+        "r": "1",
+        "sectok": "pass"
+    },
+    "login_path": "doku.php",
+    "login_page_markers": ["<form id=\"dw__login\""]
+    }
+
+We've explained all these fields except for `login_page_markers`. This is a check to ensure that
+CloudOs is actually on a login page before trying the submission. If the page does not contain these fields, auto-login
+will not be attempted.
+
+If you run the `patch_app` utility again to update your app, and then restart your CloudOs server, you should now be able
+to login.
 
 ##### Adding a taskbar icon
 
-In the same directory as your manifest file, create a directory named `files`. 
-Within that directory, create a file called taskbarIcon.png, this will be the icon shown in the CloudOs task bar.
+Right now the task bar simply shows the text of the app name (`wiki`). It would be nice to have an application icon show up there instead.
+
+To do this:
+
+  * In the same directory as your manifest file, create a directory named `files`.
+  * Within that directory, create a file called taskbarIcon.png, this will be the icon shown in the CloudOs task bar.
+
 The ideal taskbar icon is a 400x400 PNG image, containing an icon-style graphic on a transparent background to represent the app.
 
