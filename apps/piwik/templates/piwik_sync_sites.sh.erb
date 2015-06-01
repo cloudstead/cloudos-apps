@@ -25,7 +25,7 @@ SITES_CONF="${APACHE_HOME}/sites-enabled/*.conf"
 GET_ALL_SITES_URL="${API_BASE}&method=SitesManager.getAllSites"
 
 JSON="<%=@app[:chef_user_home]%>/chef/JSON.sh"
-CURL="curl -s"
+CURL="curl -sf"
 
 # Get all piwik sites
 parsed=$(${CURL} ''"${GET_ALL_SITES_URL}"'' | ${JSON})

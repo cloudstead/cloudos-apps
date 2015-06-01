@@ -68,17 +68,17 @@
 
   "templates": {
     "@doc_root/config/config.ini.php": "_",
-    "@doc_root/misc/piwik_sync_sites.sh": "_",
+    "/usr/bin/piwik_sync_sites.sh": "_",
     "@doc_root/misc/piwik_tag_template.html": "_",
     "@doc_root/plugins/CloudosAuthentication/CloudosAuthentication.php": "_"
   },
 
   "perms": {
     "@doc_root/config/config.ini.php": { "chown": "@run_as.root", "perms": "600" },
-    "/usr/local/bin/piwik_sync_sites.sh": { "chown": "root.root", "perms": "700" }
+    "/usr/bin/piwik_sync_sites.sh": { "chown": "root.root", "perms": "700" }
   },
 
-  "validation": { "pre_scripts": [ { "exec": "@doc_root/misc/piwik_sync_sites.sh" } ] },
+  "validation": { "pre_scripts": [ { "exec": "/usr/bin/piwik_sync_sites.sh" } ] },
 
   "auth": {
     "login_fields": {

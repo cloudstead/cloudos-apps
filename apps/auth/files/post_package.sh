@@ -6,11 +6,9 @@ else
 
 echo "$(date): started $0 $@" >> /tmp/kerb.log
 
-parent_domain="${1}"
-ldap_master_password="${2}"
-schema_convert_conf="${3}"
-
-ldap_domain_string="dc=$(echo -n ${parent_domain} | sed -e 's/\./,dc=/g')"
+schema_convert_conf="${1?No schema convert script arg provided}"
+admin_dn="${2?No admin_dn arg provided}"
+ldap_master_password="${LDAP_PASSWORD?No LDAP_PASSWORD found in env}"
 
 # restore /etc/hosts
 if [ -f /etc/hosts.bak ] ; then
@@ -38,13 +36,13 @@ olcDbIndex: krbPrincipalName eq,pres,sub" | ldapmodify -Y EXTERNAL -H ldapi:/// 
 
 echo "dn: olcDatabase={1}hdb,cn=config
 replace: olcAccess
-olcAccess: to attrs=userPassword,shadowLastChange,krbPrincipalKey by dn=\"cn=admin,${ldap_domain_string}\" write by anonymous auth by self write by * none
+olcAccess: to attrs=userPassword,shadowLastChange,krbPrincipalKey by dn=\"${admin_dn}\" write by anonymous auth by self write by * none
 -
 add: olcAccess
 olcAccess: to dn.base="" by * read
 -
 add: olcAccess
-olcAccess: to * by dn=\"cn=admin,${ldap_domain_string}\" write by * read" | ldapmodify -Y EXTERNAL -H ldapi:///  -D cn=admin,cn=config
+olcAccess: to * by dn=\"${admin_dn}\" write by * read" | ldapmodify -Y EXTERNAL -H ldapi:///  -D cn=admin,cn=config
 
 # init kerberos logging files
 mkdir -p /var/log/kerberos
