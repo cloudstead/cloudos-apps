@@ -34,7 +34,7 @@ $CONFIG = array (
   'mail_smtphost' => '127.0.0.1',
   'mail_smtpport' => '587',
   'mail_smtpname' => 'cloudos_system_mailer',
-  'mail_smtppassword' => '<%=base.password('cloudos_system_mailer')%>',
+  'mail_smtppassword' => $_SERVER['SYSTEM_MAILER_PASSWORD'],
   'mail_smtpauthtype' => 'PLAIN',
   'mail_smtpsecure' => 'tls',
 

@@ -24,6 +24,8 @@ server_name = apache.get_server_name(@config[:server_name], @config[:mode], @hos
   ServerSignature Off
   Header add Strict-Transport-Security: "max-age=15768000;includeSubdomains"
 
+  PassEnv LDAP_PASSWORD KADMIN_PASSWORD SYSTEM_MAILER_PASSWORD
+
   IncludeOptional mixins/*.conf
   IncludeOptional mixins/<%=@app_name%>/*.conf
 

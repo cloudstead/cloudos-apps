@@ -11,12 +11,19 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
+    "config": [ {
+        "name": "init",
+        "items": [ "ldap.server", "ldap.domain", "ldap.realm",
+                   "ldap.parentCN", "ldap.adminDN", "ldap.people", "ldap.group" ]
+    } ],
+
     "pre_package": [ { "exec": "@files/pre_package.sh", "unless": "/etc/krb5kdc/setup.marker" } ],
 
     "packages": [ "haveged", "slapd", "ldap-utils", "krb5-kdc", "krb5-kdc-ldap", "krb5-admin-server", "ldapscripts" ],
 
     "post_package": [ {
-        "exec": "@files/post_package.sh @domain @password[ldap] @files/schema_convert.conf",
+        "exec": "@files/post_package.sh @files/schema_convert.conf @ldap(admin_dn)",
+        "env": { "LDAP_PASSWORD": "@ldap(password)" },
         "unless": "/etc/krb5kdc/setup.marker"
     } ],
 
@@ -25,17 +32,20 @@
     "templates": {
         "/etc/krb5.conf": "_",
         "/etc/krb5kdc/kadm5.acl": "_",
-        "/etc/ldap/ldap.conf": "_"
+        "/etc/ldap/ldap.conf": "_",
+        "@files/post_install.sh": "_"
     },
 
     "perms": {
         "/etc/krb5.conf": { "perms": "644" },
         "/etc/krb5kdc/kadm5.acl": { "perms": "644" },
-        "/etc/ldap/ldap.conf": { "perms": "644" }
+        "/etc/ldap/ldap.conf": { "perms": "644" },
+        "@files/post_install.sh": { "perms": "700" }
     },
 
     "post_install": [ {
-        "exec": "@files/post_install.sh @domain @domain @password[kerberos] @password[ldap]",
+        "exec": "@files/post_install.sh",
+        "env": { "LDAP_PASSWORD": "@ldap(password)", "KRB_PASSWORD": "@password[kerberos]" },
         "unless": "/etc/krb5kdc/setup.marker"
     } ],
 

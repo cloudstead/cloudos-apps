@@ -42,8 +42,30 @@ end
   end
 end
 
+# Add passwords to env vars
+base = Chef::Recipe::Base
+envvars='/etc/apache2/envvars'
+bash "add passwords to #{envvars}" do
+  user 'root'
+  code <<-EOF
+
+# Remove any existing _PASSWORD fields that are present
+TEMP=$(mktemp /tmp/apache.env.XXXXXXX) || exit 1
+chmod 700 ${TEMP}
+cat #{envvars} | egrep -v "^export [A-Z_]+_PASSWORD=.+" > ${TEMP}
+
+# Write correct _PASSWORD fields, overwrite the envvars file, delete temp file
+echo "
+export LDAP_PASSWORD=\"#{base.password 'ldap'}\"
+export KADMIN_PASSWORD=\"#{base.password 'kerberos'}\"
+export SYSTEM_MAILER_PASSWORD=\"#{base.password 'cloudos_system_mailer'}\"
+" >> ${TEMP} && cat ${TEMP} > #{envvars} && chmod 600 #{envvars} && rm ${TEMP}
+  EOF
+  not_if { File.open(envvars, 'r') { |f| f.read }.include? "LDAP_PASSWORD=\"#{base.password 'ldap'}\"" }
+end
+
 # default modules needed by most apps
-%w( ssl rewrite headers proxy proxy_http include substitute setenvif ).each do |mod|
+%w( ssl rewrite headers proxy proxy_http include substitute env setenvif ).each do |mod|
   Apache.enable_module(self, mod)
 end
 

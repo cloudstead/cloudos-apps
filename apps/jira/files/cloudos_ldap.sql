@@ -27,7 +27,7 @@ COPY cwd_directory_attribute (directory_id, attribute_name, attribute_value) FRO
 9999   ldap.user.group memberOf
 9999   ldap.user.filter        (objectclass=inetorgperson)
 9999   ldap.secure     false
-9999   ldap.password   faea41c393b715b0765c96a329be24ae37d2d4b33e3cbd952c114d20c6ddcc80
+9999   ldap.password   xxx
 9999   ldap.relaxed.dn.standardisation true
 9999   ldap.user.username.rdn  cn
 9999   ldap.user.encryption    sha

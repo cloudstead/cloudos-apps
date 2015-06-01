@@ -34,7 +34,7 @@
     } ],
 
     "prep_code": [
-        { "exec": "/var/www/phabricator/libphutil/scripts/build_xhpast.sh", "dir": "@repo",
+        { "exec": "/var/www/phabricator/libphutil/scripts/build_xhpast.php", "dir": "@repo",
           "unless": "@home/libphutil/src/parser/xhpast/bin/xhpast" },
         { "exec": "@home/arcanist/bin/arc liberate", "dir": "@repo" }
     ],

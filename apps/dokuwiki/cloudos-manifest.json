@@ -25,7 +25,7 @@
     "shasum": "6fc6794e13c8e3fe07f5e02bd09cc3a167486a676e9822fa17aab0a45b094794"
   },
 
-  "packages": [ "php5-gd" ],
+  "packages": [ "php5-gd", "php5-ldap" ],
 
   "web": { "type": "apache", "mode": "service" },
 
@@ -44,6 +44,20 @@
     "@doc_root/conf/acl.auth.php": "_",
     "@doc_root/conf/local.php": "_",
     "@doc_root/conf/plugins.local.php": "_"
+  },
+
+  "auth": {
+    "home_path": "doku.php",
+    "login_fields": {
+      "id": "start",
+      "do": "login",
+      "u": "{{account.name}}",
+      "p": "{{account.password}}",
+      "r": "1",
+      "sectok": "pass"
+    },
+    "login_path": "doku.php",
+    "login_page_markers": ["<form id=\"dw__login\""]
   }
 
 }

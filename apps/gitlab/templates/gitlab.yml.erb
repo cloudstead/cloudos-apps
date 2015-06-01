@@ -8,8 +8,9 @@
 # 3. Replace gitlab -> email_from
 
 <%
-base = Chef::Recipe::Base
+ldap = @app[:auth][:ldap]
 default_project = @app[:databag][:init]['default_project']
+ldap_security_method = ldap.secure ? 'tls' : 'plain'
 %>
 
 production: &base
@@ -132,12 +133,12 @@ production: &base
   #   bundle exec rake gitlab:ldap:check RAILS_ENV=production
   ldap:
     enabled: true
-    host: '127.0.0.1'
-    port: 389
-    uid: 'uid'
-    method: 'plain' # "tls" or "ssl" or "plain"
-    bind_dn: 'cn=cloudos,<%=@app[:ldap_domain]%>'
-    password: '<%=base.password('ldap')%>'
+    host: '<%=ldap.host%>'
+    port: <%=ldap.port%>
+    uid: '<%=ldap.user_username%>'
+    method: '<%=ldap_security_method%>' # "tls" or "ssl" or "plain"
+    bind_dn: '<%=ldap.base_dn%>'
+    password: ENV['LDAP_PASSWORD']
     # If allow_username_or_email_login is enabled, GitLab will ignore everything
     # after the first '@' in the LDAP username submitted by the user on login.
     #
@@ -153,14 +154,14 @@ production: &base
     #
     #   Ex. ou=People,dc=gitlab,dc=example
     #
-    base: 'ou=People,cn=cloudos,dc=cloudstead,dc=io'
+    base: '<%=ldap.user_dn%>'
 
     # Filter LDAP users
     #
     #   Format: RFC 4515
     #   Ex. (employeeType=developer)
     #
-    user_filter: '(objectClass=inetOrgPerson)'
+    user_filter: '<%=ldap.user_filter%>'
 
 
   ## OmniAuth settings

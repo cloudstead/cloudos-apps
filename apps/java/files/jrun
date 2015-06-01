@@ -110,7 +110,7 @@ ENV_FILES="/etc/${APP_PARENT}.env ${HOME}/.${APP_PARENT}.env ${APP}.env ${HOME}/
 found=0
 for env_file in ${ENV_FILES} ; do
   if [ -f ${env_file} ] ; then
-  . ${env_file}
+    . ${env_file}
     echo "jrun: Loaded env from ${env_file}"
     found=1
   fi

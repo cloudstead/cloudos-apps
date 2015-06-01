@@ -16,3 +16,16 @@ $conf['superuser'] = '@admin';
 <% if wiki['disable_registration'] %>
 $conf['disableactions'] = 'register';
 <% end %>
+
+<% ldap = @app[:auth][:ldap] %>
+
+$conf['authtype'] = 'authldap';
+$conf['plugin']['authldap']['server'] = '<%=ldap.server%>';
+$conf['plugin']['authldap']['usertree'] = '<%=ldap.user_dn%>';
+$conf['plugin']['authldap']['grouptree'] = '<%=ldap.group_dn%>';
+$conf['plugin']['authldap']['userfilter'] = '<%=ldap.user_filter%>';
+$conf['plugin']['authldap']['groupfilter'] = '<%=ldap.group_filter%>';
+$conf['plugin']['authldap']['version'] = <%=ldap.version%>;
+$conf['plugin']['authldap']['binddn'] = '<%=ldap.admin_dn%>';
+$conf['plugin']['authldap']['bindpw'] = $_ENV['LDAP_PASSWORD'];
+$conf['plugin']['authldap']['debug'] = 0;

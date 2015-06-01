@@ -20,49 +20,49 @@ public class JiraPlugin extends ConfigurableAppRuntime {
     private static final String[][] LDAP_DIR_ATTRS = new String[][]{
             {"directory.cache.synchronise.interval", "3600" },
             {"ldap.read.timeout", "120000" },
-            {"ldap.user.displayname", "displayName" },
+            {"ldap.user.displayname", "{{system.ldap.user_displayname}}" },
             {"ldap.usermembership.use", "false" },
             {"ldap.search.timelimit", "60000" },
-            {"ldap.user.objectclass", "inetorgperson" },
-            {"ldap.group.objectclass", "groupOfUniqueNames" },
+            {"ldap.user.objectclass", "{{system.ldap.user_class}}" },
+            {"ldap.group.objectclass", "{{system.ldap.group_class}}" },
             {"ldap.pagedresults", "false" },
-            {"ldap.user.firstname", "givenName" },
-            {"ldap.group.description", "description" },
+            {"ldap.user.firstname", "{{system.ldap.user_firstname}}" },
+            {"ldap.group.description", "{{system.ldap.group_description}}" },
             {"crowd.sync.incremental.enabled", "true" },
             {"ldap.pool.timeout", "0" },
-            {"ldap.group.usernames", "uniqueMember" },
-            {"ldap.user.group", "memberOf" },
-            {"ldap.user.filter", "(objectclass=inetorgperson)" },
-            {"ldap.secure", "false" },
+            {"ldap.group.usernames", "{{system.ldap.group_usernames}}" },
+            {"ldap.user.group", "{{system.ldap.user_groupnames}}" },
+            {"ldap.user.filter", "{{system.ldap.user_filter}}" },
+            {"ldap.secure", "{{system.ldap.secure}}" },
             {"ldap.password", "{{system.ldap.password}}" },
             {"ldap.relaxed.dn.standardisation", "true" },
-            {"ldap.user.username.rdn", "cn" },
-            {"ldap.user.encryption", "sha" },
+            {"ldap.user.username.rdn", "{{system.ldap.user_username_rdn}}" },
+            {"ldap.user.encryption", "{{system.ldap.user_encryption}}" },
             {"ldap.pool.maxsize", null },
-            {"ldap.group.filter", "(objectclass=groupOfUniqueNames)" },
+            {"ldap.group.filter", "{{system.ldap.group_filter}}" },
             {"ldap.nestedgroups.disabled", "true" },
-            {"ldap.user.username", "uid" },
-            {"ldap.group.dn", "ou=Groups" },
-            {"ldap.user.email", "mail" },
+            {"ldap.user.username", "{{system.ldap.user_username}}" },
+            {"ldap.group.dn", "{{system.ldap.group_dn}}" },
+            {"ldap.user.email", "{{system.ldap.user_email}}" },
             {"autoAddGroups", "" },
             {"ldap.pool.prefsize", null },
-            {"ldap.basedn", "{{system.ldap.baseDN}}" },
+            {"ldap.basedn", "{{system.ldap.base_dn}}" },
             {"ldap.propogate.changes", "false" },
             {"localUserStatusEnabled", "false" },
             {"ldap.roles.disabled", "true" },
             {"ldap.connection.timeout", "10000" },
-            {"ldap.url", "ldap://127.0.0.1:389" },
-            {"ldap.external.id", "entryUUID" },
+            {"ldap.url", "{{system.ldap.server}}" },
+            {"ldap.external.id", "{{system.ldap.external_id}}" },
             {"ldap.usermembership.use.for.groups", "false" },
             {"ldap.pool.initsize", null },
             {"ldap.referral", "false" },
-            {"ldap.userdn", "cn=admin,{{system.ldap.domain}}" },
-            {"ldap.user.lastname", "sn" },
+            {"ldap.userdn", "{{system.ldap.admin_dn}}" },
+            {"ldap.user.lastname", "{{system.ldap.user_lastname}}" },
             {"ldap.pagedresults.size", "1000" },
-            {"ldap.group.name", "cn" },
+            {"ldap.group.name", "{{system.ldap.group_name}}" },
             {"ldap.local.groups", "false" },
-            {"ldap.user.dn", "ou=People" },
-            {"ldap.user.password", "userPassword" }
+            {"ldap.user.dn", "{{system.ldap.user_dn}}" },
+            {"ldap.user.password", "{{system.ldap.user_password}}" }
     };
 
     private static final String[] LDAP_DIR_OPS = new String[]{ "UPDATE_USER_ATTRIBUTE", "UPDATE_GROUP_ATTRIBUTE" };
@@ -108,8 +108,8 @@ public class JiraPlugin extends ConfigurableAppRuntime {
         final Map<String, Map<String, String>> databags = (Map<String, Map<String, String>>) scope.get(FSCOPE_CONFIG);
         final Map<String, String> initBag = databags.get("init");
         try {
-            @Cleanup Connection conn = getConnection(details.getName(), initBag);
-            @Cleanup PreparedStatement s = conn.prepareStatement(
+            @Cleanup final Connection conn = getConnection(details.getName(), initBag);
+            @Cleanup final PreparedStatement s = conn.prepareStatement(
                     "insert into cwd_directory (id, directory_name, lower_directory_name, created_date, updated_date, active, " +
                             "impl_class, lower_impl_class, directory_type, directory_position) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             int index=1;
@@ -123,22 +123,47 @@ public class JiraPlugin extends ConfigurableAppRuntime {
             s.setString(index++, LDAP_DRIVER_CLASS.toLowerCase());
             s.setString(index++, "CONNECTOR");
             s.setInt(index++, 1);
-            if (!tryInsertRow(s)) return;
+            if (!tryUpdate(s)) return;
 
-            @Cleanup PreparedStatement s2 = conn.prepareStatement("insert into cwd_directory_attribute (directory_id, attribute_name, attribute_value) values (?, ?, ?)");
+            @Cleanup final PreparedStatement check_attr = conn.prepareStatement("select count(*) from cwd_directory_attribute where directory_id=? and attribute_name=?");
+            @Cleanup final PreparedStatement insert_attr = conn.prepareStatement("insert into cwd_directory_attribute (directory_id, attribute_name, attribute_value) values (?, ?, ?)");
+            @Cleanup final PreparedStatement update_attr = conn.prepareStatement("update cwd_directory_attribute set attribute_value=? where directory_id=? and attribute_name=?");
             for (String[] dir_attr : LDAP_DIR_ATTRS) {
                 index=1;
-                s2.setInt(index++, 9999);
-                s2.setString(index++, dir_attr[0]);
-                s2.setString(index++, render(dir_attr[1], scope));
-                if (!tryInsertRow(s2)) s2.clearWarnings();
+                check_attr.setInt(index++, 9999);
+                check_attr.setString(index++, dir_attr[0]);
+                @Cleanup final ResultSet check_rs = check_attr.executeQuery();
+                if (check_rs.next() && check_rs.getInt(1) > 0) {
+                    log.info("attribute already exists, updating it: "+dir_attr[0]);
+                    index=1;
+                    final String value = render(dir_attr[1], scope);
+                    if (value == null) {
+                        update_attr.setNull(index++, Types.VARCHAR);
+                    } else {
+                        update_attr.setString(index++, value);
+                    }
+                    update_attr.setInt(index++, 9999);
+                    update_attr.setString(index++, dir_attr[0]);
+                    if (!tryUpdate(update_attr)) update_attr.clearWarnings();
+                } else {
+                    index = 1;
+                    insert_attr.setInt(index++, 9999);
+                    insert_attr.setString(index++, dir_attr[0]);
+                    final String value = render(dir_attr[1], scope);
+                    if (value == null) {
+                        insert_attr.setNull(index++, Types.VARCHAR);
+                    } else {
+                        insert_attr.setString(index++, value);
+                    }
+                    if (!tryUpdate(insert_attr)) insert_attr.clearWarnings();
+                }
             }
 
-            @Cleanup PreparedStatement s3 = conn.prepareStatement("insert into cwd_directory_operation (directory_id, operation_type) values (?, ?)");
+            @Cleanup PreparedStatement insert_op = conn.prepareStatement("insert into cwd_directory_operation (directory_id, operation_type) values (?, ?)");
             for (String dir_op : LDAP_DIR_OPS) {
-                s3.setInt(1, 9999);
-                s3.setString(2, dir_op);
-                if (!tryInsertRow(s3)) s3.clearWarnings();
+                insert_op.setInt(1, 9999);
+                insert_op.setString(2, dir_op);
+                if (!tryUpdate(insert_op)) insert_op.clearWarnings();
             }
 
         } catch (Exception e) {
@@ -147,7 +172,7 @@ public class JiraPlugin extends ConfigurableAppRuntime {
 
     }
 
-    private boolean tryInsertRow(PreparedStatement s) throws SQLException {
+    private boolean tryUpdate(PreparedStatement s) throws SQLException {
         if (s.executeUpdate() != 1) {
             log.error("setupLdap: Error inserting (executeUpdate did not return 1): "+s.toString());
             return false;

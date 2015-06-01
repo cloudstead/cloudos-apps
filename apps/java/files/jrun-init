@@ -144,7 +144,8 @@ case "$1" in
     echo "$(date): start: starting ${APP_NAME} as ${RUN_AS_USER}, setting HOME=${RUN_AS_USER_HOME}, was ${HOME}" | tee -a ${CONTROL_LOG}
 
     set -m
-    sudo -u ${RUN_AS_USER} -H bash -c "HOME=${RUN_AS_USER_HOME} /usr/local/bin/jrun ${APP_BASE} ${JAVA_CLASS} ${CONFIG} 2> /dev/null 1> /dev/null </dev/null &"
+    if [ -r /etc/apache2/envvars ] ; then . /etc/apache2/envvars ; fi
+    sudo -u ${RUN_AS_USER} -H -E bash -c "HOME=${RUN_AS_USER_HOME} /usr/local/bin/jrun ${APP_BASE} ${JAVA_CLASS} ${CONFIG} 2> /dev/null 1> /dev/null </dev/null &"
     exit $?
   ;;
 

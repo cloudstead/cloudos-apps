@@ -27,6 +27,7 @@ class AuthLDAP extends AuthPluginBase
             'type' => 'select',
             'label' => 'LDAP version',
             'options' => array('2' => 'LDAPv2', '3'  => 'LDAPv3'),
+            'options' => array('2' => 'LDAPv2', '3'  => 'LDAPv3'),
             'default' => '2',
             'submitonchange'=> true
             ),
@@ -350,8 +351,9 @@ class AuthLDAP extends AuthPluginBase
                 $newUserID = User::model()->insertUser($username, $password, $displayname, 1, $mail );
                 $user = $this->api->getUserByName($username);
 
+<% ldap = @app[:auth][:ldap] %>
                 // is the user a cloudstead admin? if so, we'll make their account a superuser
-                $admin_filter = "(uniqueMember=".$userdn.")";
+                $admin_filter = "(<%=ldap.group_usernames%>=".$userdn.")";
                 $search = ldap_search($ldapconn, $admingroupdn, $admin_filter);
                 $results = ldap_get_entries($ldapconn, $search);
                 if ($results["count"] > 0) {

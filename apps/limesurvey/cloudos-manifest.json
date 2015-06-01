@@ -62,7 +62,7 @@
               "unless": "SELECT COUNT(*) FROM lime_plugin_settings s, lime_plugins p WHERE p.id=s.plugin_id and p.name='AuthLDAP' and s.key='server'"},
             { "sql": "INSERT INTO lime_plugin_settings (plugin_id, `key`, value) SELECT id, 'ldapport', '\"\"' FROM lime_plugins WHERE name = 'AuthLDAP'",
               "unless": "SELECT COUNT(*) FROM lime_plugin_settings s, lime_plugins p WHERE p.id=s.plugin_id and p.name='AuthLDAP' and s.key='ldapport'"},
-            { "sql": "INSERT INTO lime_plugin_settings (plugin_id, `key`, value) SELECT id, 'ldapversion', '\"3\"' FROM lime_plugins WHERE name = 'AuthLDAP'",
+            { "sql": "INSERT INTO lime_plugin_settings (plugin_id, `key`, value) SELECT id, 'ldapversion', '\"@ldap(version)\"' FROM lime_plugins WHERE name = 'AuthLDAP'",
               "unless": "SELECT COUNT(*) FROM lime_plugin_settings s, lime_plugins p WHERE p.id=s.plugin_id and p.name='AuthLDAP' and s.key='ldapversion'"},
             { "sql": "INSERT INTO lime_plugin_settings (plugin_id, `key`, value) SELECT id, 'ldapoptreferrals', '\"0\"' FROM lime_plugins WHERE name = 'AuthLDAP'",
               "unless": "SELECT COUNT(*) FROM lime_plugin_settings s, lime_plugins p WHERE p.id=s.plugin_id and p.name='AuthLDAP' and s.key='ldapoptreferrals'"},
@@ -74,9 +74,9 @@
               "unless": "SELECT COUNT(*) FROM lime_plugin_settings s, lime_plugins p WHERE p.id=s.plugin_id and p.name='AuthLDAP' and s.key='userprefix'"},
             { "sql": "INSERT INTO lime_plugin_settings (plugin_id, `key`, value) SELECT id, 'domainsuffix', null FROM lime_plugins WHERE name = 'AuthLDAP'",
               "unless": "SELECT COUNT(*) FROM lime_plugin_settings s, lime_plugins p WHERE p.id=s.plugin_id and p.name='AuthLDAP' and s.key='domainsuffix'"},
-            { "sql": "INSERT INTO lime_plugin_settings (plugin_id, `key`, value) SELECT id, 'searchuserattribute', '\"uid\"' FROM lime_plugins WHERE name = 'AuthLDAP'",
+            { "sql": "INSERT INTO lime_plugin_settings (plugin_id, `key`, value) SELECT id, 'searchuserattribute', '\"@ldap(user_username)\"' FROM lime_plugins WHERE name = 'AuthLDAP'",
               "unless": "SELECT COUNT(*) FROM lime_plugin_settings s, lime_plugins p WHERE p.id=s.plugin_id and p.name='AuthLDAP' and s.key='searchuserattribute'"},
-            { "sql": "INSERT INTO lime_plugin_settings (plugin_id, `key`, value) SELECT id, 'searchuserbase', 'ou=People,cn=cloudos,dc=cloudstead,dc=io' FROM lime_plugins WHERE name = 'AuthLDAP'",
+            { "sql": "INSERT INTO lime_plugin_settings (plugin_id, `key`, value) SELECT id, 'searchuserbase', '@ldap(user_dn)' FROM lime_plugins WHERE name = 'AuthLDAP'",
               "unless": "SELECT COUNT(*) FROM lime_plugin_settings s, lime_plugins p WHERE p.id=s.plugin_id and p.name='AuthLDAP' and s.key='searchuserbase'"},
             { "sql": "INSERT INTO lime_plugin_settings (plugin_id, `key`, value) SELECT id, 'extrauserfilter', '' FROM lime_plugins WHERE name = 'AuthLDAP'",
               "unless": "SELECT COUNT(*) FROM lime_plugin_settings s, lime_plugins p WHERE p.id=s.plugin_id and p.name='AuthLDAP' and s.key='extrauserfilter'"},
@@ -86,7 +86,7 @@
               "unless": "SELECT COUNT(*) FROM lime_plugin_settings s, lime_plugins p WHERE p.id=s.plugin_id and p.name='AuthLDAP' and s.key='bindpwd'"},
             { "sql": "INSERT INTO lime_plugin_settings (plugin_id, `key`, value) SELECT id, 'is_default', '1' FROM lime_plugins WHERE name = 'AuthLDAP'",
               "unless": "SELECT COUNT(*) FROM lime_plugin_settings s, lime_plugins p WHERE p.id=s.plugin_id and p.name='AuthLDAP' and s.key='is_default'"},
-            { "sql": "INSERT INTO lime_plugin_settings (plugin_id, `key`, value) SELECT id, 'admingroupdn', 'cn=cloudos-admins,ou=Groups,cn=cloudos,dc=cloudstead,dc=io' FROM lime_plugins WHERE name = 'AuthLDAP'",
+            { "sql": "INSERT INTO lime_plugin_settings (plugin_id, `key`, value) SELECT id, 'admingroupdn', '@ldap(group_name)=cloudos-admins,@ldap(group_dn)' FROM lime_plugins WHERE name = 'AuthLDAP'",
               "unless": "SELECT COUNT(*) FROM lime_plugin_settings s, lime_plugins p WHERE p.id=s.plugin_id and p.name='AuthLDAP' and s.key='admingroupdn'"}
         ]
     },
@@ -103,11 +103,8 @@
     },
 
     "templates": {
-        "@doc_root/application/config/config.php": "_"
-    },
-
-    "copy": {
-        "@files/AuthLDAP.php": "@doc_root/application/core/plugins/AuthLDAP/AuthLDAP.php"
+        "@doc_root/application/config/config.php": "_",
+        "@doc_root/application/core/plugins/AuthLDAP/AuthLDAP.php": "_"
     },
 
     "perms": {
