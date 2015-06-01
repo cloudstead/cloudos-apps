@@ -40,6 +40,8 @@
 
     "web": { "type": "apache", "mode": "proxy" },
 
+    "validation": { "timeout": 900 },
+
     "auth": {
       "login_fields": {
         "username": "{{account.name}}",
