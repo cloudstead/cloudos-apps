@@ -155,12 +155,12 @@ sleep 5s
     Digest::SHA256.file(file).hexdigest
   end
 
-  def self.logrotate(chef, path)
-    chef.template path do
+  def self.logrotate(chef, app_name, path)
+    chef.template "/etc/logrotate.d/#{app_name}" do
       source 'log_rotate.erb'
       owner 'root'
       group 'root'
-      mode '0755'
+      mode '0750'
       cookbook 'base'
       variables({ :path => path })
       action :create
