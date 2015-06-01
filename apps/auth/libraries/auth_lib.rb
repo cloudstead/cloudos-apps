@@ -96,11 +96,6 @@ class Chef::Recipe::LdapHelper
     val 'admin_dn', "cn=#{admin},#{ldap_domain}"
   end
 
-  def external_id
-    # default 'cn=admin,dc=cloudstead,dc=io'
-    val 'external_id', 'entryUUID'
-  end
-
   def transport
     val 'transport', 'plain'
   end
@@ -113,18 +108,23 @@ class Chef::Recipe::LdapHelper
     Chef::Recipe::Base.password 'ldap'
   end
 
-  def parent
-    val 'parent', 'cloudos'
+  def name
+    val 'name', 'cloudos'
   end
 
-  def parent_cn
-    # default 'cn=cloudos,'
-    val 'parent_cn', "cn=#{parent},"
+  def name_dn
+    # default 'cn=cloudos'
+    "cn=#{name}"
   end
 
   def base_dn
     # default 'cn=cloudos,dc=cloudstead,dc=io'
-    val 'base_dn', "#{parent_cn}#{ldap_domain}"
+    val 'base_dn', "#{name_dn},#{ldap_domain}"
+  end
+
+  def external_id
+    # default 'cn=admin,dc=cloudstead,dc=io'
+    val 'external_id', 'entryUUID'
   end
 
   def users
@@ -132,8 +132,12 @@ class Chef::Recipe::LdapHelper
     val 'users', 'People'
   end
 
+  def user_simple_dn
+    "ou=#{users}"
+  end
+
   def user_dn
-    val 'user_dn', "ou=#{users},#{base_dn}"
+    val 'user_dn', "#{user_simple_dn},#{base_dn}"
   end
 
   def user_class
@@ -181,8 +185,12 @@ class Chef::Recipe::LdapHelper
     val 'groups', 'Groups'
   end
 
+  def group_simple_dn
+    "ou=#{groups}"
+  end
+
   def group_dn
-    val 'group_dn', "ou=#{groups},#{base_dn}"
+    val 'group_dn', "#{group_simple_dn},#{base_dn}"
   end
 
   def group_class
@@ -212,16 +220,14 @@ class Chef::Recipe::LdapHelper
 
   def safe_hash
     hash = {}
-    attributes = %w( server scheme host port domain realm org_unit_class version admin_dn external_id base_dn
+    %w( server domain realm transport name org_unit_class version admin admin_dn external_id base_dn
         users user_dn user_class user_filter user_username user_displayname user_firstname user_lastname
         user_groupnames user_username_rdn user_password user_encryption groups
-        group_dn group_class group_filter group_name )
-
-    attributes.each do |attr|
+        group_dn group_class group_filter group_name ).each do |attr|
       hash[attr] = self.send attr
     end
 
-    # admin may have defined additional properties. Add everything we haven't already added, but NOT password
+    # admin may have defined additional properties. Add everything we haven't already added, but NOT password.
     @ldap.each_key { |k|
       hash[k] = @app[:lib].subst_string(@ldap[k], @app) unless hash[k] || k == 'password'
     }

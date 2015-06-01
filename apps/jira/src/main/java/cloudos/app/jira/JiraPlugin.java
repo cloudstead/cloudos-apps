@@ -42,7 +42,7 @@ public class JiraPlugin extends ConfigurableAppRuntime {
             {"ldap.group.filter", "{{system.ldap.group_filter}}" },
             {"ldap.nestedgroups.disabled", "true" },
             {"ldap.user.username", "{{system.ldap.user_username}}" },
-            {"ldap.group.dn", "{{system.ldap.group_dn}}" },
+            {"ldap.group.dn", "{{system.ldap.group_simple_dn}}" },
             {"ldap.user.email", "{{system.ldap.user_email}}" },
             {"autoAddGroups", "" },
             {"ldap.pool.prefsize", null },
@@ -61,7 +61,7 @@ public class JiraPlugin extends ConfigurableAppRuntime {
             {"ldap.pagedresults.size", "1000" },
             {"ldap.group.name", "{{system.ldap.group_name}}" },
             {"ldap.local.groups", "false" },
-            {"ldap.user.dn", "{{system.ldap.user_dn}}" },
+            {"ldap.user.dn", "{{system.ldap.user_simple_dn}}" },
             {"ldap.user.password", "{{system.ldap.user_password}}" }
     };
 
