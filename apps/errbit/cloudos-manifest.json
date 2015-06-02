@@ -1,0 +1,30 @@
+{
+  "version": "0.1.0",
+  "name": "errbit",
+  "style": "rails",
+  "interactive": true,
+
+  "publisher": {
+    "maintainer": "Jonathan Cobb",
+    "maintainer_email": "jonathan@cloudstead.io",
+    "license": "https://raw.githubusercontent.com/errbit/errbit/master/LICENSE",
+    "code_copyright": "Copyright (c) 2010-2015 Errbit Team",
+    "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
+  },
+
+  "assets" : {
+    "blurb" : "The open source, self-hosted error catcher. Compatible with Airbrake.io",
+    "description" : "The open source, self-hosted error catcher. Compatible with Airbrake.io"
+  },
+
+  "repo": { "url": "https://github.com/errbit/errbit.git" },
+
+  "packages": ["mongodb-server"],
+
+  "web": { "type": "apache", "mode": "proxy" },
+
+  "post_install": [
+    { "exec": "bundle exec rake errbit:bootstrap", "user": "@run_as", "dir": "@name" }
+  ]
+
+}
