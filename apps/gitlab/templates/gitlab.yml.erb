@@ -21,7 +21,7 @@ production: &base
   ## GitLab settings
   gitlab:
     ## Web server settings (note: host is the FQDN, do not include http://)
-    host: <%=@app[:hostname]%>
+    host: <%=@app[:name]%>-<%=@app[:hostname]%>
     port: 443
     https: true
 
