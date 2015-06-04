@@ -15,13 +15,30 @@ sudo -u #{run_as} -H chmod 644 #{known_hosts}
     end
   end
 
-  def self.clone (chef, repo, branch, run_as, cwd, dir = nil)
+  def self.synchronize (chef, repo, branch, run_as, cwd, dir = nil)
     dir ||= base_name(repo)
-    chef.bash "clone repository #{repo} on branch #{branch} into dir #{dir}" do
+    chef.bash "synchronize repository #{repo} (branch #{branch}) into dir #{dir}" do
       user 'root'
       cwd cwd
       code <<-EOF
-sudo -u #{run_as} -H git clone #{repo} --branch #{branch} #{dir}
+if [ -d "#{dir}/.git" ] ; then
+  # it exists. grab the latest code from the (possibly new) branch.
+  current_branch="$(cd #{dir} && git rev-parse --abbrev-ref HEAD)"
+  if [ "${current_branch}" != "#{branch}" ] ; then
+    cd #{dir} && sudo -u #{run_as} -H bash -c "git fetch && git checkout #{branch} && git pull origin #{branch}"
+  else
+    cd #{dir} && sudo -u #{run_as} -H bash -c "git fetch && git pull origin #{branch}"
+  fi
+
+elif [ -e "#{dir}" ] ; then
+  # it exists but is not a git repo? wtf. we bail.
+  echo >&2 "git_lib.synchronize ($0): #{dir} exists but is not a git repo (no .git dir)"
+  exit 1
+
+else
+  # it doesn't exist. fresh clone.
+  sudo -u #{run_as} -H git clone #{repo} --branch #{branch} #{dir}
+fi
       EOF
       not_if { File.exists? "#{cwd}/#{dir}"  }
     end
