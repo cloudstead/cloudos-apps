@@ -1,0 +1,15 @@
+---
+user: <%=@app[:run_as]%>
+gitlab_url: https://<%=@app[:name]%>-<%=@app[:hostname]%>/
+http_settings:
+  self_signed_cert: false
+repos_path: /home/git/repositories/
+auth_file: !binary |-
+  L2hvbWUvZ2l0Ly5zc2gvYXV0aG9yaXplZF9rZXlz
+redis:
+  bin: /usr/bin/redis-cli
+  host: localhost
+  port: 6379
+  namespace: resque:gitlab
+log_level: INFO
+audit_usernames: false
