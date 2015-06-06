@@ -1,5 +1,9 @@
 {
   "id": "translations",
+  "assets": {
+    "blurb": "CloudOs powers your cloudstead",
+    "description": "The core of a cloudstead, CloudOs manages the system, accounts and apps on your cloudstead"
+  },
   "categories": {
     "base": {
       "hostname": { "label": "Hostname", "info": "First part of the public hostname of this system" },

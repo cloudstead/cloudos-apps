@@ -1,0 +1,7 @@
+{
+  "id": "translations",
+  "assets": {
+    "blurb": "CloudOs alimenter votre cloudstead",
+    "description": "Le noyau d'une cloudstead, CloudOs gère le système, les comptes et applications sur votre cloudstead"
+  }
+}
