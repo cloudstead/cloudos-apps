@@ -330,7 +330,7 @@ Here's what our default (English) translation file looks like:
           "wiki.license.choice.cc-by-nc": { "label": "Creative Commons BY NC License", "info": "Attribution + Noncommercial. https://creativecommons.org/licenses/by-nc/4.0" },
           "wiki.license.choice.cc-by-nc-sa": { "label": "Creative Commons BY NC SA License", "info": "Attribution + Noncommercial + ShareAlike. https://creativecommons.org/licenses/by-nc-sa/4.0" },
           "wiki.license.choice.0": { "label": "No License", "info": "Do not specify any license" }
-       }
+        }
       }
     }
 
@@ -472,22 +472,27 @@ login POST request is sent to.
 Based on this information, we add the `auth` block like so:
 
     "auth": {
-    "home_path": "doku.php",
-    "login_fields": {
+      "home_path": "doku.php",
+      "login_fields": {
         "id": "start",
         "do": "login",
         "u": "{{account.name}}",
         "p": "{{account.password}}",
         "r": "1",
         "sectok": "pass"
-    },
-    "login_path": "doku.php",
-    "login_page_markers": ["<form id=\"dw__login\""]
+      },
+      "login_path": "doku.php",
+      "login_page_markers": ["<form id=\"dw__login\""]
     }
 
 We've explained all these fields except for `login_page_markers`. This is a check to ensure that
 CloudOs is actually on a login page before trying the submission. If the page does not contain these fields, auto-login
 will not be attempted.
+
+Also notice that the `sectok` parameter has a special value of `pass`. This means whatever value the server generates on
+the HTML form will be passed back to the server as-is for that parameter.
+
+todo: a full list of all scope variables exposed in this context 
 
 If you run the `patch_app` utility again to update your app, and then restart your CloudOs server, you should now be able
 to login.
@@ -502,4 +507,3 @@ To do this:
   * Within that directory, create a file called taskbarIcon.png, this will be the icon shown in the CloudOs task bar.
 
 The ideal taskbar icon is a 400x400 PNG image, containing an icon-style graphic on a transparent background to represent the app.
-
