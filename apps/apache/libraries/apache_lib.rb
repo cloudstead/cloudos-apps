@@ -256,11 +256,11 @@ a2ensite #{site_name}
 
   def self.disable_site (chef, site_name)
     site_name = '000-default' if site_name == 'default'
-    chef.bash "disable Apache new_site: #{site_name}" do
+    chef.bash "disable Apache site: #{site_name}" do
       user 'root'
       cwd '/tmp'
       code <<-EOH
-# always return true because new_site may already be disabled
+# always return true because site may already be disabled
 a2dissite #{site_name} || true
       EOH
     end
