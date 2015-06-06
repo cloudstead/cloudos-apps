@@ -3,9 +3,9 @@ user: <%=@app[:run_as]%>
 gitlab_url: https://<%=@app[:name]%>-<%=@app[:hostname]%>/
 http_settings:
   self_signed_cert: false
-repos_path: /home/git/repositories/
-auth_file: !binary |-
-  L2hvbWUvZ2l0Ly5zc2gvYXV0aG9yaXplZF9rZXlz
+repos_path: <%=@app[:run_as_home]%>/repositories/
+auth_file: <%=@app[:run_as_home]%>/.ssh/authorized_keys
+
 redis:
   bin: /usr/bin/redis-cli
   host: localhost
