@@ -357,7 +357,7 @@ Ensure that the cloudos-dist/bin directory is on your PATH:
     
 If your `cloudos-manifest.json` for the DokuWiki app is in `~/my-apps/dokuwiki`, you would run the bundler like so:
 
-    cbundle_app ~/myapps/dokuwiki
+    cbundle ~/myapps/dokuwiki
     
 This will produce an app bundle in:
 
@@ -507,3 +507,8 @@ To do this:
   * Within that directory, create a file called taskbarIcon.png, this will be the icon shown in the CloudOs task bar.
 
 The ideal taskbar icon is a 400x400 PNG image, containing an icon-style graphic on a transparent background to represent the app.
+
+##### Uploading to the App Store
+
+You can use the bundler tool to upload your bundle to the app store and make it available to anyone.
+
