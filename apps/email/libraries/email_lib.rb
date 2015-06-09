@@ -167,7 +167,6 @@ else
     archive_user_dir="${archive_dir}.#{account}-$(date +%Y-%m-%d-%H-%M-%S)"
     echo "Archving mailbox ${mailbox} -> ${archive_user_dir}"
     mv ${mailbox} ${archive_user_dir}
-    fi
 
   else
     echo "Removing mailbox, no new owner: ${mailbox}"
