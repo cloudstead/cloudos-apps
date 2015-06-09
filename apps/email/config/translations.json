@@ -4,7 +4,7 @@
     "init": {
       "smtp_relay.host": { "label": "SMTP Relay Hostname", "info": "Outbound email will be routed via this server" },
       "smtp_relay.port": { "label": "SMTP Relay Port", "info": "Port number on the relay server to use" },
-      "smtp_relay.user": { "label": "SMTP Username", "info": "Authenticate with the relay using this username" },
+      "smtp_relay.username": { "label": "SMTP Username", "info": "Authenticate with the relay using this username" },
       "smtp_relay.password": { "label": "SMTP Password", "info": "Authenticate with the relay using this password" }
     }
   }
