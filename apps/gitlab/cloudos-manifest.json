@@ -2,6 +2,7 @@
     "version": "0.1.0",
     "name": "gitlab",
     "style": "rails",
+    "style_options": { "rbenv": "2.0.0-dev" },
     "run_as": { "user": "git", "can_login": true },
     "interactive": true,
 
@@ -58,7 +59,7 @@
         "@repo/config/gitlab.yml": "_",
         "@repo/config/unicorn.rb": "_",
         "@repo/config/initializers/rack_attack.rb": "_",
-        "@home/gitlab-shell/config.yml": "_"
+        "@repo/config/gitlab-shell-config.yml": "_"
     },
 
     "symlinks": { "@repo/@name": "@repo" },
@@ -75,10 +76,11 @@
     },
 
     "post_install": [
-        { "user": "git", "exec": "git config --global user.name \"GitLab\"" },
-        { "user": "git", "exec": "git config --global user.email \"@name@@hostname\"" },
-        { "user": "git", "exec": "git config --global core.autocrlf input" },
-        { "user": "git", "dir": "@repo", "exec": "bundle exec rake gitlab:shell:install[v1.9.6] REDIS_URL=redis://localhost:6379 RAILS_ENV=production" }
+        { "user": "@run_as", "exec": "git config --global user.name \"GitLab\"" },
+        { "user": "@run_as", "exec": "git config --global user.email \"@name@@hostname\"" },
+        { "user": "@run_as", "exec": "git config --global core.autocrlf input" },
+        { "user": "@run_as", "dir": "@repo", "exec": "@bash(bundle exec rake gitlab:shell:install[v2.6.3] REDIS_URL=redis://localhost:6379 RAILS_ENV=production)" },
+        { "user": "@run_as", "exec": "@bash(if [ ! -f @home/gitlab-shell/config.yml ] ; then ln -sf @repo/config/gitlab-shell-config.yml @home/gitlab-shell/config.yml; fi)" }
     ],
 
     "pre_uninstall": [
