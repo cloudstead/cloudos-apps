@@ -81,6 +81,10 @@
         { "user": "git", "dir": "@repo", "exec": "bundle exec rake gitlab:shell:install[v1.9.6] REDIS_URL=redis://localhost:6379 RAILS_ENV=production" }
     ],
 
+    "pre_uninstall": [
+        { "exec": "@bash(ps auxwwww | grep sidekiq | grep @run_as | awk '{print $2}' | xargs --no-run-if-empty kill)" }
+    ],
+
     "logrotate": [ "gitlab-shell/gitlab-shell.log" ],
 
     "services": [ { "name": "gitlab", "pattern": "unicorn_rails (.+ )?-D -c @repo/config/unicorn.rb" } ],
