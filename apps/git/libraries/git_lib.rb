@@ -19,8 +19,13 @@ sudo -u #{run_as} -H chmod 644 #{known_hosts}
     dir ||= base_name(repo)
     chef.bash "synchronize repository #{repo} (branch #{branch}) into dir #{dir}" do
       user 'root'
-      cwd cwd
       code <<-EOF
+# for a first-time install, the user dir might be missing. Create it.
+if [ ! -d #{cwd} ] ; then
+  mkdir -p #{cwd} && chown #{run_as} #{cwd}
+fi
+cd #{cwd}
+
 if [ -d "#{dir}/.git" ] ; then
   # it exists. grab the latest code from the (possibly new) branch.
   current_branch="$(cd #{dir} && git rev-parse --abbrev-ref HEAD)"
