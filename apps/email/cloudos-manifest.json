@@ -22,7 +22,7 @@
 
     "config": [ {
         "name": "init",
-        "items": [ "smtp_relay.user", "smtp_relay.password", "smtp_relay.host", "smtp_relay.port",
+        "items": [ "smtp_relay.username", "smtp_relay.password", "smtp_relay.host", "smtp_relay.port",
                    "vmail_user", "postmaster_user" ]
     } ],
 
