@@ -181,7 +181,7 @@ EOF
       # remove alias from virtual file
       virtual_file='/etc/postfix/virtual'
       to_remove = "#{account}  #{deliver_to_account}"
-      base.remove_from_file(chef, virtual_file, to_remove)
+      base_lib.remove_from_file(chef, virtual_file, to_remove)
     end
 
     chef.bash "remap #{vmailbox} #{virtual_file.nil? ? '' : "and #{virtual_file}"} after removing/archiving #{account}" do
