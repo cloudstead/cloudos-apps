@@ -10,7 +10,13 @@
         "default_project.snippets": { "required": true, "type": "yesno" },
         "default_project.wiki": { "required": true, "type": "yesno" },
         "default_project.merge_requests": { "required": true, "type": "yesno" },
-        "default_project.issues": { "required": true, "type": "yesno" }
+        "default_project.issues": { "required": true, "type": "yesno" },
+        "google_oauth2.app_id": { "required": false, "type": "field" },
+        "google_oauth2.app_secret": { "required": false, "type": "field" },
+        "twitter.app_id": { "required": false, "type": "field" },
+        "twitter.app_secret": { "required": false, "type": "field" },
+        "github.app_id": { "required": false, "type": "field" },
+        "github.app_secret": { "required": false, "type": "field" }
       }
     }
   }

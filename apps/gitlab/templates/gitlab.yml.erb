@@ -167,7 +167,7 @@ production: &base
   ## OmniAuth settings
   omniauth:
     # Allow login via Twitter, Google, etc. using OmniAuth providers
-    enabled: false
+    enabled: true
 
     # CAUTION!
     # This allows users to login without having a user account first (default: false).
@@ -184,14 +184,20 @@ production: &base
     # arguments, followed by optional 'args' which can be either a hash or an array.
     # Documentation for this is available at http://doc.gitlab.com/ce/integration/omniauth.html
     providers:
-      # - { name: 'google_oauth2', app_id: 'YOUR APP ID',
-      #     app_secret: 'YOUR APP SECRET',
-      #     args: { access_type: 'offline', approval_prompt: '' } }
-      # - { name: 'twitter', app_id: 'YOUR APP ID',
-      #     app_secret: 'YOUR APP SECRET'}
-      # - { name: 'github', app_id: 'YOUR APP ID',
-      #     app_secret: 'YOUR APP SECRET',
-      #     args: { scope: 'user:email' } }
+      <% unless @app[:databag][:init]['google_oauth2']['app_id'].to_s.empty? %>
+       - { name: 'google_oauth2', app_id: '<%=@app[:databag][:init]['google_oauth2']['app_id']%>',
+           app_secret: '<%=@app[:databag][:init]['google_oauth2']['app_secret']%>',
+           args: { access_type: 'offline', approval_prompt: '' } }
+      <% end %>
+      <% unless @app[:databag][:init]['twitter']['app_id'].to_s.empty? %>
+       - { name: 'twitter', app_id: '<%=@app[:databag][:init]['twitter']['app_id']%>',
+           app_secret: '<%=@app[:databag][:init]['twitter']['app_secret']%>'}
+      <% end %>
+      <% unless @app[:databag][:init]['github']['app_id'].to_s.empty? %>
+       - { name: 'github', app_id: '<%=@app[:databag][:init]['github']['app_id']%>',
+           app_secret: '<%=@app[:databag][:init]['github']['app_secret']%>',
+           args: { scope: 'user:email' } }
+      <% end %>
 
 
 

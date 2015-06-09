@@ -8,5 +8,17 @@
     "wiki": true,
     "merge_requests": true,
     "issues": true
+  },
+  "google_oauth2": {
+    "app_id": "",
+    "app_secret": ""
+  },
+  "twitter": {
+    "app_id": "",
+    "app_secret": ""
+  },
+  "github": {
+    "app_id": "",
+    "app_secret": ""
   }
 }

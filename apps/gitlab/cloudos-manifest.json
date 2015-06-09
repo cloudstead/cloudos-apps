@@ -31,7 +31,10 @@
       "name": "init",
       "items": [ "email_sender", "email_sender_alias",
                  "default_project.visibility_level", "default_project.snippets",
-                 "default_project.wiki", "default_project.merge_requests", "default_project.issues" ]
+                 "default_project.wiki", "default_project.merge_requests", "default_project.issues",
+                 "google_oauth2.app_id", "google_oauth2.app_secret",
+                 "github.app_id", "github.app_secret",
+                 "twitter.app_id", "twitter.app_secret" ]
     } ],
 
     "mailboxes": [ { "address": "@config[init][email_sender]", "alias_for": "@config[init][email_sender_alias]" } ],

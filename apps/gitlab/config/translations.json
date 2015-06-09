@@ -11,7 +11,13 @@
       "default_project.snippets": { "label": "Enable snippets", "info": "Enable snippets" },
       "default_project.wiki": { "label": "Enable wiki", "info": "Enable wiki" },
       "default_project.merge_requests": { "label": "Enable merge requests", "info": "Enable merge requests" },
-      "default_project.issues": { "label": "Enable issues", "info": "Enable issues" }
+      "default_project.issues": { "label": "Enable issues", "info": "Enable issues" },
+      "google_oauth2.app_id": { "label": "Google OAuth2 API Key", "info": "Google OAuth2 API Key" },
+      "google_oauth2.app_secret": { "label": "Google OAuth2 API Secret", "info": "Google OAuth2 API Secret" },
+      "twitter.app_id": { "label": "Twitter API Key", "info": "Twitter API Key" },
+      "twitter.app_secret": { "label": "Twitter API Secret", "info": "Twitter API Secret" },
+      "github.app_id": { "label": "Github API Key", "info": "Github API Key" },
+      "github.app_secret": { "label": "Github API Secret", "info": "Github API Secret" }
     }
   }
 }
