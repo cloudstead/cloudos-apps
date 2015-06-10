@@ -2,7 +2,7 @@
     "version": "0.1.0",
     "name": "gitlab",
     "style": "rails",
-    "style_options": { "rbenv": "2.2.2" },
+    "style_options": { "rbenv": "2.1.6" },
     "run_as": { "user": "git", "can_login": true },
     "interactive": true,
 
@@ -95,14 +95,20 @@
     "services": [ { "name": "gitlab", "pattern": "unicorn_rails (.+ )?-D -c @repo/config/unicorn.rb" } ],
 
     "auth": {
-      "login_path": "users/auth/ldap/callback",
+      "login_path": "users/auth/ldapmain/callback",
       "login_fields": {
         "utf8": "✓",
         "username": "{{account.name}}",
         "password": "{{account.password}}",
         "authenticity_token": "pass"
       },
-      "login_page_markers": [ "login-box", "value=\"LDAP Sign in\"" ]
+      "login_page_markers": [ "login-box", "placeholder=\"LDAP Login\"" ]
+    },
+
+    "validation": {
+        "pre_scripts": [
+            { "user": "@run_as", "dir": "@repo", "exec": "@bash(bundle exec rake gitlab:check RAILS_ENV=production)"}
+        ]
     }
 
 }
