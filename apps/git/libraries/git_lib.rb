@@ -17,6 +17,8 @@ sudo -u #{run_as} -H chmod 644 #{known_hosts}
 
   def self.synchronize (chef, repo, branch, run_as, cwd, dir = nil)
     dir ||= base_name(repo)
+    branch ||= 'master'
+    is_tag = branch.start_with?('tags/') ? 1 : 0
     chef.bash "synchronize repository #{repo} (branch #{branch}) into dir #{dir}" do
       user 'root'
       code <<-EOF
@@ -26,13 +28,18 @@ if [ ! -d #{cwd} ] ; then
 fi
 cd #{cwd}
 
+is_tag=#{is_tag}
 if [ -d "#{dir}/.git" ] ; then
   # it exists. grab the latest code from the (possibly new) branch.
   current_branch="$(cd #{dir} && git rev-parse --abbrev-ref HEAD)"
-  if [ "${current_branch}" != "#{branch}" ] ; then
-    cd #{dir} && sudo -u #{run_as} -H bash -c "git fetch && git checkout #{branch} && git pull origin #{branch}"
+  if [ ${is_tag} ] ; then
+    cd #{dir} && sudo -u #{run_as} -H bash -c "git fetch && git checkout #{branch}"
   else
-    cd #{dir} && sudo -u #{run_as} -H bash -c "git fetch && git pull origin #{branch}"
+    if [ "${current_branch}" != "#{branch}" ] ; then
+      cd #{dir} && sudo -u #{run_as} -H bash -c "git fetch && git checkout #{branch} && git pull origin #{branch}"
+    else
+      cd #{dir} && sudo -u #{run_as} -H bash -c "git fetch && git pull origin #{branch}"
+    fi
   fi
 
 elif [ -e "#{dir}" ] ; then
@@ -41,11 +48,10 @@ elif [ -e "#{dir}" ] ; then
   exit 1
 
 else
-  # it doesn't exist. fresh clone.
-  sudo -u #{run_as} -H git clone #{repo} --branch #{branch} #{dir}
+  # it doesn't exist. create its parent dir and do a fresh clone.
+  sudo -u #{run_as} -H bash -c "mkdir -p $(dirname #{dir}) && git clone #{repo} #{dir} && cd #{dir} && git checkout #{branch}"
 fi
       EOF
-      not_if { File.exists? "#{cwd}/#{dir}"  }
     end
   end
 

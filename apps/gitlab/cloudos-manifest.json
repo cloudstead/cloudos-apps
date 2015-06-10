@@ -2,7 +2,7 @@
     "version": "0.1.0",
     "name": "gitlab",
     "style": "rails",
-    "style_options": { "rbenv": "2.0.0-dev" },
+    "style_options": { "rbenv": "2.2.2" },
     "run_as": { "user": "git", "can_login": true },
     "interactive": true,
 
