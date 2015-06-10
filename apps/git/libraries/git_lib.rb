@@ -33,12 +33,12 @@ if [ -d "#{dir}/.git" ] ; then
   # it exists. grab the latest code from the (possibly new) branch.
   current_branch="$(cd #{dir} && git rev-parse --abbrev-ref HEAD)"
   if [ ${is_tag} ] ; then
-    cd #{dir} && sudo -u #{run_as} -H bash -c "git fetch && git checkout #{branch}"
+    cd #{dir} && sudo -u #{run_as} -H bash -c "git fetch --all && git reset --hard origin/master && git checkout #{branch}"
   else
     if [ "${current_branch}" != "#{branch}" ] ; then
-      cd #{dir} && sudo -u #{run_as} -H bash -c "git fetch && git checkout #{branch} && git pull origin #{branch}"
+      cd #{dir} && sudo -u #{run_as} -H bash -c "git fetch --all && git reset --hard origin/#{branch} && git checkout #{branch} && git pull origin #{branch}"
     else
-      cd #{dir} && sudo -u #{run_as} -H bash -c "git fetch && git pull origin #{branch}"
+      cd #{dir} && sudo -u #{run_as} -H bash -c "git fetch --all && git reset --hard origin/#{branch} && git pull origin/#{branch}"
     fi
   fi
 
