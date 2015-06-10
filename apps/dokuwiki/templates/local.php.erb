@@ -5,27 +5,35 @@
  * Date: Thu, 14 May 2015 19:39:09 +0000
  */
 
-<% wiki = @app[:databag][:init]['wiki'] %>
+<%
+wiki = @app[:databag][:init]['wiki']
+admin_group_name = @app[:databag][:init]['admin_group']['name']
+%>
 
 $conf['title'] = '<%=wiki['title']%>';
 $conf['lang'] = '<%=wiki['lang']%>';
 $conf['license'] = '<%=wiki['license']%>';
 $conf['useacl'] = 1;
-$conf['superuser'] = '@admin';
+$conf['superuser'] = '@<%=admin_group_name%>';
 
 <% if wiki['disable_registration'] %>
 $conf['disableactions'] = 'register';
 <% end %>
 
+$conf['template'] = 'arctic';
+
 <% ldap = @app[:auth][:ldap] %>
 
 $conf['authtype'] = 'authldap';
 $conf['plugin']['authldap']['server'] = '<%=ldap.server%>';
-$conf['plugin']['authldap']['usertree'] = '<%=ldap.user_dn%>';
-$conf['plugin']['authldap']['grouptree'] = '<%=ldap.group_dn%>';
-$conf['plugin']['authldap']['userfilter'] = '<%=ldap.user_filter%>';
-$conf['plugin']['authldap']['groupfilter'] = '<%=ldap.group_filter%>';
+$conf['plugin']['authldap']['usertree'] = '<%=ldap.user_dn_lc%>';
+$conf['plugin']['authldap']['grouptree'] = '<%=ldap.group_dn_lc%>';
+$conf['plugin']['authldap']['userfilter'] = '(&(<%=ldap.user_username_lc%>=%{user})<%=ldap.user_filter_lc%>)';
+$conf['plugin']['authldap']['groupfilter'] = '(&<%=ldap.group_filter_lc%>(<%=ldap.group_usernames_lc%>=<%=ldap.user_username_lc%>=%{user},<%=ldap.user_dn_lc%>))';
 $conf['plugin']['authldap']['version'] = <%=ldap.version%>;
-$conf['plugin']['authldap']['binddn'] = '<%=ldap.admin_dn%>';
-$conf['plugin']['authldap']['bindpw'] = $_ENV['LDAP_PASSWORD'];
+$conf['plugin']['authldap']['binddn'] = '<%=ldap.admin_dn_lc%>';
+$conf['plugin']['authldap']['bindpw'] = $_SERVER['LDAP_PASSWORD'];
 $conf['plugin']['authldap']['debug'] = 0;
+
+$conf['plugin']['authldap']['mapping']['name']  = '<%=ldap.user_displayname_lc%>'; # Name of attribute for pretty print user name.
+$conf['plugin']['authldap']['mapping']['grps']  = array('<%=ldap.user_groupnames_lc%>' => '/CN=(.+?),/i'); # Where groups are defined

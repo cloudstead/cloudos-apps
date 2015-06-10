@@ -1,14 +1,23 @@
 {
   "id": "init",
+
   "admin": {
     "login": "admin",
     "name": "admin",
     "email": "postmaster@@hostname"
   },
+
+  "admin_group": {
+    "name": "wiki-admins",
+    "mirror": "cloudos-admins",
+    "members": ""
+  },
+
   "wiki": {
     "title": "@hostname wiki",
     "lang": "@lang",
     "license": "0",
     "disable_registration": true
   }
+
 }

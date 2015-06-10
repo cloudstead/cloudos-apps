@@ -46,6 +46,18 @@
     "@doc_root/conf/plugins.local.php": "_"
   },
 
+  "post_install": [
+    { "exec": "@bash(cd @doc_root/lib/tpl && curl http://r.notomorrow.de/dokuwiki-template-arctic/pkg/arctic-stable.tgz | tar xzf -)"}
+  ],
+
+  "cloudos_groups": {
+    "@config[init][admin_group][name]": {
+      "description": "Wiki administrators",
+      "mirror": "@config[init][admin_group][mirror]",
+      "members": "@config[init][admin_group][members]"
+    }
+  },
+
   "auth": {
     "home_path": "doku.php",
     "login_fields": {

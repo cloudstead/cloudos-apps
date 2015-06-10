@@ -6,6 +6,11 @@
       "admin.name": { "label": "Admin Name", "info": "Name of the admin user" },
       "admin.password": { "label": "Admin Password", "info": "Password for the admin user" },
       "admin.email": { "label": "Admin Email", "info": "Email for the admin user" },
+
+      "admin_group.name": { "label": "Wiki Admin Group", "info": "Members of this CloudOs group will have admin permissions on the Wiki" },
+      "admin_group.mirror": { "label": "Wiki Admin Mirror", "info": "An existing CloudOs group that will be mirrored by the Wiki Admin Group" },
+      "admin_group.members": { "label": "Wiki Admin Members", "info": "An initial set of members of the Wiki Admin Group" },
+
       "wiki.title": { "label": "Title", "info": "Main title for the entire wiki" },
       "wiki.lang": { "label": "Language", "info": "Language" },
       "wiki.license": { "label": "License", "info": "License for content created on this wiki" },
