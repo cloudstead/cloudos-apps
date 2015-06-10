@@ -205,8 +205,21 @@ class Chef::Recipe::LdapHelper
     val 'group_name', 'cn'
   end
 
+  def group_usernames
+    val 'group_usernames', 'uniqueMember'
+  end
+
   def method_missing(method, *args, &block)
+
+    # Looking for a forced-lowercase version of something?
+    if method.to_s.end_with?('_lc') && methods.include?(method.to_s[0..-4].to_sym)
+      return send(method.to_s[0..-4].to_sym).downcase
+    end
+
+    # Or a non-standard field defined in the databag?
     @app[:lib].subst_string(@ldap[method], @app) if @ldap[method]
+
+    # Otherwise, it's undefined
     "--undefined: #{method} (#{self})--"
   end
 
