@@ -3,8 +3,8 @@
   "categories": {
       "init": {
       "fields": {
-        "admin.name": { "group": "cloudos-dns", "required": true, "type": "login" },
-        "admin.password": { "group": "cloudos-dns", "required": true, "type": "password" },
+        "admin.name": { "group": "cloudos-dns", "required": false, "type": "login" },
+        "admin.password": { "group": "cloudos-dns", "required": false, "type": "password" },
         "dyndns.account": { "group": "dyndns", "required": true, "type": "login" },
         "dyndns.user": { "group": "dyndns", "required": true, "type": "login" },
         "dyndns.password": { "group": "dyndns", "required": true, "type": "password" },

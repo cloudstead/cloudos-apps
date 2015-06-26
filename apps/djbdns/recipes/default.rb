@@ -13,21 +13,53 @@
   end
 end
 
-user "dnslog" do
-  shell "/bin/false"
+user 'dnslog' do
+  shell '/bin/false'
 end
 
-user "tinydns" do
-  shell "/bin/false"
+user 'tinydns' do
+  shell '/bin/false'
 end
 
-bash "configure tinydns" do
-  user "root"
-  cwd "/tmp"
+user 'axfrdns' do
+  shell '/bin/false'
+end
+
+bash 'configure tinydns' do
+  user 'root'
+  cwd '/tmp'
   code <<-EOF
 tinydns-conf tinydns dnslog /etc/tinydns/ #{node[:ipaddress]}
-mkdir /etc/service ; cd /etc/service ; ln -sf /etc/tinydns/
+axfrdns-conf axfrdns dnslog /etc/axfrdns /etc/tinydns #{node[:ipaddress]}
+
+mkdir /etc/service && cd /etc/service && ln -sf /etc/tinydns/ && ln -sf /etc/axfrdns/
 initctl start svscan
-  EOF
-  not_if { File.exists? "/etc/tinydns" }
+EOF
+  not_if { File.exists? '/etc/tinydns' }
+end
+
+begin
+  bag = chef.data_bag_item('djbdns', 'init')
+
+  if defined? bag['allow_axfr']
+    template '/etc/axfrdns/tcp' do
+      source 'axfrdns_tcp.erb'
+      owner 'root'
+      group 'root'
+      mode '0644'
+      variables ({ :allow => bag['allow_axfr'] })
+      action :create
+    end
+
+    bash 'refresh axfrdns' do
+      user 'root'
+      cwd '/etc/axfrdns'
+      code <<-EOF
+make && svc -h /etc/service/axfrdns
+EOF
+    end
+  end
+
+rescue => e
+  puts "cloudos-dns/init databag not found or error reading, no AXFR hosts will be allowed: #{e}"
 end

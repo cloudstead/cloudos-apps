@@ -2,6 +2,7 @@
     "name": "cloudos-dns",
     "version": "0.1.0",
     "style": "java_webapp",
+    "level": "cloudos",
     "publisher": {
         "maintainer": "Jonathan Cobb",
         "maintainer_email": "jonathan@cloudstead.io",
