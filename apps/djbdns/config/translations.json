@@ -1,0 +1,15 @@
+{
+  "id": "translations",
+  "assets": {
+    "blurb": "djbdns is a reliable and secure DNS server that runs on your cloudstead",
+    "description": "The DNS server helps your cloudstead manage hostnames for apps you install"
+  },
+  "categories": {
+    "init": {
+      "allow_axfr": {
+        "label": "Secondary Name Servers",
+        "info": "Enter a list of IP addresses separated by spaces and/or commas. Zone transfers will be allowed from these IP addresses."
+      }
+    }
+  }
+}

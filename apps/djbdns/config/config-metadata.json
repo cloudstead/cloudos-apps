@@ -1,0 +1,10 @@
+{
+  "id": "config-metadata",
+  "categories": {
+    "init": {
+      "fields": {
+        "allow_axfr": { "required": true, "type": "list_ipaddr" }
+      }
+    }
+  }
+}

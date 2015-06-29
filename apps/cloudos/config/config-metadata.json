@@ -21,8 +21,10 @@
         "authy.user": { "group": "twofactor", "required": true, "type": "secret_key" },
         "authy.base_uri": { "group": "twofactor", "required": true,
           "type": "pick_one", "choices": ["http://sandbox-api.authy.com", "https://api.authy.com"] },
+        "dns.account": { "group": "dns", "required": true, "type": "login" },
         "dns.user": { "group": "dns", "required": true, "type": "login" },
         "dns.password": { "group": "dns", "required": true, "type": "secret_key" },
+        "dns.zone": { "group": "dns", "required": true, "type": "hostname" },
         "dns.base_uri": { "group": "dns", "required": true, "type": "http" },
         "dns.enabled": { "group": "dns", "required": false, "type": "yesno" },
         "backup_cron_schedule": { "group": "backup", "required": true, "type": "cron" }
