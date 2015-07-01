@@ -21,9 +21,13 @@
       "s3_bucket": { "label": "S3 Bucket Name", "info": "Backups and other data will be encrpyted and written to this bucket" },
       "authy.user": { "label": "Authy API Token", "info": "This is your API key with Authy. You can find it in your Authy control panel." },
 
-      "authy.base_uri": { "label": "Authy URL", "info": "Choose the sandbox server for testing purposes, or the production server if you're ready for prime time." },
-      "authy.base_uri.choice.https://api.authy.com": { "label": "Authy Production API (https://api.authy.com)" },
-      "authy.base_uri.choice.http://sandbox-api.authy.com": { "label": "Authy Sandbox API (http://sandbox-api.authy.com)" },
+      "authy.base_uri": {
+        "label": "Authy URL", "info": "Choose the sandbox server for testing purposes, or the production server if you're ready for prime time.",
+        "choices": [
+          { "label": "https://api.authy.com", "info": "Authy Production API (https://api.authy.com)" },
+          { "label": "http://sandbox-api.authy.com", "info": "Authy Sandbox API (http://sandbox-api.authy.com)" }
+        ]
+      },
 
       "dns.user": { "label": "Dyn User", "info": "Authenticate with this Dyn username" },
       "dns.password": { "label": "Dyn User", "info": "Authenticate with this Dyn username" },

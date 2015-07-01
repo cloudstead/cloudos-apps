@@ -16,14 +16,19 @@
       "wiki.license": { "label": "License", "info": "License for content created on this wiki" },
       "wiki.disable_registration": { "label": "Disable Registration?", "info": "If set, anonymous users will not be able to register accounts on the wiki" },
 
-      "wiki.license.choice.cc-zero": { "label": "Creative Commons Zero License", "info": "As close to Public Domain as you can get with a license" },
-      "wiki.license.choice.publicdomain": { "label": "Public Domain", "info": "Anyone can do anything with it" },
-      "wiki.license.choice.cc-by": { "label": "Creative Commons BY License", "info": "Attribution required. https://creativecommons.org/licenses/by/4.0" },
-      "wiki.license.choice.cc-by-sa": { "label": "Creative Commons BY SA License", "info": "Attribution + ShareAlike. https://creativecommons.org/licenses/by-sa/4.0" },
-      "wiki.license.choice.gnufdl": { "label": "GNU FDL", "info": "GNU Free Documentation License. https://gnu.org/licenses/fdl.html" },
-      "wiki.license.choice.cc-by-nc": { "label": "Creative Commons BY NC License", "info": "Attribution + Noncommercial. https://creativecommons.org/licenses/by-nc/4.0" },
-      "wiki.license.choice.cc-by-nc-sa": { "label": "Creative Commons BY NC SA License", "info": "Attribution + Noncommercial + ShareAlike. https://creativecommons.org/licenses/by-nc-sa/4.0" },
-      "wiki.license.choice.0": { "label": "No License", "info": "Do not specify any license" }
-   }
+      "wiki.license": {
+        "label": "License", "info": "The license for content on your wiki",
+        "choices": [
+          { "label": "cc-zero", "info": "Creative Commons Zero License", "help": "As close to Public Domain as you can get with a license" },
+          { "label": "publicdomain", "info": "Public Domain", "help": "Anyone can do anything with it" },
+          { "label": "cc-by", "info": "Creative Commons BY License", "help": "Attribution required. https://creativecommons.org/licenses/by/4.0" },
+          { "label": "cc-by-sa", "info": "Creative Commons BY SA License", "help": "Attribution + ShareAlike. https://creativecommons.org/licenses/by-sa/4.0" },
+          { "label": "gnufdl", "info": "GNU FDL", "help": "GNU Free Documentation License. https://gnu.org/licenses/fdl.html" },
+          { "label": "cc-by-nc", "info": "Creative Commons BY NC License", "help": "Attribution + Noncommercial. https://creativecommons.org/licenses/by-nc/4.0" },
+          { "label": "cc-by-nc-sa", "info": "Creative Commons BY NC SA License", "help": "Attribution + Noncommercial + ShareAlike. https://creativecommons.org/licenses/by-nc-sa/4.0" },
+          { "label": "0", "info": "No License", "help": "Do not specify any license" }
+        ]
+      }
+    }
   }
 }
