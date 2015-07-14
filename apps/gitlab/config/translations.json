@@ -6,11 +6,11 @@
       "email_sender_alias": { "label": "Email From Alias", "info": "Messages sent to the Email From address will be delivered to this account or group" },
       "default_project.visibility_level": {
         "label": "Visibility Level", "info": "How visible should your gitlab application be to the world?",
-        "choices": {
-          "private": { "label": "Private", "info": "Gitlab will be in private mode" },
-          "public": { "label": "Public", "info": "Gitlab will be in public mode" },
-          "internal": { "label": "Internal", "info": "Gitlab will be in internal mode" },
-        }
+        "choices": [
+          { "label": "private", "info": "Gitlab will be in private mode" },
+          { "label": "public", "info": "Gitlab will be in public mode" },
+          { "label": "internal", "info": "Gitlab will be in internal mode" }
+        ]
       },
       "default_project.snippets": { "label": "Enable snippets", "info": "Enable snippets" },
       "default_project.wiki": { "label": "Enable wiki", "info": "Enable wiki" },
