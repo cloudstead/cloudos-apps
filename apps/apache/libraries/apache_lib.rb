@@ -12,6 +12,15 @@ if [[ "$(service apache2 status)" =~ "not running" ]] ; then
 else
   service apache2 reload
 fi
+
+if [ -f /etc/init/php5-fpm.conf ] ; then
+  service apache2 restart
+  if [[ "$(service php5-fpm status)" =~ "not running" ]] ; then
+    service php5-fpm start
+  else
+    service php5-fpm restart
+  fi
+fi
       EOH
     end
   end
@@ -44,9 +53,34 @@ fi
       user 'root'
       cwd '/tmp'
       code <<-EOH
+
+if [[ #{module_name} =~ mpm_.+ ]] ; then
+  # disable any existing mpm modules (there should be only 1, but just in case...)
+  for mpm in $(find /etc/apache2/mods-enabled -name "mpm_*.load" | xargs basename | awk -F '.' '{print $1}') ; do
+    a2dismod ${mpm}
+  done
+
+elif [ #{module_name} == "php5-fpm" ] ; then
+  # disable existing php module if enabled
+  if [ -e /etc/apache2/mods-enabled/php5.load ] ; then
+    a2dismod php5
+  fi
+fi
+
 a2enmod #{module_name}
       EOH
       not_if { File.exists? "/etc/apache2/mods-enabled/#{module_name}.load" }
+    end
+  end
+
+  def self.disable_module (chef, module_name)
+    chef.bash "disable Apache module: #{module_name}" do
+      user 'root'
+      cwd '/tmp'
+      code <<-EOH
+a2dismod #{module_name}
+      EOH
+      only_if { File.exists? "/etc/apache2/mods-enabled/#{module_name}.load" }
     end
   end
 
@@ -290,15 +324,22 @@ rm -f /etc/apache2/rewrite-rules-enabled/#{service_name}
 
   def self.set_php_ini(chef, key, value, overwrite = false)
     value_hash = Digest::SHA256.hexdigest(value)
-    php_ini = "/etc/php5/apache2/conf.d/50-#{key}-#{value_hash}.ini"
+    ini_file = "50-#{key}-#{value_hash}.ini"
+    php_ini = "/etc/php5/mods-available/#{ini_file}"
 
     chef.bash "setting #{key}=#{value} in #{php_ini} (overwrite=#{overwrite})" do
       user 'root'
       code <<-EOH
 if [ "#{overwrite}" = "true" ] ; then
-  rm -f /etc/php5/apache2/conf.d/50-#{key}-*.ini
+  rm -f #{php_ini}
 fi
 echo "#{key}=#{value}" > #{php_ini}
+if [ -d /etc/php5/apache2/conf.d ] ; then
+  cd /etc/php5/apache2/conf.d && ln -sf ../../mods-available/#{ini_file}
+fi
+if [ -d /etc/php5/fpm/conf.d ] ; then
+  cd /etc/php5/fpm/conf.d && ln -sf ../../mods-available/#{ini_file}
+fi
       EOH
     end
   end
