@@ -19,8 +19,9 @@
       "aws_secret_key": { "label": "AWS Secret Key", "info": "Credentials used to write to S3 for backups and other purposes" },
       "aws_iam_user": { "label": "AWS IAM User", "info": "This IAM user ensures the cloudstead may only read/write to its own private slice of a shared S3 bucket" },
       "s3_bucket": { "label": "S3 Bucket Name", "info": "Backups and other data will be encrpyted and written to this bucket" },
+      "appstore.user": { "label": "CloudOs AppStore Identifier", "info": "This identifies your CloudOs instance with the CloudOs AppStore." },
+      "appstore.base_uri": { "label": "CloudOs AppStore Base URL", "info": "The URL of the CloudOs AppStore API" },
       "authy.user": { "label": "Authy API Token", "info": "This is your API key with Authy. You can find it in your Authy control panel." },
-
       "authy.base_uri": {
         "label": "Authy URL", "info": "Choose the sandbox server for testing purposes, or the production server if you're ready for prime time.",
         "choices": [
@@ -29,9 +30,11 @@
         ]
       },
 
-      "dns.user": { "label": "Dyn User", "info": "Authenticate with this Dyn username" },
-      "dns.password": { "label": "Dyn User", "info": "Authenticate with this Dyn username" },
-      "dns.base_uri": { "label": "Dyn User", "info": "Authenticate with this Dyn username" },
+      "dns.user": { "label": "DNS User", "info": "Authenticate with this Dyn username", "help": "If using cloudos-dns (for example in conjunction with djbdns), this is the login to the cloudos-dns API" },
+      "dns.account": { "label": "Dyn Account", "info": "Name of the Dyn account that this username is a member of", "help": "If using cloudos-dns, this value is ignored" },
+      "dns.password": { "label": "Dyn Password", "info": "The password for the Dyn username", "help": "If using cloudos-dns, this is the password for the given username" },
+      "dns.zone": { "label": "Dyn Zone", "info": "Name of the DNS zone", "help": "If using cloudos-dns, this value is ignored" },
+      "dns.base_uri": { "label": "Dyn URL", "info": "Ignored for Dyn", "help": "If using cloudos-dns, this is the URL of the cloudos-dns API" },
       "dns.enabled": { "label": "Enable DNS", "info": "If disabled, no changes to DNS will be made" },
       "backup_cron_schedule": { "label": "Dyn User", "info": "Authenticate with this Dyn username" }
     }

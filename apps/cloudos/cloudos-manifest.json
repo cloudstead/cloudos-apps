@@ -21,6 +21,7 @@
                 "server_tarball", "server_port",
                 "admin_initial_pass", "recovery_email",
                 "aws_access_key", "aws_secret_key", "aws_iam_user", "s3_bucket",
+                "appstore.user", "appstore.base_uri",
                 "authy.user", "authy.base_uri",
                 "dns.user", "dns.password", "dns.base_uri", "dns.enabled",
                 "backup_cron_schedule"
