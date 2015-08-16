@@ -20,12 +20,13 @@
 # found in the files described below.
 #
 # Environment configuration may be defined in one of the predefined places:
+#     /etc/acmecorp-cool-app.env        # /etc/${PARENT}-${ROLE}.env
+#     ${HOME}/.acmecorp-cool-app.env    # ${HOME}/.${PARENT}-${ROLE}.env
 #     /etc/acmecorp.env                 # /etc/${PARENT}.env
 #     ${HOME}/.acmecorp.env             # ${HOME}/.${PARENT}.env
 #     ./acmecorp-cool-app.env           # ./${PARENT}-${ROLE}.env
-#     ${HOME}/.acmecorp-cool-app.env    # ${HOME}/.${PARENT}-${ROLE}.env
 #
-# The env file should be a series of "export ENV_NAME=something" statements.
+# The env file should be a series of "export ENV_NAME=some-value" statements.
 # If multiple files are found, the first one is used.
 # If no file is found, no environment variables are loaded.
 # todo: parse env file, discard anything that's not an export statement.
@@ -106,7 +107,7 @@ APP=$(basename ${APP_BASE})
 APP_PARENT=$(echo $APP | tr '-' ' ' | awk '{print $1}')
 APP_ROLE=$(echo $APP | tr '-' ' ' | awk '{print $2}')
 
-ENV_FILES="/etc/${APP_PARENT}.env ${HOME}/.${APP_PARENT}.env ${APP}.env ${HOME}/.${APP}.env"
+ENV_FILES="/etc/${APP}.env ${HOME}/.${APP}.env /etc/${APP_PARENT}.env ${HOME}/.${APP_PARENT}.env ${APP}.env"
 found=0
 for env_file in ${ENV_FILES} ; do
   if [ -f ${env_file} ] ; then
