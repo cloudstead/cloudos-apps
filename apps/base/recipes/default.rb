@@ -13,7 +13,7 @@ execute 'apt-get update' do
 end
 
 # every system needs these
-%w( openntpd safe-rm ).each do |pkg|
+%w( openntpd safe-rm uuid ).each do |pkg|
   package pkg do
     action :install
   end
