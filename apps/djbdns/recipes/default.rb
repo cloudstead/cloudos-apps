@@ -32,7 +32,10 @@ bash 'configure tinydns' do
 tinydns-conf tinydns dnslog /etc/tinydns/ #{node[:ipaddress]}
 axfrdns-conf axfrdns dnslog /etc/axfrdns /etc/tinydns #{node[:ipaddress]}
 
-mkdir /etc/service && cd /etc/service && ln -sf /etc/tinydns/ && ln -sf /etc/axfrdns/
+if [ ! -d /etc/service ] ; then
+  mkdir /etc/service
+fi
+cd /etc/service && ln -sf /etc/tinydns/ && ln -sf /etc/axfrdns/
 initctl start svscan
 EOF
   not_if { File.exists? '/etc/tinydns' }
