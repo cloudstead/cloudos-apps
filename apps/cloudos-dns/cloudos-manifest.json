@@ -26,7 +26,7 @@
         "type": "postgresql",
         "schema_version": "1.0",
         "inserts": [ {
-            "sql": "insert into dns_account (uuid, ctime, admin, name, hashed_password) VALUES ('@name', @now_millis, TRUE, '@config[init][admin][name]', '@config[init][admin][password]')",
+            "sql": "insert into dns_account (uuid, ctime, admin, name, hashed_password) VALUES ('@uuid', @now_millis, TRUE, '@config[init][admin][name]', '@config[init][admin][password]')",
             "unless": "select count(*) from dns_account where admin = true"
         } ]
     },

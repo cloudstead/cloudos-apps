@@ -2,7 +2,6 @@
 
 queueName: <%=@app[:passwords]['rooty_queue']%>+root
 secret: <%=@app[:passwords]['rooty']%> # used to encrypt messages and generate hashes in request filenames
-memcachedKey: <%=@app[:passwords]['backup_key']%> # status is put in memcached for a limited time
 
 configDir: /etc/rooty_handlers
 

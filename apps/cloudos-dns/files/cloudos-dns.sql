@@ -30,7 +30,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: dns_account; Type: TABLE; Schema: public; Owner: cloudos_dns_test; Tablespace: 
+-- Name: dns_account; Type: TABLE; Schema: public; Owner: cloudos_dns; Tablespace: 
 --
 
 CREATE TABLE dns_account (
@@ -40,22 +40,23 @@ CREATE TABLE dns_account (
     admin boolean NOT NULL,
     hashed_password character varying(200) NOT NULL,
     reset_token character varying(30),
-    reset_token_ctime bigint
+    reset_token_ctime bigint,
+    zone character varying(255)
 );
 
 
-ALTER TABLE public.dns_account OWNER TO cloudos_dns_test;
+ALTER TABLE public.dns_account OWNER TO cloudos_dns;
 
 --
--- Data for Name: dns_account; Type: TABLE DATA; Schema: public; Owner: cloudos_dns_test
+-- Data for Name: dns_account; Type: TABLE DATA; Schema: public; Owner: cloudos_dns
 --
 
-COPY dns_account (uuid, ctime, name, admin, hashed_password, reset_token, reset_token_ctime) FROM stdin;
+COPY dns_account (uuid, ctime, name, admin, hashed_password, reset_token, reset_token_ctime, zone) FROM stdin;
 \.
 
 
 --
--- Name: dns_account_name_key; Type: CONSTRAINT; Schema: public; Owner: cloudos_dns_test; Tablespace: 
+-- Name: dns_account_name_key; Type: CONSTRAINT; Schema: public; Owner: cloudos_dns; Tablespace: 
 --
 
 ALTER TABLE ONLY dns_account
@@ -63,7 +64,7 @@ ALTER TABLE ONLY dns_account
 
 
 --
--- Name: dns_account_pkey; Type: CONSTRAINT; Schema: public; Owner: cloudos_dns_test; Tablespace: 
+-- Name: dns_account_pkey; Type: CONSTRAINT; Schema: public; Owner: cloudos_dns; Tablespace: 
 --
 
 ALTER TABLE ONLY dns_account

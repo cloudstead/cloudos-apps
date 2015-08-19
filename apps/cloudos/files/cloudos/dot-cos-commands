@@ -12,7 +12,7 @@ backup-key:   cloudos.main.GetBackupKeyMain
 restore:      cloudos.main.RestoreCloudsteadMain
 sysconfig:    cloudos.main.SysConfigMain
 dns:          cloudos.main.CloudOsDnsMain
-cos-dns:      cloudos.dns.main.DnsMain
+cos-dns:      cloudos.dns.main.DnsDirectMain
 account:      cloudos.main.account.CloudOsAccountMain
 group:        cloudos.main.account.CloudOsGroupMain
 sudo:         cloudos.main.CloudOsServerMain
