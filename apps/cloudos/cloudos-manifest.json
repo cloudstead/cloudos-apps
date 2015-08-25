@@ -69,14 +69,14 @@
         "@files/s3s3mirror.jar": "/usr/bin"
     },
 
-    "dirs": [ "app-repository" ],
+    "dirs": [ "app-repository", "@name/logs" ],
 
     "perms": {
         "@home": { "chgrp": "@group[rooty]", "perms": "770" },
         "@name": { "chgrp": "@group[rooty]", "perms": "770" },
         ".cloudos.env": { "chown": "@run_as.root", "perms": "700" },
         "@name/jrun_prestart.sh": { "chown": "@run_as.@group[rooty]", "perms": "770" },
-        "@name/logs": { "chgrp": "@group[rooty]", "perms": "770" },
+        "@name/logs": { "chown": "@run_as.@group[rooty]", "perms": "770" },
         "@name/logs/cloudos-RootyMain-chef.log": { "chown": "@chef_user.@group[rooty]", "perms": "600" },
         "@name/target": { "chgrp": "@group[rooty]", "perms": "750" },
         "@name/target/*.jar": { "chgrp": "@group[rooty]", "perms": "640" },
