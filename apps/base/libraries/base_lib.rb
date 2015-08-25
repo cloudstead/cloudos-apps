@@ -29,6 +29,10 @@ class Chef::Recipe::Base
     "#{chef_dir}/data_bags/#{cookbook}"
   end
 
+  def self.chef_datafiles(cookbook)
+    "#{chef_dir}/data_files/#{cookbook}"
+  end
+
   def self.chef_user_home
     user_home(chef_user)
   end
@@ -232,11 +236,6 @@ rsync -cv #{ssl_key_src} #{ssl_key_dest} && chmod 600 #{ssl_key_dest}
     %x(echo 'For path #{path}, subject=#{pem_subject}' > /tmp/pem_cn_#{File.basename(path, '.pem')})
     matches = /\/CN=([^\/]+)\//.match(pem_subject)
     matches ? matches[1] : nil
-  end
-
-  def self.local_data_files(app)
-    # thankfully %x will return the empty string (and this method will return an empty array) if the dir does not exist
-    %x(ls -1 #{chef_user_home}/chef/data_files/#{app}).split
   end
 
   def self.set_hostname(chef, fqdn)
