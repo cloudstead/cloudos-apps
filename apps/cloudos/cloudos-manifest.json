@@ -95,10 +95,13 @@
         "@chef_home/restore.sh": { "chown": "@chef_user.root", "perms": "700" }
     },
 
+    "dns": [
+        { "type": "a", "fqdn": "@hostname", "value": "@ipaddress", "ttl": 14400 },
+        { "type": "a", "fqdn": "mx-@hostname", "value": "@ipaddress", "ttl": 14400 },
+        { "type": "mx", "fqdn": "@hostname", "value": "mx-@hostname", "ttl": 14400, "opts": "rank=1" }
+    ],
+
     "post_install": [
-        { "exec": "cos cos-dns --operation add --record a  --fqdn @hostname    --value @ipaddress   --ttl 14400" },
-        { "exec": "cos cos-dns --operation add --record a  --fqdn mx.@hostname --value @ipaddress   --ttl 14400" },
-        { "exec": "cos cos-dns --operation add --record mx --fqdn @hostname    --value mx.@hostname --ttl 14400 --options rank=1" },
         { "exec": "service cron restart" },
         { "exec": "service apache2 restart" }
     ],
