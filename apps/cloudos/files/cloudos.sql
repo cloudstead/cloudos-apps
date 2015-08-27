@@ -111,6 +111,23 @@ CREATE TABLE account_group_member (
 ALTER TABLE public.account_group_member OWNER TO cloudos;
 
 --
+-- Name: cloud_os_event; Type: TABLE; Schema: public; Owner: cloudos; Tablespace: 
+--
+
+CREATE TABLE cloud_os_event (
+    uuid character varying(100) NOT NULL,
+    ctime bigint NOT NULL,
+    exception character varying(32000),
+    message_key character varying(1000) NOT NULL,
+    success boolean NOT NULL,
+    task_id character varying(100) NOT NULL,
+    cloud_os_uuid character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.cloud_os_event OWNER TO cloudos;
+
+--
 -- Name: email_domain; Type: TABLE; Schema: public; Owner: cloudos; Tablespace: 
 --
 
@@ -175,6 +192,14 @@ COPY account_group_member (uuid, ctime, group_name, group_uuid, member_name, mem
 
 
 --
+-- Data for Name: cloud_os_event; Type: TABLE DATA; Schema: public; Owner: cloudos
+--
+
+COPY cloud_os_event (uuid, ctime, exception, message_key, success, task_id, cloud_os_uuid) FROM stdin;
+\.
+
+
+--
 -- Data for Name: email_domain; Type: TABLE DATA; Schema: public; Owner: cloudos
 --
 
@@ -187,7 +212,7 @@ COPY email_domain (uuid, ctime, name) FROM stdin;
 --
 
 COPY ssl_certificate (uuid, ctime, name, common_name, description, key_md5, key_sha, pem_md5, pem_sha) FROM stdin;
-c07162f6-429a-4a56-a890-b0b907bec4a3	1431429978732	ssl-https	*.cloudstead.io	cloudstead.io wildcard certificate	23a5bcd716f54cc819a7367e64fe70e9	1844d332ccb478a82eb038e947988b1b1e5b7882ddda85456efbc89bca327e97	e367ebcdec3792a33c0005e8b8098040	761f5e4128089695d51600c36e6b96438828e0ee7c76d7a15da2c13516832417
+e1f3aa5b-f6f8-4afe-a86e-edaa4ce174cf	1440623663396	ssl-https	*.cloudstead.io	cloudstead.io wildcard certificate	23a5bcd716f54cc819a7367e64fe70e9	1844d332ccb478a82eb038e947988b1b1e5b7882ddda85456efbc89bca327e97	e367ebcdec3792a33c0005e8b8098040	761f5e4128089695d51600c36e6b96438828e0ee7c76d7a15da2c13516832417
 \.
 
 
@@ -261,6 +286,14 @@ ALTER TABLE ONLY account
 
 ALTER TABLE ONLY account
     ADD CONSTRAINT account_pkey PRIMARY KEY (uuid);
+
+
+--
+-- Name: cloud_os_event_pkey; Type: CONSTRAINT; Schema: public; Owner: cloudos; Tablespace: 
+--
+
+ALTER TABLE ONLY cloud_os_event
+    ADD CONSTRAINT cloud_os_event_pkey PRIMARY KEY (uuid);
 
 
 --
