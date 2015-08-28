@@ -30,6 +30,15 @@
         ]
       },
 
+      "dns.mode":  {
+        "label": "DNS Mode", "info": "Choose how your Cloudstead will handle DNS management",
+        "choices": [
+          { "label": "dyn", "info": "Connect to your DynDNS account", "help": "Select this option if you use Dyn.com to manage the DNS domain for this Cloudstead" },
+          { "label": "external", "info": "Connect to external cdns (cloudos-dns) server", "help": "Select this option if you run your own name server on another system. You'll need to install cloudos-dns on that system to allow your Cloudsteads to have limited DNS management rights with that server." },
+          { "label": "internal", "info": "Run your own DNS right on the Cloudstead", "help": "Select this option if you want your Cloudstead to run its own DNS. You will need to manually update the nameserver records for your domain, and set up your other DNS servers to be secondary name servers." }
+        ]
+      },
+
       "dns.user": { "label": "DNS User", "info": "Authenticate with this Dyn username", "help": "If using cloudos-dns (for example in conjunction with djbdns), this is the login to the cloudos-dns API" },
       "dns.account": { "label": "Dyn Account", "info": "Name of the Dyn account that this username is a member of", "help": "If using cloudos-dns, this value is ignored" },
       "dns.password": { "label": "Dyn Password", "info": "The password for the Dyn username", "help": "If using cloudos-dns, this is the password for the given username" },

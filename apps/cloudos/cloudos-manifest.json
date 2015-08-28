@@ -23,7 +23,7 @@
                 "aws_access_key", "aws_secret_key", "aws_iam_user", "s3_bucket",
                 "appstore.user", "appstore.base_uri",
                 "authy.user", "authy.base_uri",
-                "dns.user", "dns.password", "dns.base_uri", "dns.enabled",
+                "dns.mode", "dns.user", "dns.password", "dns.base_uri", "dns.zone", "dns.enabled",
                 "backup_cron_schedule"
             ]
         }

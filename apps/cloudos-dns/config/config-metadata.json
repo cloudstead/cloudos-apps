@@ -5,10 +5,21 @@
       "fields": {
         "admin.name": { "group": "cloudos-dns", "required": false, "type": "login" },
         "admin.password": { "group": "cloudos-dns", "required": false, "type": "password" },
-        "dyndns.account": { "group": "dyndns", "required": true, "type": "login" },
-        "dyndns.user": { "group": "dyndns", "required": true, "type": "login" },
-        "dyndns.password": { "group": "dyndns", "required": true, "type": "password" },
-        "dyndns.zone": { "group": "dyndns", "required": true, "type": "hostname" }
+
+        "server_type": { "group": "clouodos-dns", "required": true,
+          "type": "pick_one", "choices": ["dyn", "djbdns"],
+          "sub_fields": [
+            { "label": "dyn",   "required": [ "dyn.account", "dyn.user", "dyn.password", "dyn.zone" ] },
+            { "label": "djbdns",   "required": [ "djbdns" ] }
+          ]
+        },
+
+        "dyn.account": { "group": "dyn", "required": false, "type": "login" },
+        "dyn.user": { "group": "dyn", "required": false, "type": "login" },
+        "dyn.password": { "group": "dyn", "required": false, "type": "password" },
+        "dyn.zone": { "group": "dyn", "required": false, "type": "hostname" },
+
+        "djbdns": { "group": "djbdns", "required": false, "type": "yesno" }
       }
     }
   }

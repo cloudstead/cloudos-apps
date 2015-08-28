@@ -13,8 +13,9 @@
 
     "config": [ {
         "name": "init",
-        "items": [ "admin.name", "admin.password",
-                   "dyndns.account", "dyndns.user", "dyndns.password", "dyndns.zone" ]
+        "items": [ "admin.name", "admin.password", "mode",
+                   "dyn.account", "dyn.user", "dyn.password", "dyn.zone",
+                   "djbdns" ]
     } ],
 
     "tarball": {
