@@ -8,7 +8,7 @@
     "init": {
       "allow_axfr": {
         "label": "Secondary Name Servers",
-        "info": "Enter a list of IP addresses separated by spaces and/or commas. Zone transfers will be allowed from these IP addresses."
+        "info": "Enter a list of IP addresses separated by spaces and/or commas. Zone transfers will be allowed from these IP addresses, which are usually your secondary name servers."
       }
     }
   }

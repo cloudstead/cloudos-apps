@@ -8,15 +8,15 @@
       "server_type":  {
         "label": "DNS Server Type", "info": "Choose how your Cloudstead will handle DNS management",
         "choices": [
-          { "label": "dyn", "info": "Connect to a DynDNS account", "help": "Select this option to connect this cloudos-dns server to an account on Dyn.com" },
-          { "label": "djbdns", "info": "Manage a local djbdns server", "help": "Select this option to manage a local djbdns server. You may need to manually update the nameserver records for your domain to include this server." }
+          { "label": "dyn", "info": "Dyn", "help": "Configure your cloudstead to use an account with <a href=\"http://dyn.com/\">Dyn</a> for DNS services." },
+          { "label": "djbdns", "info": "Built-in TinyDNS", "help": "Configure your cloudstead to use a built-in <a href=\"http://cr.yp.to/djbdns.html\">djbdns</a> (also called tinydns) for DNS services. The djbdns server will be installed automatically with your new cloudstead, but you will need to update your Name Servers with your domain registrars to include the hostname of this new cloudstead. You will also need to ensure that this is the primary DNS server for your domain, and all other Name Servers will be secondaries." }
         ]
       },
 
       "dyn.account": { "label": "Dyn Account", "info": "Name of the Dyn account" },
       "dyn.user": { "label": "Dyn User", "info": "Authenticate with this Dyn username" },
       "dyn.password": { "label": "Dyn Password", "info": "Password for the Dyn User" },
-      "dyn.zone": { "label": "Dyn Zone", "info": "The DNS zone to manage" },
+      "dyn.zone": { "label": "Dyn Zone", "info": "The fully-qualified zone name" },
 
       "djbdns": { "label": "Enable djbdns", "info": "If true, this server will manage a local djbdns server" }
     }
