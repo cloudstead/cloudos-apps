@@ -2,5 +2,6 @@
   "id": "init",
   "vmail_user": "vmail",
   "postmaster_user": "postmaster",
+  "server_type": "custom",
   "smtp_relay": {}
 }
