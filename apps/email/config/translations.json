@@ -5,7 +5,18 @@
       "smtp_relay.host": { "label": "SMTP Relay Hostname", "info": "Outbound email will be routed via this server" },
       "smtp_relay.port": { "label": "SMTP Relay Port", "info": "Port number on the relay server to use" },
       "smtp_relay.username": { "label": "SMTP Username", "info": "Authenticate with the relay using this username" },
-      "smtp_relay.password": { "label": "SMTP Password", "info": "Authenticate with the relay using this password" }
+      "smtp_relay.password": { "label": "SMTP Password", "info": "Authenticate with the relay using this password" },
+
+      "server_type":  {
+        "label": "Email Server Type",
+          "info": "Choose how your Cloudstead will handle outgoing email delivery",
+          "help": "A Cloudstead relies on a mail relay to ensure email is properly delivered. Connect to your account at SendGrid or Mailgun, or enter credentials for another SMTP server you have access to",
+        "choices": [
+          { "label": "sendgrid", "info": "Connect to a SendGrid account", "help": "Relay your outgoing email through your SendGrid account" },
+          { "label": "mailgun", "info": "Connect to a Mailgun account", "help": "Relay your outgoing email through your Mailgun account" },
+          { "label": "custom", "info": "Connect to another SMTP server", "help": "Relay your outgoing email through this SMTP server" }
+        ]
+      }
     }
   }
 }

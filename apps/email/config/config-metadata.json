@@ -3,10 +3,18 @@
   "categories": {
       "init": {
       "fields": {
-        "smtp_relay.username": { "required": true },
+        "smtp_relay.username": { "required": true},
         "smtp_relay.password": { "required": true, "type": "secret_key" },
-        "smtp_relay.host": { "required": true, "type": "hostname" },
-        "smtp_relay.port": { "required": true, "type": "port" }
+        "smtp_relay.host": { "required": false, "type": "hostname" },
+        "smtp_relay.port": { "required": false, "type": "port" },
+        "server_type": { "required": true,
+          "type": "pick_one", "choices": ["sendgrid", "mailgun", "custom"],
+          "sub_fields": [
+            { "label": "sendgrid", "required": [ "smtp_relay.username", "smtp_relay.password" ] },
+            { "label": "mailgun",  "required": [ "smtp_relay.username", "smtp_relay.password" ] },
+            { "label": "custom",   "required": [ "smtp_relay.username", "smtp_relay.password", "smtp_relay.host", "smtp_relay.port" ] }
+          ]
+        }
       }
     }
   }
