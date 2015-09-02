@@ -1,5 +1,5 @@
 {
   "id": "init",
   "server_tarball": "http://cloudstead.io/downloads/cloudos-dns-server.tar.gz",
-  "server_shasum": "a13a793ece260e4425a0d65e3b0151a0a31ab5348a93146c093a56eccfd8be49"
+  "server_shasum": "af4bb36de03ca0a7ca95883dcdbd6310b158e1244da104fee9eb9fb6e87c5b93"
 }

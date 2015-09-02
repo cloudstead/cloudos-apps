@@ -11,6 +11,8 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
+    "packages": [ "memcached", "redis-server", "curl" ],
+
     "config": [ {
         "name": "init",
         "items": [ "admin.name", "admin.password", "server_type",
@@ -33,9 +35,21 @@
 
     "web": { "type": "apache", "mode": "proxy_service", "mount": "dns" },
 
-    "templates": { ".cloudos-dns.env": "dot-cloudos-dns.env" },
+    "templates": {
+        ".cloudos-dns.env": "dot-cloudos-dns.env",
+        "/etc/rooty.yml": "_",
+        "/usr/local/bin/cdns": "_"
+    },
+
+    "perms": {
+        "/usr/local/bin/cdns": { "perms": "755" }
+    },
 
     "sysinit": [ "jrun" ],
+
+    "post_install": [
+        { "exec": "@files/setup_rooty_if_djbdns.sh @config[init][server_type]" }
+    ],
 
     "validation": { "service_url": "/api/dns"},
 

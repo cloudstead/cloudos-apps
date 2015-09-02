@@ -1,0 +1,21 @@
+# Rooty configuration
+#
+# The rooty service runs as root and receives requests from cloudos-dns to manage DNS
+#
+<%
+base = @app[:base_lib]
+init = @app[:databag][:init]
+%>
+
+queueName: <%=base.password('rooty_queue')%>
+secret: <%=base.password('rooty')%> # used to encrypt messages and generate hashes in request filenames
+
+handlers:
+<% if init['server_type'] == 'djbdns' %>
+  rooty.toots.djbdns.DnsHandler:
+    params:
+      dataFile: /etc/tinydns/root/data  # todo: make this configurable, based on DNS_HANDLER
+
+<% else %>
+  <% raise "Unsupported server_type: #{init['server_type']}" %>
+<% end %>

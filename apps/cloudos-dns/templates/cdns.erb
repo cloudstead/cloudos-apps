@@ -1,0 +1,39 @@
+#!/bin/bash
+
+function die () {
+  echo >&2 "${1}"
+  exit 1
+}
+
+BASE=$(cd <%=@app[:run_as_home]%>/<%=@app[:name]%> && pwd)
+
+JAR_PATTERN="cloudos-dns-server-*.jar"
+JAR_DIR="${BASE}/target"
+JAR="$(find ${JAR_DIR} -maxdepth 1 -type f -name ${JAR_PATTERN})"
+NUM_JARS=$(find ${JAR_DIR} -maxdepth 1 -type f -name ${JAR_PATTERN} | wc -l | tr -d ' ')
+
+if [ ${NUM_JARS} -eq 0 ] ; then
+  die "No cloudos-dns-server jar found in ${JAR_DIR}. Please build it first: cd ${BASE}/target && mvn package"
+
+elif [ ${NUM_JARS} -gt 1 ] ; then
+  die "Multiple cloudos-dns-server jars found in ${JAR_DIR}: ${JAR}"
+fi
+
+debug="${1}"
+if [ "x${debug}" = "xdebug" ] ; then
+  shift
+  ARG_LEN=$(echo -n "${1}" | wc -c)
+  ARG_NUMERIC_LEN=$(echo -n "${1}" | tr -dc [:digit:] | wc -c)  # strip all non-digits
+  if [ ${ARG_LEN} -eq ${ARG_NUMERIC_LEN} ] ; then
+    # Second arg is the debug port
+    DEBUG_PORT="${1}"
+    shift
+  else
+    DEBUG_PORT=5005
+  fi
+  debug="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=${DEBUG_PORT}"
+else
+  debug=""
+fi
+
+exec java ${debug} -cp ${JAR} cloudos.dns.main.DnsMain "$@"
