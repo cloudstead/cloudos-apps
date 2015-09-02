@@ -69,8 +69,7 @@ end
   Apache.enable_module(self, mod)
 end
 
-# Disable default sites. CloudOs will enable default-ssl on a new site name
-Apache.disable_site(self, 'default-ssl')
+# Disable default site. We will route everything from port 80 to 443
 Apache.disable_site(self, 'default')
 
 # Enable GeoIP if one or more databases is provided

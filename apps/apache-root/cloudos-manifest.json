@@ -1,0 +1,24 @@
+{
+  "name": "apache-root",
+  "version": "0.1.0",
+  "style": "system",
+  "level": "system",
+  "publisher": {
+    "maintainer": "Jonathan Cobb",
+    "maintainer_email": "jonathan@cloudstead.io",
+    "license": "https://www.gnu.org/licenses/agpl-3.0.txt",
+    "code_copyright": "Copyright © 2015 Cloudstead, Inc",
+    "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
+  },
+
+  "pre_package": [
+    { "exec": "@files/check_for_existing_root.sh" }
+  ],
+
+  "web": {
+    "type": "apache",
+    "doc_root": "@config[init][doc_root]",
+    "mode": "vhost_root",
+    "ssl_cert_name": "@config[base][ssl_cert_name]"
+  }
+}

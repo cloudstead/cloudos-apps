@@ -324,4 +324,10 @@ echo "
     )
   end
 
+  def self.uuid
+    %x(apt-get install -y uuid) if %x(which uuid).strip.to_s.empty?
+    %x(uuid -v 4).strip
+  end
+
+
 end

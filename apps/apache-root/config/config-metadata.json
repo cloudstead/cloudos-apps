@@ -1,0 +1,10 @@
+{
+  "id": "config-metadata",
+  "categories": {
+    "init": {
+      "fields": {
+        "doc_root": { "required": true, "type": "filename" }
+      }
+    }
+  }
+}

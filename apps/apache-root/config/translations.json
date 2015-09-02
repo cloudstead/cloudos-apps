@@ -1,0 +1,12 @@
+{
+  "id": "translations",
+  "assets": {
+    "blurb": "An simple static web root, will not install on top of CloudOs",
+    "description": "An alternate web root for certain minimal servers that do not run their own CloudOs"
+  },
+  "categories": {
+    "init": {
+      "doc_root": { "label": "Document Root", "info": "Filesystem path to the web root directory" }
+    }
+  }
+}
