@@ -3,6 +3,8 @@
   "categories": {
       "init": {
       "fields": {
+        "server_tarball": { "group": "cloudos-dns", "required": true, "type": "url" },
+        "server_shasum": { "group": "cloudos-dns", "required": true, "type": "hash" },
         "admin.name": { "group": "cloudos-dns", "required": false, "type": "login" },
         "admin.password": { "group": "cloudos-dns", "required": false, "type": "password" },
 
@@ -17,9 +19,7 @@
         "dyn.account": { "group": "dyn", "required": false, "type": "login" },
         "dyn.user": { "group": "dyn", "required": false, "type": "login" },
         "dyn.password": { "group": "dyn", "required": false, "type": "password" },
-        "dyn.zone": { "group": "dyn", "required": false, "type": "hostname" },
-
-        "djbdns": { "group": "djbdns", "required": false, "type": "yesno" }
+        "dyn.zone": { "group": "dyn", "required": false, "type": "hostname" }
       }
     }
   }

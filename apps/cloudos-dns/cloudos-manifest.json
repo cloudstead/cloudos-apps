@@ -13,14 +13,13 @@
 
     "config": [ {
         "name": "init",
-        "items": [ "admin.name", "admin.password", "mode",
-                   "dyn.account", "dyn.user", "dyn.password", "dyn.zone",
-                   "djbdns" ]
+        "items": [ "admin.name", "admin.password", "server_type",
+                   "dyn.account", "dyn.user", "dyn.password", "dyn.zone" ]
     } ],
 
     "tarball": {
-        "url": "http://cloudstead.io/downloads/cloudos-dns-server.tar.gz",
-        "shasum": "a13a793ece260e4425a0d65e3b0151a0a31ab5348a93146c093a56eccfd8be49"
+        "url": "@config[init][server_tarball]",
+        "shasum": "@config[init][server_shasum]"
     },
 
     "database": {

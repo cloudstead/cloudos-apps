@@ -2,6 +2,8 @@
   "id": "translations",
   "categories": {
     "init": {
+      "server_tarball": { "label": "Server Codebase", "info": "URL to the tarball containing the cloudos-dns server code" },
+      "server_shasum": { "label": "Server SHA sum", "info": "The SHA-256 checksum of the Server Codebase file" },
       "admin.name": { "label": "Admin Name", "info": "Full name of the person who is the admin" },
       "admin.password": { "label": "Admin Password", "info": "The admin account will login with this password" },
 
@@ -16,9 +18,7 @@
       "dyn.account": { "label": "Dyn Account", "info": "Name of the Dyn account" },
       "dyn.user": { "label": "Dyn User", "info": "Authenticate with this Dyn username" },
       "dyn.password": { "label": "Dyn Password", "info": "Password for the Dyn User" },
-      "dyn.zone": { "label": "Dyn Zone", "info": "The fully-qualified zone name" },
-
-      "djbdns": { "label": "Enable djbdns", "info": "If true, this server will manage a local djbdns server" }
+      "dyn.zone": { "label": "Dyn Zone", "info": "The fully-qualified zone name" }
     }
   }
 }
