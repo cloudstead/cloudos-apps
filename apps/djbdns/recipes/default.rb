@@ -42,7 +42,7 @@ EOF
 end
 
 begin
-  bag = chef.data_bag_item('djbdns', 'init')
+  bag = data_bag_item('djbdns', 'init')
 
   if defined? bag['allow_axfr']
     template '/etc/axfrdns/tcp' do
