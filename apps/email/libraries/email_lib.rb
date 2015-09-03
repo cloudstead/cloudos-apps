@@ -25,7 +25,7 @@ class Chef::Recipe::Email
 # If the slash is missing, postfix treats it like a regular file and things break
 echo "#{account}@#{domain}   #{domain}/#{deliver_to_account}/Maildir/" >> #{vmailbox}
       EOF
-      not_if { File.exists?(vmailbox) && File.readlines(vmailbox).grep(/^#{account}@#{domain}/).size > 0 }
+      not_if { File.exist?(vmailbox) && File.readlines(vmailbox).grep(/^#{account}@#{domain}/).size > 0 }
     end
 
     chef.directory "/var/vmail/vhosts/#{domain}/#{deliver_to_account}" do
