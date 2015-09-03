@@ -8,7 +8,7 @@ server_name = apache.get_server_name(@config[:server_name], @config[:mode], @hos
 
 <IfModule mod_ssl.c>
 
-<VirtualHost <%=@ip_address%>:443>
+<VirtualHost *:443>
 
   ServerName <%=server_name%>
 
