@@ -69,7 +69,7 @@ fi
 
 a2enmod #{module_name}
       EOH
-      not_if { File.exists? "/etc/apache2/mods-enabled/#{module_name}.load" }
+      not_if { File.exist? "/etc/apache2/mods-enabled/#{module_name}.load" }
     end
   end
 
@@ -80,7 +80,7 @@ a2enmod #{module_name}
       code <<-EOH
 a2dismod #{module_name}
       EOH
-      only_if { File.exists? "/etc/apache2/mods-enabled/#{module_name}.load" }
+      only_if { File.exist? "/etc/apache2/mods-enabled/#{module_name}.load" }
     end
   end
 

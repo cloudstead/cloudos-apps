@@ -25,7 +25,7 @@ end
 
 # overwrite ports with our version that sets a few defaults
 %w( /etc/apache2/ports.conf ).each do |config|
-  if File.exists? config
+  if File.exist? config
     template config do
       action :delete
     end
@@ -102,3 +102,6 @@ EOF
     variables ({ :geo_db_dir => geo_db_dir })
   end
 end
+
+base.public_port self, 'apache', 80
+base.public_port self, 'apache', 443

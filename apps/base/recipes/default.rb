@@ -57,15 +57,14 @@ rm -f #{startcom_ca_cert_name}.pem && \
 ln -s #{startcom_ca_cert} #{startcom_ca_cert_name}.pem && \
 ln -s #{startcom_ca_cert_name}.pem #{startcom_ca_cert_hash}
   EOF
-  not_if { File.exists? "#{ca_cert_dir}/#{startcom_ca_cert_hash}" }
+  not_if { File.exist? "#{ca_cert_dir}/#{startcom_ca_cert_hash}" }
 end
 
-base_lib = Chef::Recipe::Base
 bash 'install data_files' do
   user 'root'
   code <<-EOF
 DATA_DIR="/opt/cloudos"
-DATA_FILES="#{base_lib.chef_dir}/data_files"
+DATA_FILES="#{base.chef_dir}/data_files"
 mkdir -p ${DATA_DIR} && chown root.root ${DATA_DIR} && chmod 755 ${DATA_DIR}
 if [ $(find ${DATA_FILES} -type f 2> /dev/null | wc -l | tr -d ' ') -gt 0 ] ; then
   rsync -avzc ${DATA_FILES}/* ${DATA_DIR}/
@@ -75,4 +74,20 @@ if [ $(find ${DATA_FILES} -type f 2> /dev/null | wc -l | tr -d ' ') -gt 0 ] ; th
   chmod -R 755 ${DATA_DIR}
 fi
 EOF
+end
+
+rules='/etc/iptables.d'
+bash "touch #{rules}" do
+  user 'root'
+  code <<-EOF
+mkdir -p #{rules}
+  EOF
+  not_if { File.exist? rules }
+end
+
+template '/etc/network/if-pre-up.d/iptablesload' do
+  owner 'root'
+  group 'root'
+  mode '0700'
+  action :create
 end

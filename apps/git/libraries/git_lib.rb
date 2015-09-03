@@ -11,7 +11,7 @@ class Chef::Recipe::Git
 sudo -u #{run_as} -H bash -c "echo '#{github_hostkey}' >> #{known_hosts}"
 sudo -u #{run_as} -H chmod 644 #{known_hosts}
       EOF
-      not_if { File.exists?(known_hosts) && `cat #{known_hosts}`.lines.grep(github_hostkey).size > 0 }
+      not_if { File.exist?(known_hosts) && `cat #{known_hosts}`.lines.grep(github_hostkey).size > 0 }
     end
   end
 

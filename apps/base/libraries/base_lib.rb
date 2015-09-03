@@ -134,7 +134,7 @@ sleep 5s
   end
 
   def self.secret
-    if ! File.exists? @CLIENT_SECRET
+    if ! File.exist? @CLIENT_SECRET
       File.open(@CLIENT_SECRET, 'wb') { |f| f.write SecureRandom.hex(64) }
     end
     %x(chmod 700 #{@CLIENT_SECRET})
@@ -183,7 +183,7 @@ sleep 5s
     # This is where deploy.sh puts the ssl certs provided in INIT_FILES directory
     ssl_pem_src = local_pem_path(app, name)
     ssl_key_src = "#{chef_user_home}/chef/certs/#{app}/#{name}.key"
-    if File.exists?(ssl_pem_src) && File.exists?(ssl_key_src)
+    if File.exist?(ssl_pem_src) && File.exists?(ssl_key_src)
 
       ssl_pem_dest = "/etc/ssl/certs/#{name}.pem"
       ssl_key_dest = "/etc/ssl/private/#{name}.key"
@@ -196,13 +196,13 @@ sleep 5s
 rsync -cv #{ssl_pem_src} #{ssl_pem_dest} && chmod 644 #{ssl_pem_dest} && \
 rsync -cv #{ssl_key_src} #{ssl_key_dest} && chmod 600 #{ssl_key_dest}
         EOF
-        not_if { File.exists?(ssl_pem_dest) && File.exists?(ssl_key_dest) }
+        not_if { File.exist?(ssl_pem_dest) && File.exists?(ssl_key_dest) }
       end
     end
   end
 
   def self.local_pem_exists(app, name)
-    File.exists? local_pem_path(app, name)
+    File.exist? local_pem_path(app, name)
   end
 
   def self.local_pem_app_path (app)
@@ -230,7 +230,7 @@ rsync -cv #{ssl_key_src} #{ssl_key_dest} && chmod 600 #{ssl_key_dest}
   end
 
   def self.pem_cn_path(path)
-    return nil if path.nil? || !File.exists?(path)
+    return nil if path.nil? || !File.exist?(path)
 
     pem_subject = %x(openssl x509 -in #{path} -subject | grep subject= | head -n 1).strip
     %x(echo 'For path #{path}, subject=#{pem_subject}' > /tmp/pem_cn_#{File.basename(path, '.pem')})
@@ -329,5 +329,44 @@ echo "
     %x(uuid -v 4).strip
   end
 
+  def self.public_iface
+    'eth0'
+  end
+
+  def self.public_port (chef, name, port, iface='world', protocol='tcp', chain='INPUT', action='ACCEPT')
+
+    case iface
+      when 'world'
+        interface = 'eth0'
+      when 'local'
+        interface = 'lo'
+      else
+        raise "invalid interface: #{iface}"
+    end
+
+    protocol_clause = "-p #{protocol}"
+    port_clause = port.nil? ? '' : "--dport #{port}"
+
+    line="-A #{chain} -i #{interface} #{protocol_clause} #{port_clause} -j #{action}"
+
+    iptables_file="/etc/iptables.d/#{port}_#{name}"
+    chef.template iptables_file do
+      source 'iptables_entry.erb'
+      owner 'root'
+      group 'root'
+      mode '0700'
+      cookbook 'base'
+      variables({ :line => line })
+      action :create
+    end
+
+    chef.bash "reload iptables rules after adding #{line}" do
+      user 'root'
+      code <<-EOF
+/etc/network/if-pre-up.d/iptablesload
+      EOF
+      not_if { File.exist? iptables_file }
+    end
+  end
 
 end

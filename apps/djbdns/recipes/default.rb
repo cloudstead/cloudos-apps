@@ -38,7 +38,7 @@ fi
 cd /etc/service && ln -sf /etc/tinydns/ && ln -sf /etc/axfrdns/
 initctl start svscan
 EOF
-  not_if { File.exists? '/etc/tinydns' }
+  not_if { File.exist? '/etc/tinydns' }
 end
 
 begin
@@ -64,5 +64,9 @@ EOF
   end
 
 rescue => e
-  puts "cloudos-dns/init databag not found or error reading, no AXFR hosts will be allowed: #{e}"
+  puts "djbdns/init databag not found or error reading, no AXFR hosts will be allowed: #{e}"
 end
+
+base = Chef::Recipe::Base
+base.public_port(self, 'djbdns', 53, nil, 'tcp')
+base.public_port(self, 'djbdns', 53, nil, 'udp')
