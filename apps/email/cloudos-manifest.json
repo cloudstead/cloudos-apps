@@ -11,7 +11,7 @@
         "packaging_copyright": "Copyright 2014 Cloudstead, Inc."
     },
 
-    "firewall_rules": [
+    "public_ports": [
         { "port": 25 }, { "port": 110 }, { "port": 143 }, { "port": 587 }, { "port": 993 }, { "port": 995 }
     ],
 
