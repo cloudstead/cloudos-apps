@@ -355,15 +355,18 @@ EOF
       variables({ :input => input, :output => output })
     end
 
+    refresh_firewall chef
+  end
+
+  def self.refresh_firewall (chef)
     iptables_refresh='/etc/network/if-pre-up.d/iptables_load'
-    chef.bash "reload iptables rules after rules for #{name}/#{port}/#{iface}/#{protocol}" do
+    chef.bash "reload iptables rules at #{Time.now} " do
       user 'root'
       code <<-EOF
 if [ -x #{iptables_refresh} ] ; then
   #{iptables_refresh}
 fi
-EOF
-      not_if { File.exist? iptables_file }
+      EOF
     end
   end
 
