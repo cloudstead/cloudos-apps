@@ -85,7 +85,16 @@ mkdir -p #{rules}
   not_if { File.exist? rules }
 end
 
-template '/etc/network/if-pre-up.d/iptablesload' do
+%w( iptables_header iptables_footer ).each do |rule|
+  template "#{rules}/#{rule}" do
+    owner 'root'
+    group 'root'
+    mode '0600'
+    action :create
+  end
+end
+
+template '/etc/network/if-pre-up.d/iptables_load' do
   owner 'root'
   group 'root'
   mode '0700'

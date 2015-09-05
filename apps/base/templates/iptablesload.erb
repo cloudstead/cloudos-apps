@@ -1,3 +1,0 @@
-#!/bin/bash
-
-find /etc/iptables.d -type f | grep -v "*~" | xargs egrep -l '^COMMIT$' | sort | iptables-restore

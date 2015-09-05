@@ -92,19 +92,13 @@ class Chef::Recipe::Base
   def self.port_available(port)
     raise 'port_available: port was nil or empty' if port.to_s.empty?
     raise "port_available: invalid port: #{port}" unless port.to_s =~ /^\d+$/
-    port_check_output=%x(
-      port=#{port}
-      for addr in $(ifconfig | grep 'inet addr' | tr ':' ' ' | awk '{print $3}') ; do
-        if nc -z ${addr} ${port} ; then
-          echo "listening on ${addr}"
-        fi
-      done
-    )
-    return false if port_check_output.to_s.include? 'listening'
+
+    port_check_output=%x(#{chef_files('base')}/port-available #{port})
+    return false unless port_check_output.strip.include? 'available'
 
     %w(primary admin).each do |type|
       assigned=%x(find #{chef_dir}/data_bags -type f -name ports.json | xargs egrep '"#{type}"[[:space:]]*:[[:space:]]*#{port}')
-      return false unless assigned.to_s.strip.empty?
+      return false unless assigned.strip.empty?
     end
 
     true
@@ -129,7 +123,7 @@ done
 echo "Nothing was not listening on #{port}, restarting #{service}"
 service #{service} restart
 sleep 5s
-      EOF
+EOF
     end
   end
 
@@ -195,7 +189,7 @@ sleep 5s
 # use -cv so they are only copied if the checksum differs
 rsync -cv #{ssl_pem_src} #{ssl_pem_dest} && chmod 644 #{ssl_pem_dest} && \
 rsync -cv #{ssl_key_src} #{ssl_key_dest} && chmod 600 #{ssl_key_dest}
-        EOF
+EOF
         not_if { File.exist?(ssl_pem_dest) && File.exists?(ssl_key_dest) }
       end
     end
@@ -247,7 +241,7 @@ if [ $(hostname) != "#{fqdn}" ] ; then
   hostname #{fqdn}
   echo #{fqdn} > /etc/hostname
 fi
-      EOF
+EOF
     end
 
     chef.template '/etc/hosts' do
@@ -301,7 +295,7 @@ sysctl -w #{setting}=#{min_value}
 echo "
 #{setting}=#{min_value}
 " >> /etc/sysctl.conf
-      EOF
+EOF
       only_if { %x(sysctl #{setting} | awk -F '=' '{print $2}').to_i < min_value }
     end
   end
@@ -333,7 +327,7 @@ echo "
     'eth0'
   end
 
-  def self.public_port (chef, name, port, iface='world', protocol='tcp', chain='INPUT', action='ACCEPT')
+  def self.public_port (chef, name, port, iface='world', protocol='tcp')
 
     case iface
       when 'world'
@@ -345,9 +339,11 @@ echo "
     end
 
     protocol_clause = "-p #{protocol}"
-    port_clause = port.nil? ? '' : "--dport #{port}"
+    inport_clause = port.nil? ? '' : "--dport #{port} --sport 513:65535"
+    outport_clause = port.nil? ? '' : "--sport #{port} --dport 513:65535"
 
-    line="-A #{chain} -i #{interface} #{protocol_clause} #{port_clause} -j #{action}"
+    input="-A INPUT -i #{interface} #{protocol_clause} #{inport_clause} -m state --state NEW,ESTABLISHED -j ACCEPT"
+    output="-A OUTPUT #{protocol_clause} #{outport_clause} -m state --state ESTABLISHED -j ACCEPT"
 
     iptables_file="/etc/iptables.d/#{port}_#{name}"
     chef.template iptables_file do
@@ -356,15 +352,17 @@ echo "
       group 'root'
       mode '0700'
       cookbook 'base'
-      variables({ :line => line })
-      action :create
+      variables({ :input => input, :output => output })
     end
 
-    chef.bash "reload iptables rules after adding #{line}" do
+    iptables_refresh='/etc/network/if-pre-up.d/iptables_load'
+    chef.bash "reload iptables rules after rules for #{name}/#{port}/#{iface}/#{protocol}" do
       user 'root'
       code <<-EOF
-/etc/network/if-pre-up.d/iptablesload
-      EOF
+if [ -x #{iptables_refresh} ] ; then
+  #{iptables_refresh}
+fi
+EOF
       not_if { File.exist? iptables_file }
     end
   end
