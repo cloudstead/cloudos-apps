@@ -98,7 +98,7 @@
     "dns": [
         { "type": "a", "fqdn": "@hostname", "value": "@ipaddress", "ttl": 14400 },
         { "type": "a", "fqdn": "mx-@hostname", "value": "@ipaddress", "ttl": 14400 },
-        { "type": "mx", "fqdn": "@hostname", "value": "mx-@hostname", "ttl": 14400, "opts": "rank=1" }
+        { "type": "mx", "fqdn": "@hostname", "value": "mx-@hostname", "ttl": 14400, "options_string": "rank=1" }
     ],
 
     "post_install": [
