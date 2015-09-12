@@ -41,7 +41,7 @@ CREATE TABLE dns_account (
     hashed_password character varying(200) NOT NULL,
     reset_token character varying(30),
     reset_token_ctime bigint,
-    zone character varying(255)
+    zone character varying(1024)
 );
 
 

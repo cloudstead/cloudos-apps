@@ -17,5 +17,5 @@ handlers:
       dataFile: /etc/tinydns/root/data  # todo: make this configurable, based on DNS_HANDLER
 
 <% else %>
-  <% raise "Unsupported server_type: #{init['server_type']}" %>
+  # No rooty handlers required for <%=init['server_type']%>
 <% end %>
