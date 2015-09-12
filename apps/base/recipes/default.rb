@@ -12,6 +12,12 @@ execute 'apt-get update' do
   command 'apt-get update'
 end
 
+# if ntp is installed, uninstall it first. otherwise openntpd will not install correctly
+ntp_installed=%x(dpkg -l | awk '{print $2}' | egrep '^ntp$' | wc -l | tr -d ' ').strip
+unless ntp_installed.to_s.empty? || ntp_installed.to_i == 0
+  %x(if [ -f /etc/apparmor.d/usr.sbin.ntpd ] ; then apparmor_parser -R /etc/apparmor.d/usr.sbin.ntpd ; fi ; apt-get purge -y ntp)
+end
+
 # every system needs these
 %w( openntpd safe-rm uuid ).each do |pkg|
   package pkg do
