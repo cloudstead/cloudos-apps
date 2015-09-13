@@ -5,11 +5,6 @@
     "description": "The core of a cloudstead, CloudOs manages the system, accounts and apps on your cloudstead"
   },
   "categories": {
-    "base": {
-      "hostname": { "label": "Hostname", "info": "The name of your cloudstead. For example, if your cloudstead's fully qualified domain name is something.example.com, then the Parent Domain is \"example.com\" and the Hostname is \"something\"" },
-      "parent_domain": { "label": "Parent Domain", "info": "The parent domain of your cloudstead. For example, if your cloudstead fully qualified domain name is something.example.com, then the Parent Domain is \"example.com\" and the Hostname is \"something\"" },
-      "ssl_cert_name": { "label": "SSL Certificate Name", "info": "The name of the SSL certificate to install" }
-    },
     "init": {
       "server_tarball": { "label": "CloudOs Server Bundle", "info": "URL of the CloudOs server bundle" },
       "server_port": { "label": "CloudOs Server Port", "info": "CloudOs API will listen on this port (on localhost only)" },

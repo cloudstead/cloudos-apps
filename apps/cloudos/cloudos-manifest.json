@@ -13,9 +13,6 @@
 
     "config": [
         {
-            "name": "base",
-            "items": [ "hostname", "parent_domain", "ssl_cert_name" ]
-        }, {
             "name": "init",
             "items": [
                 "server_tarball", "server_port",
