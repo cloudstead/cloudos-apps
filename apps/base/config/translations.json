@@ -1,0 +1,14 @@
+{
+  "id": "translations",
+  "assets": {
+    "blurb": "Basic system services",
+    "description": "System software that supports your cloudstead"
+  },
+  "categories": {
+    "base": {
+      "hostname": { "label": "Hostname", "info": "The name of your cloudstead. For example, if your cloudstead's fully qualified domain name is something.example.com, then the Parent Domain is \"example.com\" and the Hostname is \"something\"" },
+      "parent_domain": { "label": "Parent Domain", "info": "The parent domain of your cloudstead. For example, if your cloudstead fully qualified domain name is something.example.com, then the Parent Domain is \"example.com\" and the Hostname is \"something\"" },
+      "ssl_cert_name": { "label": "SSL Certificate Name", "info": "The name of the SSL certificate to install" }
+    }
+  }
+}

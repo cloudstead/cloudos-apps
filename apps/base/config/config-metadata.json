@@ -1,0 +1,12 @@
+{
+  "id": "config-metadata",
+  "categories": {
+    "base": {
+      "fields": {
+        "hostname": { "group": "system", "required": true, "type": "hostname_part" },
+        "parent_domain": { "group": "system", "required": true, "type": "hostname" },
+        "ssl_cert_name": { "group": "system", "required": true, "type": "filename" }
+      }
+    }
+  }
+}
