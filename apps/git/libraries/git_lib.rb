@@ -15,10 +15,11 @@ sudo -u #{run_as} -H chmod 644 #{known_hosts}
     end
   end
 
-  def self.synchronize (chef, repo, branch, run_as, cwd, dir = nil)
+  def self.synchronize (chef, repo, branch, run_as, cwd, dir = nil, ssh = nil)
     dir ||= base_name(repo)
     branch ||= 'master'
     is_tag = branch.start_with?('tags/') ? 1 : 0
+    git = ssh.nil? ? 'git' : "GIT_SSH=\"#{ssh}\" git"
     chef.bash "synchronize repository #{repo} (branch #{branch}) into dir #{dir}" do
       user 'root'
       code <<-EOF
@@ -31,14 +32,14 @@ cd #{cwd}
 is_tag=#{is_tag}
 if [ -d "#{dir}/.git" ] ; then
   # it exists. grab the latest code from the (possibly new) branch.
-  current_branch="$(cd #{dir} && git rev-parse --abbrev-ref HEAD)"
+  current_branch="$(cd #{dir} && #{git} rev-parse --abbrev-ref HEAD)"
   if [ ${is_tag} ] ; then
-    cd #{dir} && sudo -u #{run_as} -H bash -c "git fetch --all && git reset --hard origin/master && git checkout #{branch}"
+    cd #{dir} && sudo -u #{run_as} -H bash -c "#{git} fetch --all && #{git} reset --hard origin/master && #{git} checkout #{branch}"
   else
     if [ "${current_branch}" != "#{branch}" ] ; then
-      cd #{dir} && sudo -u #{run_as} -H bash -c "git fetch --all && git reset --hard origin/#{branch} && git checkout #{branch} && git pull origin #{branch}"
+      cd #{dir} && sudo -u #{run_as} -H bash -c "#{git} fetch --all && #{git} reset --hard origin/#{branch} && #{git} checkout #{branch} && #{git} pull origin #{branch}"
     else
-      cd #{dir} && sudo -u #{run_as} -H bash -c "git fetch --all && git reset --hard origin/#{branch} && git pull origin/#{branch}"
+      cd #{dir} && sudo -u #{run_as} -H bash -c "#{git} fetch --all && #{git} reset --hard origin/#{branch} && #{git} pull origin/#{branch}"
     fi
   fi
 
@@ -49,7 +50,7 @@ elif [ -e "#{dir}" ] ; then
 
 else
   # it doesn't exist. create its parent dir and do a fresh clone.
-  sudo -u #{run_as} -H bash -c "mkdir -p $(dirname #{dir}) && git clone #{repo} #{dir} && cd #{dir} && git checkout #{branch}"
+  sudo -u #{run_as} -H bash -c "mkdir -p $(dirname #{dir}) && #{git} clone #{repo} #{dir} && cd #{dir} && #{git} checkout #{branch}"
 fi
       EOF
     end
