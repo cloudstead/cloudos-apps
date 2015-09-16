@@ -121,7 +121,7 @@ function is_running () {
 }
 
 case "$1" in
-  start)
+  start|debug)
     is_running "${PROC_SIG}"
     if [ $? -ge 1 ] ; then
       echo "$(date): start: ${APP} server already running (proc pattern=${PROC_SIG}), NOT starting" | tee -a ${CONTROL_LOG}
@@ -145,7 +145,12 @@ case "$1" in
 
     set -m
     if [ -r /etc/apache2/envvars ] ; then . /etc/apache2/envvars ; fi
-    sudo -u ${RUN_AS_USER} -H -E bash -c "HOME=${RUN_AS_USER_HOME} /usr/local/bin/jrun ${APP_BASE} ${JAVA_CLASS} ${CONFIG} 2> /dev/null 1> /dev/null </dev/null &"
+    if [ "$1" = "debug" ] ; then
+      DEBUG="debug ${2}"
+    else
+      DEBUG=""
+    fi
+    sudo -u ${RUN_AS_USER} -H -E bash -c "HOME=${RUN_AS_USER_HOME} /usr/local/bin/jrun ${DEBUG} ${APP_BASE} ${JAVA_CLASS} ${CONFIG} 2> /dev/null 1> /dev/null </dev/null &"
     exit $?
   ;;
 
