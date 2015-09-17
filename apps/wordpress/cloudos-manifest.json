@@ -20,8 +20,8 @@
   } ],
 
   "tarball": {
-    "url": "http://cloudstead.io/downloads/wordpress-4.1.tar.gz",
-    "shasum": "3743d82698571903382dc223940e712f7bb5cfd20cedba7b7c32c97d470defab"
+    "url": "http://cloudstead.io/downloads/wordpress-4.3.1.tar.gz",
+    "shasum": "df5a5bfa28c916e11e8a636297c8eeb68816fff1d1bc2564c1d73c0063f0027c"
   },
 
   "database": { "type": "mysql", "auto_migration": false },
