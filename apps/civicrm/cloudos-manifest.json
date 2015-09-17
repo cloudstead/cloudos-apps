@@ -1,0 +1,47 @@
+{
+  "version": "0.1.0",
+  "name": "civicrm",
+  "style": "php",
+  "parent": "wordpress",
+  "interactive": true,
+
+  "publisher": {
+    "maintainer": "Jonathan Cobb",
+    "maintainer_email": "jonathan@cloudstead.io",
+    "license": "https://civicrm.org/license",
+    "code_copyright": "Copyright 2015 CiviCRM LLC",
+    "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
+  },
+
+  "assets": { "taskbarIconAltText": "CiviCRM" },
+
+  "database": { "type": "mysql", "dbname": "civicrm", "dbuser": "civicrm", "auto_migration": false },
+
+  "tarball": {
+    "url": "http://cloudstead.io/downloads/civicrm-4.6.8-wordpress.zip",
+    "shasum": "28231849daebce8e211b0a540d49f4d8cafa38600d029ca5dda8849cfed06c96",
+    "to": "@doc_root/wp-content/plugins/civicrm"
+  },
+
+  "dirs": [
+    "@doc_root/wp-content/plugins/files",
+    "@doc_root/wp-content/plugins/files/civicrm",
+    "@doc_root/wp-content/plugins/files/civicrm/uploads",
+    "@doc_root/wp-content/plugins/files/civicrm/custom"
+  ],
+
+  "copy": {
+    "@files/no_access.conf": "@doc_root/wp-content/plugins/files/civicrm/uploads",
+    "@files/no_access.conf": "@doc_root/wp-content/plugins/files/civicrm/custom"
+  },
+
+  "perms": {
+    "@doc_root/wp-content/plugins/files": { "chown": "@run_as.root", "perms": "755", "recursive": true }
+  },
+
+  "post_install": [ {
+    "dir": "@doc_root/wp-content/plugins/civicrm",
+    "exec": "curl http://cloudstead.io/downloads/civicrm-4.6.8-l10n.tar.gz | tar xzf -"
+  } ]
+
+}
