@@ -19,6 +19,8 @@
     "items": [ "admin.login", "admin.password", "admin.email" ]
   } ],
 
+  "packages": [ "php5-curl" ],
+
   "tarball": {
     "url": "http://cloudstead.io/downloads/wordpress-4.3.1.tar.gz",
     "shasum": "df5a5bfa28c916e11e8a636297c8eeb68816fff1d1bc2564c1d73c0063f0027c"
@@ -42,7 +44,8 @@
   },
 
   "perms": {
-    "@doc_root/wp-config.php": { "perms": "400" }
+    "@doc_root/wp-config.php": { "perms": "400" },
+    "@doc_root/httpful.phar": { "perms": "755" }
   },
 
   "post_install": [
