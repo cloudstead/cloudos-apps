@@ -1,0 +1,29 @@
+{
+  "version": "0.1.0",
+  "name": "kolab",
+  "style": "php",
+  "interactive": true,
+
+  "publisher": {
+    "maintainer": "Jonathan Cobb",
+    "maintainer_email": "jonathan@cloudstead.io",
+    "license": "Various Open Source licenses: https://en.wikipedia.org/wiki/Kolab",
+    "code_copyright": "Copyright 2015 by the contributors",
+    "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
+  },
+
+  "pre_package": [ { "exec": "@files/install.sh" } ],
+
+  "packages": [ "kolab" ],
+
+  "assets": { "taskbarIconAltText": "kolab" },
+
+  "public_ports": [
+    { "port": 25 },
+    { "port": 110 }, { "port": 143 },
+    { "port": 389 }, { "port": 465 },
+    { "port": 587 }, { "port": 636 },
+    { "port": 993 }, { "port": 995 }
+  ]
+
+}
