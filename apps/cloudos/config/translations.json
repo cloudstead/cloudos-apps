@@ -40,7 +40,7 @@
       "dns.zone": { "label": "Dyn Zone", "info": "Name of the DNS zone", "help": "If using cloudos-dns, this value is ignored" },
       "dns.base_uri": { "label": "Dyn URL", "info": "Ignored for Dyn", "help": "If using cloudos-dns, this is the URL of the cloudos-dns API" },
       "dns.enabled": { "label": "Enable DNS", "info": "If disabled, no changes to DNS will be made" },
-      "backup_cron_schedule": { "label": "Dyn User", "info": "Authenticate with this Dyn username" }
+      "backup_cron_schedule": { "label": "Backup schedule", "info": "When to backup this cloudstead" }
     }
   }
 }
