@@ -24,6 +24,24 @@
     { "port": 389 }, { "port": 465 },
     { "port": 587 }, { "port": 636 },
     { "port": 993 }, { "port": 995 }
+  ],
+
+  "passwords": [ "mysql-root", "kolab", "kolab-roundcube" ],
+
+  "templates": {
+    "/etc/mailname": "_",
+    "/etc/kolab/kolab.conf": "_"
+  },
+
+  "post_install": [
+    {
+      "exec": "@files/setup_kolab_wrapper.sh @timezone",
+      "env": {
+        "MYSQL_PWD": "@password[mysql-root]",
+        "KOLAB_PASS": "@password[kolab]",
+        "RC_PASS": "@password[kolab-roundcube]"
+      }
+    }
   ]
 
 }

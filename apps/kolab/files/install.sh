@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if dpkg -l kolab > /dev/null 2>&1 ; then
+  echo "$0: kolab already installed, returning"
+  exit 0
+fi
+
 apt-get update
 apt-get install -y expect haveged
 
