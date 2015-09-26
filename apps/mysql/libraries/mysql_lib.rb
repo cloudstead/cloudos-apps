@@ -1,5 +1,7 @@
 class Chef::Recipe::Mysql
 
+  MYSQL_ROOT = "mysql -u root"
+
   def self.set_config (chef, group, key, value)
     mysql_cnf = "/etc/mysql/conf.d/#{group}__#{key}.cnf"
     chef.bash "set #{key}=#{value} via #{mysql_cnf}" do
@@ -11,6 +13,30 @@ echo "[#{group}]
     end
   end
 
+  def self.set_password(chef, user, password)
+    chef.bash "set password for mysql user #{user} at #{Time.now}" do
+      user 'root'
+      code <<-EOF
+HOME=$(cd ~#{user} && pwd)
+echo "UPDATE mysql.user SET Password=PASSWORD(\'#{password}\') WHERE User=\'#{user}\'; FLUSH PRIVILEGES;" | #{MYSQL_ROOT}
+if [ -d ${HOME} ] ; then
+  CNF="${HOME}/.my.cnf"
+  if [ -f ${CNF} ] ; then
+    sed -ie 's/^[[:space:]]*password[[:space:]]*=[[:space:]]*.*$/password=#{password}/' ${CNF}
+  else
+    echo "[client]
+password=#{password}
+" > ${CNF}
+  fi
+  if [ -f ${CNF} ] ; then
+    chmod 400 ${CNF}
+    chown #{user} ${CNF}
+  fi
+fi
+      EOF
+    end
+  end
+
   def self.create_user (chef, dbuser, dbpass, allow_create_db = nil)
     chef.bash "create mysql user #{dbuser} at #{Time.now}" do
       user 'root'
@@ -19,7 +45,7 @@ EXISTS=$(echo "select count(*) from mysql.user where User='#{dbuser}'" | mysql -
 if [ ${EXISTS} -gt 0 ] ; then
   echo "User already exists: #{dbuser}"
 else
-  echo "CREATE USER #{dbuser} IDENTIFIED BY '#{dbpass}'" | mysql -u root
+  echo "CREATE USER #{dbuser} IDENTIFIED BY '#{dbpass}'" | #{MYSQL_ROOT}
 fi
       EOF
     end
@@ -29,7 +55,7 @@ fi
     chef.bash "dropping mysql user #{dbuser}" do
       user 'root'
       code <<-EOF
-echo "DELETE USER '#{dbuser}'" | mysql -u root
+echo "DELETE USER '#{dbuser}'" | #{MYSQL_ROOT}
       EOF
       not_if { %x(echo "select count(*) from mysql.user where User='#{dbuser}'" | mysql -s -u root).to_i == 0 }
     end
@@ -53,11 +79,11 @@ if [ ${EXISTS} -gt 0 ] ; then
   if [ -z "#{force_clause}" ] ; then
     echo "Database already exists: #{dbname}"
   else
-    echo "DROP DATABASE #{dbname}" | mysql -u root #{force_clause}
-    echo "CREATE DATABASE #{dbname}" | mysql -u root #{force_clause}
+    echo "DROP DATABASE #{dbname}" | #{MYSQL_ROOT} #{force_clause}
+    echo "CREATE DATABASE #{dbname}" | #{MYSQL_ROOT} #{force_clause}
   fi
 else
-  echo "CREATE DATABASE #{dbname}" | mysql -u root #{force_clause}
+  echo "CREATE DATABASE #{dbname}" | #{MYSQL_ROOT} #{force_clause}
 fi
       EOF
     end
@@ -71,7 +97,7 @@ fi
       code <<-EOF
 EXISTS=$(echo "show grants" | mysql -u #{dbuser} | grep "GRANT ALL PRIVILEGES ON \\`#{dbname}\\`.* TO '#{dbuser}'@'%'" | wc -l | tr -d ' ')
 if [ ${EXISTS} -eq 0 ] ; then
-  echo "GRANT ALL ON #{dbname}.* TO '#{dbuser}'" | mysql -u root #{force_clause}
+  echo "GRANT ALL ON #{dbname}.* TO '#{dbuser}'" | #{MYSQL_ROOT} #{force_clause}
 fi
       EOF
     end
@@ -182,7 +208,7 @@ echo "
 CREATE TABLE __cloudos_metadata__ (m_category varchar(255), m_name varchar(255), m_value varchar(255), m_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP);
 INSERT INTO __cloudos_metadata__ (m_category, m_name, m_value) VALUES ('schema_version', '#{schema_name}', '#{schema_version}');
 " \
-  | mysql -u root #{dbname}
+  | #{MYSQL_ROOT} #{dbname}
       EOF
       not_if { lib.table_exists(dbname, dbuser, dbpass, '__cloudos_metadata__') }
     end
@@ -200,13 +226,13 @@ INSERT INTO __cloudos_metadata__ (m_category, m_name, m_value) VALUES ('schema_v
 " >> ${temp}
 echo "COMMIT;" >> ${temp}
 
-cat ${temp} | mysql -u root #{dbname}
+cat ${temp} | #{MYSQL_ROOT} #{dbname}
       EOF
     end
   end
 
   def self.get_schema_version(chef, dbname, dbuser, dbpass, schema_name)
-    %x(echo "SELECT m_value FROM __cloudos_metadata__ WHERE m_category='schema_version' AND m_name='#{schema_name}' ORDER BY m_time DESC LIMIT 1" | mysql -u root #{dbname}).strip
+    %x(echo "SELECT m_value FROM __cloudos_metadata__ WHERE m_category='schema_version' AND m_name='#{schema_name}' ORDER BY m_time DESC LIMIT 1" | #{MYSQL_ROOT} #{dbname}).strip
   end
 
 end

@@ -12,3 +12,6 @@
     action :install
   end
 end
+
+base = Chef::Recipe::Base
+Chef::Recipe::Mysql.set_password(self, 'root', base.password('mysql-root'))
