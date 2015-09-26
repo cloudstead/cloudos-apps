@@ -108,6 +108,30 @@ class Chef::Recipe::LdapHelper
     Chef::Recipe::Base.password 'ldap'
   end
 
+  def service
+     val 'service', 'ldap-service'
+  end
+
+  def special_users_group
+    val 'special_user_group', 'special_user_group'
+  end
+
+  def service_dn
+    val 'service_dn', "cn=#{service},ou=#{special_users_group},#{ldap_domain}"
+  end
+
+  def service_password
+    Chef::Recipe::Base.password 'ldap-service'
+  end
+
+  def domain_simple_dn
+    val 'domains', 'cn=cloudos,cn=config'
+  end
+
+  def domain_dn
+    val 'domain_dn', "#{domain_simple_dn},#{base_dn}"
+  end
+
   def name
     val 'name', 'cloudos'
   end
