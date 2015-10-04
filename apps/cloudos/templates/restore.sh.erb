@@ -135,10 +135,6 @@ if [ -z "${RSKIP_INSTALL}" ] ; then
 
   # Run the default "install" to ensure everything is OK first
 
-  # Nuke kerberos and ldap, they will get reinstalled with proper keys
-  KERBEROS_LDAP_PACKAGES=$(cos json -f ${CHEF_HOME}/chef/data_bags/auth/cloudos-manifest.json -o read -p packages | tr -d '[]",')
-  apt-get -y --purge remove ${KERBEROS_LDAP_PACKAGES} && rm -rf /etc/krb* /etc/ldap* || die "Error removing kerberos packages"
-
   # Nuke all java processes. This will ensure that all cloudos services are stopped
   killall -9 java
 

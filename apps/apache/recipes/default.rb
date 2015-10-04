@@ -57,7 +57,6 @@ cat #{envvars} | egrep -v "^export [A-Z_]+_PASSWORD=.+" > ${TEMP}
 # Write correct _PASSWORD fields, overwrite the envvars file, delete temp file
 echo "
 export LDAP_PASSWORD=\"#{base.password 'ldap'}\"
-export KADMIN_PASSWORD=\"#{base.password 'kerberos'}\"
 export SYSTEM_MAILER_PASSWORD=\"#{base.password 'cloudos_system_mailer'}\"
 " >> ${TEMP} && cat ${TEMP} > #{envvars} && chmod 600 #{envvars} && rm ${TEMP}
   EOF

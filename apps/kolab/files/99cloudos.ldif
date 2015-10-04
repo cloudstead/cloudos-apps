@@ -1,0 +1,96 @@
+#
+# CloudOs schema
+#
+dn: cn=schema
+attributeTypes: ( 1.3.6.1.4.1.9999999.666.100.201
+  NAME 'resetPasswordToken'
+  DESC 'Token used to verify password reset'
+  EQUALITY caseIgnoreIA5Match
+  SUBSTR caseIgnoreIA5SubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{256} )
+attributeTypes: ( 1.3.6.1.4.1.9999999.666.100.202
+  NAME 'resetPasswordTokenCtime'
+  DESC 'When was the reset token set'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.36{256} )
+attributeTypes: ( 1.3.6.1.4.1.9999999.666.100.203
+  NAME 'emailVerificationCode'
+  DESC 'Token used to verify email'
+  EQUALITY caseIgnoreIA5Match
+  SUBSTR caseIgnoreIA5SubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{256} )
+attributeTypes: ( 1.3.6.1.4.1.9999999.666.100.204
+  NAME 'emailVerificationCodeCtime'
+  DESC 'When was the email token set'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.36{256} )
+attributeTypes: ( 1.3.6.1.4.1.9999999.666.100.207
+  NAME 'emailVerified'
+  DESC 'The email address has been verified'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+attributeTypes: ( 1.3.6.1.4.1.9999999.666.100.205
+  NAME 'mobilePhoneCountryCode'
+  DESC 'Mobile phone country code'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.36{8} )
+attributeTypes: ( 1.3.6.1.4.1.9999999.666.100.206
+  NAME 'mobilePhone'
+  DESC 'Mobile phone number'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.36{256} )
+attributeTypes: ( 1.3.6.1.4.1.9999999.666.100.207
+  NAME 'admin'
+  DESC 'If true, this account is a CloudOs Admin'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+attributeTypes: ( 1.3.6.1.4.1.9999999.666.100.208
+  NAME 'suspended'
+  DESC 'If true, this account is suspended in CloudOs'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+attributeTypes: ( 1.3.6.1.4.1.9999999.666.100.209
+  NAME 'twoFactor'
+  DESC 'If true, this account is enabled for 2-factor authentication'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+attributeTypes: ( 1.3.6.1.4.1.9999999.666.100.210
+  NAME 'twoFactorAuthId'
+  DESC 'User token with third-party 2-factor authentication service'
+  EQUALITY caseIgnoreIA5Match
+  SUBSTR caseIgnoreIA5SubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{256} )
+attributeTypes: ( 1.3.6.1.4.1.9999999.666.100.211
+  NAME 'lastLogin'
+  DESC 'Most recent login, formatted as YYYY-MM-DD HH:mm:ss'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{30} )
+attributeTypes: ( 1.3.6.1.4.1.9999999.666.100.212
+  NAME 'storageQuota'
+  DESC 'Storage quota in bytes. Should be larger than mailQuota'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.36{50} )
+attributeTypes: ( 1.3.6.1.4.1.9999999.666.100.213
+  NAME 'mirror'
+  DESC 'Instructs CloudOs to merge the referenced group's members into this one. The relationship is one-way. A group may pull from multiple mirrors.'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
+attributeTypes: ( 1.3.6.1.4.1.9999999.666.100.214
+  NAME 'cloudosStatus'
+  DESC 'Status of cloudos user'
+  EQUALITY caseIgnoreIA5Match
+  SUBSTR caseIgnoreIA5SubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{20} )
+
+dn: cn=schema
+objectClasses: ( 1.3.6.1.4.1.9999999.3.2.3
+  NAME 'cloudosInetOrgPerson'
+  DESC 'cloudos Internet Organizational Person'
+  SUP top AUXILIARY
+  MAY ( resetPasswordToken $
+        resetPasswordTokenCtime $
+        emailVerificationCode $
+        emailVerificationCodeCtime $
+        mobilePhoneCountryCode $
+        mobilePhone $
+        admin $
+        suspended $
+        twoFactor $
+        twoFactorAuthId $
+        lastLogin $
+        storageQuota $ ) )
+objectClasses: ( 1.3.6.1.4.1.9999999.3.2.4
+  NAME 'cloudosGroupOfUniqueNames'
+  DESC 'cloudos group of names'
+  SUP top AUXILIARY
+  MAY ( mirror $
+        storageQuota ) )

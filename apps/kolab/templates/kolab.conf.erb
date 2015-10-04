@@ -1,10 +1,7 @@
-<%
-ldap = @app[:auth][:ldap]
-base = Chef::Recipe::Base
-%>
+<% base = Chef::Recipe::Base %>
 
 [kolab]
-primary_domain = <%=@app[:domain]%>
+primary_domain = <%=@app[:hostname]%>
 auth_mechanism = ldap
 imap_backend = cyrus-imap
 default_locale = <%=@app[:lib].subst_string('@locale', @app)%>
@@ -105,44 +102,35 @@ autocreate_folders = {
 virtual_domains = userid
 
 [ldap]
-ldap_uri=ldap://<%=@app[:hostname]%>
-base_dn=<%=ldap.base_dn%>
-bind_dn=<%=ldap.admin_dn%>
-bind_pw=<%=ldap.password%>
-
-# todo: use a separate ldap-service account for this
-service_bind_dn = <%=ldap.admin_dn%>
-service_bind_pw = <%=ldap.password%>
-#service_bind_dn = <%=ldap.service_dn%>
-#service_bind_pw = <%=ldap.service_password%>
-
+ldap_uri = ldap://localhost:389
+supported_controls = 0,2,3
+base_dn = dc=cloudstead,dc=io
+bind_dn = cn=Directory Manager
+bind_pw = <%=base.password('kolab-ldap-admin')%>
+service_bind_dn = uid=kolab-service,ou=Special Users,dc=cloudstead,dc=io
+service_bind_pw = <%=base.password('kolab-ldap-service')%>
+user_base_dn = ou=People,%(base_dn)s
 user_scope = sub
-user_base_dn=<%=ldap.user_dn%>
-user_filter=<%=ldap.user_filter%>
-kolab_user_base_dn=<%=ldap.user_dn%>
-kolab_user_filter=<%=ldap.user_filter%>
-
+user_filter = (objectclass=inetorgperson)
+kolab_user_base_dn = ou=People,%(base_dn)s
+kolab_user_filter = (objectclass=kolabinetorgperson)
+group_base_dn = ou=Groups,%(base_dn)s
+group_filter = (|(objectclass=groupofuniquenames)(objectclass=groupofurls))
 group_scope = sub
-group_base_dn=<%=ldap.group_dn%>
-group_filter=<%=ldap.group_filter%>
-kolab_group_base_dn=<%=ldap.group_dn%>
-kolab_group_filter=<%=ldap.group_filter%>
-
+kolab_group_filter = (|(objectclass=kolabgroupofuniquenames)(objectclass=kolabgroupofurls))
 sharedfolder_base_dn = ou=Shared Folders,%(base_dn)s
-sharedfolder_filter = (objectclass=sharedFolder)
+sharedfolder_filter = (objectclass=kolabsharedfolder)
 sharedfolder_acl_entry_attribute = acl
-
 resource_base_dn = ou=Resources,%(base_dn)s
-resource_filter = (objectclass=groupOfUrls)
-
-domain_base_dn=<%=ldap.domain_simple_dn%>
+resource_filter = (|%(group_filter)s(objectclass=kolabsharedfolder))
+domain_base_dn = cn=kolab,cn=config
 domain_filter = (&(associatedDomain=*))
 domain_name_attribute = associateddomain
 domain_rootdn_attribute = inetdomainbasedn
-
 quota_attribute = mailquota
 modifytimestamp_format = %Y%m%d%H%M%SZ
-unique_attribute=entryUUID
+unique_attribute = nsuniqueid
+mail_attributes = mail, alias
 mailserver_attribute = mailhost
 auth_attributes = mail, alias, uid
 
@@ -157,6 +145,7 @@ xsender_header = True
 empty_sender_hosts = 3.2.1.0/24, 6.6.6.0/24
 
 [kolab_wap]
+api_url=https://<%=@app[:hostname]%>/kolab-webadmin/api/
 skin = default
 sql_uri = mysql://kolab:mysql@localhost/kolab
 ssl_verify_peer = false

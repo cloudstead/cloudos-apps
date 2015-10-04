@@ -1,41 +1,14 @@
-require 'uri'
-require 'json'
-require 'yaml'
-
-class Chef::Recipe::Kerberos
-
-  def self.create_user(chef, username, password)
-    chef.bash "kerberos.create_user #{username}" do
-      user 'root'
-      cwd '/tmp'
-      code <<-EOF
-echo "delprinc #{username}
-yes" | kadmin.local
-
-echo "addprinc -pw #{password} #{username}" | kadmin.local
-      EOF
-      not_if { %x(echo listprincs | kadmin.local | grep #{username}@ | wc -l).to_i > 0 }
-    end
-  end
-
-  def self.delete_user(chef, username)
-    chef.bash "kerberos.delete_user #{username}" do
-      user 'root'
-      cwd '/tmp'
-      code <<-EOF
-echo "delprinc #{username}
-yes" | kadmin.local
-      EOF
-      not_if { %x(echo listprincs | kadmin.local | grep #{username}@ | wc -l).to_i == 0 }
-    end
-  end
-
-end
 
 class Chef::Recipe::LdapHelper
 
   def initialize (chef, app)
-    @ldap = chef.data_bag_item('auth', 'init')['ldap']
+
+    begin
+      require 'inifile'
+    rescue LoadError
+      system('gem install inifile')
+    end
+    @ldap = IniFile.load('/etc/kolab/kolab.conf')['ldap']
     @app = app
   end
 
@@ -64,7 +37,7 @@ class Chef::Recipe::LdapHelper
   end
 
   def domain
-    val 'domain', '@domain'
+    val 'domain', '@hostname'
   end
 
   def ldap_domain
@@ -88,12 +61,12 @@ class Chef::Recipe::LdapHelper
   end
 
   def admin
-    val 'admin', 'admin'
+    val 'admin', 'Directory Manager'
   end
 
   def admin_dn
-    # default 'cn=admin,dc=cloudstead,dc=io'
-    val 'admin_dn', "cn=#{admin},#{ldap_domain}"
+    # default 'cn=Directory Manager'
+    val 'admin_dn', "cn=#{admin}"
   end
 
   def transport
@@ -108,51 +81,27 @@ class Chef::Recipe::LdapHelper
     Chef::Recipe::Base.password 'ldap'
   end
 
-  def service
-     val 'service', 'ldap-service'
-  end
-
-  def special_users_group
-    val 'special_user_group', 'special_user_group'
-  end
-
-  def service_dn
-    val 'service_dn', "cn=#{service},ou=#{special_users_group},#{ldap_domain}"
-  end
-
-  def service_password
-    Chef::Recipe::Base.password 'ldap-service'
-  end
-
-  def domain_simple_dn
-    val 'domains', 'cn=cloudos,cn=config'
-  end
-
-  def domain_dn
-    val 'domain_dn', "#{domain_simple_dn},#{base_dn}"
-  end
-
   def name
-    val 'name', 'cloudos'
+    val 'name', %x(hostname -s).strip
   end
 
   def name_dn
-    # default 'cn=cloudos'
+    # default 'cn=short-hostname'
     "cn=#{name}"
   end
 
   def base_dn
-    # default 'cn=cloudos,dc=cloudstead,dc=io'
+    # default 'cn=short-hostname,dc=cloudstead,dc=io'
     val 'base_dn', "#{name_dn},#{ldap_domain}"
   end
 
   def external_id
-    # default 'cn=admin,dc=cloudstead,dc=io'
+    # default 'cn=admin,dc=short-hostname,dc=cloudstead,dc=io'
     val 'external_id', 'entryUUID'
   end
 
   def users
-    # default 'ou=People,cn=cloudos,dc=cloudstead,dc=io'
+    # default 'ou=People,cn=short-hostname,dc=cloudstead,dc=io'
     val 'users', 'People'
   end
 
@@ -205,7 +154,7 @@ class Chef::Recipe::LdapHelper
   end
 
   def groups
-    # default 'ou=Groups,cn=cloudos,dc=cloudstead,dc=io'
+    # default 'ou=Groups,cn=short-hostname,dc=cloudstead,dc=io'
     val 'groups', 'Groups'
   end
 
@@ -269,6 +218,39 @@ class Chef::Recipe::LdapHelper
       hash[k] = @app[:lib].subst_string(@ldap[k], @app) unless hash[k] || k == 'password'
     }
     hash
+  end
+
+  def create_user (chef, username, password)
+    chef.bash "create LDAP user #{username}" do
+      code <<-EOH
+echo "dn: uid=#{username},ou=People,dc=cloudstead,dc=io
+objectClass: top
+objectClass: inetorgperson
+objectClass: kolabinetorgperson
+objectClass: mailrecipient
+objectClass: organizationalperson
+objectClass: person
+uid: stest
+alias: s.test@cloudstead.io
+alias: stest@cloudstead.io
+givenname: test
+initials: st
+mailquota: 1024000
+preferredLanguage: en_US
+sn: test
+userpassword: #{password}
+cn: stest test
+displayname: test, stest
+o: organization
+title: CEO
+mail: stest.test@cloudstead.io" | ldapadd -x -H ldap://127.0.0.1 -D "cn=Directory Manager" -w dirman
+
+EOH
+    end
+  end
+
+  def delete_user (chef, username)
+
   end
 
 end

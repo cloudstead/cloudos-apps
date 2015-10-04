@@ -2,7 +2,8 @@
   "version": "0.1.0",
   "name": "kolab",
   "style": "php",
-  "interactive": true,
+  "interactive": false,
+  "level": "system",
 
   "publisher": {
     "maintainer": "Jonathan Cobb",
@@ -12,11 +13,9 @@
     "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
   },
 
-  "pre_package": [ { "exec": "@files/install.sh" } ],
+  "pre_package": [ { "exec": "@files/init_kolab_packages.sh" } ],
 
   "packages": [ "kolab" ],
-
-  "assets": { "taskbarIconAltText": "kolab" },
 
   "public_ports": [
     { "port": 25 },
@@ -26,7 +25,7 @@
     { "port": 993 }, { "port": 995 }
   ],
 
-  "passwords": [ "mysql-root", "kolab", "kolab-roundcube" ],
+  "passwords": [ "mysql-root", "ldap", "kolab-ldap-admin", "kolab", "kolab-roundcube" ],
 
   "templates": {
     "/etc/mailname": "_",
@@ -35,8 +34,10 @@
 
   "post_install": [
     {
-      "exec": "@files/setup_kolab_wrapper.sh @timezone",
+      "exec": "@files/setup_kolab_wrapper.sh @hostname @timezone @files/99cloudos.ldif",
       "env": {
+        "LDAP_PASS": "@password[ldap]",
+        "DIRMAN_PASS": "@password[kolab-ldap-admin]",
         "MYSQL_PWD": "@password[mysql-root]",
         "KOLAB_PASS": "@password[kolab]",
         "RC_PASS": "@password[kolab-roundcube]"

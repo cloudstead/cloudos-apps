@@ -402,7 +402,7 @@ There are two parts to connecting an app to CloudOs SSO:
  * Adjusting the app configuration so logins are authenticated against a CloudOs service
  * Telling CloudOs how to automatically login CloudOs users to the app
 
-For the first part, CloudOs offers a variety of authentication means: LDAP, Kerberos, IMAP, and a REST API.
+For the first part, CloudOs offers a variety of authentication means: LDAP, IMAP, and a REST API.
 
 DokuWiki supports LDAP authentication, so we'll use that for this app.
 

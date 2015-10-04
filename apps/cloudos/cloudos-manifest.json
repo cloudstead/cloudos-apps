@@ -26,11 +26,11 @@
         }
     ],
 
-    "users": [ { "user": "cloudos_system_mailer", "kerberos": true } ],
+    "users": [ { "user": "cloudos_system_mailer", "ldap": true } ],
 
     "groups": [ { "group": "rooty", "members": [ "@run_as", "@chef_user", "root" ] } ],
 
-    "passwords": [ "kerberos", "ldap", "backup_key", "rooty", "rooty_queue" ],
+    "passwords": [ "ldap", "backup_key", "rooty", "rooty_queue" ],
 
     "packages": [ "memcached", "redis-server", "awscli" ],
 
