@@ -1,0 +1,61 @@
+{
+  "version": "0.1.0",
+  "name": "jenkins",
+  "style": "java_webapp",
+  "interactive": true,
+  "run_as": { "user": "jenkins", "home": "/var/lib/jenkins" },
+
+  "publisher": {
+    "maintainer": "Jonathan Cobb",
+    "maintainer_email": "jonathan@cloudstead.io",
+    "license": "https://raw.githubusercontent.com/jenkinsci/jenkins/master/LICENSE.txt",
+    "code_copyright": "Copyright (c) 2004-, Kohsuke Kawaguchi, Sun Microsystems, Inc., and a number of other of contributors",
+    "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
+  },
+
+  "assets" : {
+    "blurb" : "A CI system",
+    "description" : "A leading open source continuous integration (CI) system"
+  },
+
+  "config": [
+    {
+      "name": "init",
+      "items": [
+        "plugins", "security.type",
+        "security.admin.login", "security.admin.password",
+        "security.admin.fullname", "security.admin.email"
+      ]
+    }
+  ],
+
+  "pre_package": [ {"exec": "@files/pre_package.sh"} ],
+
+  "templates": {
+    "/etc/default/jenkins": "_",
+    "@home/config.xml": "_",
+    "@home/jenkins.model.JenkinsLocationConfiguration.xml": "_",
+    "@home/jenkins.model.ArtifactManagerConfiguration.xml": "_",
+    "@home/jenkins.model.DownloadSettings.xml": "_",
+    "@home/jenkins.mvn.GlobalMavenConfig.xml": "_",
+    "@home/jenkins.security.QueueItemAuthenticatorConfiguration.xml": "_",
+    "@home/hudson.scm.SubversionSCM.xml": "_",
+    "@home/hudson.tasks.Ant.xml": "_",
+    "@home/hudson.tasks.Shell.xml": "_",
+    "@home/hudson.tasks.Maven.xml": "_"
+  },
+
+  "packages": [ "jenkins" ],
+
+  "web": { "type": "apache", "mode": "proxy_service", "local_mount": "@name" },
+
+  "post_install": [
+    {
+      "exec": "@files/install_plugins.sh @run_as @home",
+      "env": { "PLUGINS": "@config[init][plugins]" }
+    },
+    { "exec": "@files/setup_admin.sh '@config[init][security][admin][login]' '@config[init][security][admin][password]' '@config[init][security][admin][email]' '@config[init][security][admin][fullname]'" }
+  ],
+
+  "validation": { "timeout": "300" }
+}

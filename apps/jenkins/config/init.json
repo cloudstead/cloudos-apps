@@ -1,0 +1,13 @@
+{
+  "id": "init",
+  "plugins": "git git-client scm-api",
+  "security": {
+    "type": "jenkins",
+    "admin": {
+      "login": "admin",
+      "password": "admin123!",
+      "email": "postmaster@@hostname",
+      "fullname": "administrator"
+    }
+  }
+}

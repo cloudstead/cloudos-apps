@@ -1,0 +1,8 @@
+
+Header edit Location ^http://<%=@hostname%>/jenkins https://<%=@hostname%>/jenkins
+
+RewriteEngine on
+RewriteCond %{REQUEST_URI} ^/jenkins$
+RewriteRule ^(.*)$ /jenkins/ [R=301,L]
+
+AllowEncodedSlashes NoDecode
