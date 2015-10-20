@@ -5,7 +5,7 @@ if [ -d ${RULES} ] ; then
 
   ( cd ${RULES} && \
     if [ -f iptables_header ] ; then cat iptables_header ; fi && echo "" && \
-    find . -type f | grep -v "*~" | grep -v 'iptables_' | sort | xargs cat && echo "" && \
+    find . -type f | egrep '^\./[[:digit:]]+_[-[:alnum:]]+$' | sort | xargs cat && echo "" && \
     if [ -f iptables_footer ] ; then cat iptables_footer ; fi \
   ) | iptables-restore
 
