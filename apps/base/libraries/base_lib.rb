@@ -233,6 +233,7 @@ EOF
   end
 
   def self.set_hostname(chef, fqdn)
+    return if fqdn == 'localhost'
     chef.bash "set hostname to #{fqdn}" do
       user 'root'
       cwd '/tmp'
@@ -244,14 +245,14 @@ fi
 EOF
     end
 
-    chef.template '/etc/hosts' do
-      owner 'root'
-      group 'root'
-      mode '0644'
-      cookbook 'base'
-      variables({ :fqdn => fqdn })
-      action :create
-    end
+    # chef.template '/etc/hosts' do
+    #   owner 'root'
+    #   group 'root'
+    #   mode '0644'
+    #   cookbook 'base'
+    #   variables({ :fqdn => fqdn })
+    #   action :create
+    # end
   end
 
   def self.set_perms (chef, path, owner, perms)
