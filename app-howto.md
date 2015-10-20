@@ -435,7 +435,7 @@ Click save, take another MD5 snapshot, and check the difference. Take a look at 
 
 So we update our `local.php.erb` template and add this at the end:
 
-    <% ldap = @app[:auth][:ldap] %>
+    <% ldap = @app[:ldap] %>
     $conf['plugin']['authldap']['server'] = '<%=ldap.server%>';
     $conf['plugin']['authldap']['usertree'] = '<%=ldap.user_dn%>';
     $conf['plugin']['authldap']['grouptree'] = '<%=ldap.group_dn%>';
@@ -445,7 +445,7 @@ So we update our `local.php.erb` template and add this at the end:
     $conf['plugin']['authldap']['binddn'] = '<%=ldap.admin_dn%>';
     $conf['plugin']['authldap']['bindpw'] = $_SERVER['LDAP_PASSWORD'];
 
-An LDAP utility is available in the `@app[:auth][:ldap]` variable, and we use it here to fill out the configuration fields.
+An LDAP utility is available in the `@app[:ldap]` variable, and we use it here to fill out the configuration fields.
 Note that the password comes in via the environment. This allows us to avoid storing an important password in plaintext in this configuration file.
 
 At this point you should be able to start the app and log in using your CloudOs credentials.
