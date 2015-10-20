@@ -1,6 +1,6 @@
 <?php
 
-<% ldap = @app[:auth][:ldap] %>
+<% ldap = @app[:ldap] %>
 
 $conf['authtype'] = 'authldap';
 $conf['plugin']['authldap']['server'] = '<%=ldap.server%>';
