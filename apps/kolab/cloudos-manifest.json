@@ -13,6 +13,8 @@
     "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
   },
 
+  "installer_gems": ["inifile"],
+
   "pre_package": [ { "exec": "@files/init_kolab_packages.sh" } ],
 
   "packages": [ "kolab" ],
@@ -25,7 +27,7 @@
     { "port": 993 }, { "port": 995 }
   ],
 
-  "passwords": [ "mysql-root", "ldap", "kolab-ldap-admin", "kolab", "kolab-roundcube" ],
+  "passwords": [ "mysql-root", "ldap", "kolab-ldap-admin", "kolab", "kolab-service", "cyrus", "kolab-roundcube" ],
 
   "templates": {
     "/etc/mailname": "_",
@@ -33,6 +35,7 @@
   },
 
   "post_install": [
+    { "exec": "@files/fixup_etc_hosts.sh" },
     {
       "exec": "@files/setup_kolab_wrapper.sh @hostname @timezone @files/99cloudos.ldif",
       "env": {
@@ -40,9 +43,19 @@
         "DIRMAN_PASS": "@password[kolab-ldap-admin]",
         "MYSQL_PWD": "@password[mysql-root]",
         "KOLAB_PASS": "@password[kolab]",
+        "KOLAB_SVC_PASS": "@password[kolab-service]",
+        "CYRUS_PASS": "@password[cyrus]",
         "RC_PASS": "@password[kolab-roundcube]"
       }
     }
-  ]
+  ],
+
+  "backup": {
+    "pre": [ { "exec": "@files/backup.sh @backup_dir --before" } ],
+    "files": [
+      "/etc/kolab"
+    ],
+    "post": [ { "exec": "@files/backup.sh @backup_dir --after" } ]
+  }
 
 }

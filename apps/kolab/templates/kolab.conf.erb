@@ -1,4 +1,7 @@
-<% base = Chef::Recipe::Base %>
+<%
+base = Chef::Recipe::Base
+base_dn = @app[:ldap].domainify(@app[:hostname])
+%>
 
 [kolab]
 primary_domain = <%=@app[:hostname]%>
@@ -104,10 +107,10 @@ virtual_domains = userid
 [ldap]
 ldap_uri = ldap://localhost:389
 supported_controls = 0,2,3
-base_dn = dc=cloudstead,dc=io
+base_dn = <%=base_dn%>
 bind_dn = cn=Directory Manager
 bind_pw = <%=base.password('kolab-ldap-admin')%>
-service_bind_dn = uid=kolab-service,ou=Special Users,dc=cloudstead,dc=io
+service_bind_dn = uid=kolab-service,ou=Special Users,<%=base_dn%>
 service_bind_pw = <%=base.password('kolab-ldap-service')%>
 user_base_dn = ou=People,%(base_dn)s
 user_scope = sub

@@ -1,20 +1,29 @@
+require 'inifile'
 
 class Chef::Recipe::LdapHelper
 
-  def initialize (chef, app)
+  KOLAB_CONF = '/etc/kolab/kolab.conf'
 
-    begin
-      require 'inifile'
-    rescue LoadError
-      system('gem install inifile')
-    end
-    @ldap = IniFile.load('/etc/kolab/kolab.conf')['ldap']
+  def initialize (chef, app)
+    @ldap = nil
+    @chef = chef
     @app = app
   end
 
+  # lazy init. the KOLAB_CONF file may not exist until later
+  def config
+    unless @ldap
+      # remove curly-brace sections from conf file, ruby inifile parser chokes on them
+      temp_conf=%x(tmp=$(mktemp /tmp/kolab.conf.XXXXXX) && chmod 600 ${tmp} && cat #{KOLAB_CONF} | sed '/{/,/}/d' | grep -v '}' > ${tmp} && echo ${tmp}).strip
+      @ldap = IniFile.load(temp_conf)['ldap']
+      File.delete temp_conf
+    end
+    @ldap
+  end
+
   def val (field, default)
-    if defined?(@ldap[field]) && @ldap[field].to_s != ''
-      @app[:lib].subst_string(@ldap[field], @app).to_s
+    if defined?(config[field]) && config[field].to_s != ''
+      @app[:lib].subst_string(config[field], @app).to_s
     else
       @app[:lib].subst_string(default, @app).to_s
     end
@@ -190,7 +199,7 @@ class Chef::Recipe::LdapHelper
     end
 
     # Or a non-standard field defined in the databag?
-    @app[:lib].subst_string(@ldap[method], @app) if @ldap[method]
+    @app[:lib].subst_string(config[method], @app) if config[method]
 
     # Otherwise, it's undefined
     "--undefined: #{method} (#{self})--"
@@ -214,8 +223,8 @@ class Chef::Recipe::LdapHelper
     end
 
     # admin may have defined additional properties. Add everything we haven't already added, but NOT password.
-    @ldap.each_key { |k|
-      hash[k] = @app[:lib].subst_string(@ldap[k], @app) unless hash[k] || k == 'password'
+    config.each_key { |k|
+      hash[k] = @app[:lib].subst_string(config[k], @app) unless hash[k] || k == 'password'
     }
     hash
   end
@@ -230,27 +239,16 @@ objectClass: kolabinetorgperson
 objectClass: mailrecipient
 objectClass: organizationalperson
 objectClass: person
-uid: stest
-alias: s.test@cloudstead.io
-alias: stest@cloudstead.io
-givenname: test
-initials: st
-mailquota: 1024000
-preferredLanguage: en_US
-sn: test
+uid: #{username}
 userpassword: #{password}
-cn: stest test
-displayname: test, stest
-o: organization
-title: CEO
-mail: stest.test@cloudstead.io" | ldapadd -x -H ldap://127.0.0.1 -D "cn=Directory Manager" -w dirman
+" | ldapadd -x -H ldap://127.0.0.1 -D "cn=Directory Manager" -w dirman
 
 EOH
     end
   end
 
   def delete_user (chef, username)
-
+    raise 'not yet implemented'
   end
 
 end

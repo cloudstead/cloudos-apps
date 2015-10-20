@@ -11,7 +11,9 @@ LOG=/tmp/setup-kolab.log
 
 if [ ! -f ${MARKER_FILE} ] ; then
   ${BASE}/setup_kolab_expect.sh $@ 2>&1 > ${LOG} && touch ${MARKER_FILE} || die "Error running setup-kolab"
-  rm ${LOG}
+  rm -f ${LOG} || die "Error removing setup-kolab log file"
+  # for some reason wallace is often not running at this point, restart it now
+  sevice wallace restart
 fi
 
 # clean up Apache configs
@@ -76,4 +78,56 @@ if [ -z "${INSTALLED_LDIF}" ] ; then
 fi
 if [ ! -f "${INSTALLED_LDIF}" ] ; then
   cp "${CLOUDOS_LDIF}" "${INSTALLED_LDIF}" || die "Error copying ${CLOUDOS_LDIF} -> ${INSTALLED_LDIF}"
+  service dirsrv restart
 fi
+
+# Assumes we are using StartCom SSL
+# todo: install intermediate cert for arbitrary SSL cert
+certutil -d /etc/dirsrv/slapd-$(hostname -s)/ -A -t "CT,," \
+  -n "StartCom Certification Authority" \
+  -i /usr/share/ca-certificates/mozilla/StartComClass2PrimaryIntermediateServerCA.crt
+
+openssl pkcs12 -export \
+  -in /etc/ssl/certs/ssl-https.pem \
+  -inkey /etc/ssl/private/ssl-https.key \
+  -out /tmp/ldap.p12 -name Server-Cert -passout pass:foo
+echo "foo" > /tmp/foo
+pk12util -i /tmp/ldap.p12 -d /etc/dirsrv/slapd-$(hostname -s)/ -w /tmp/foo -k /dev/null || die "Error importing SSL cert"
+rm -f /tmp/foo /tmp/ldap.p12
+
+ldapmodify -x -h localhost -p 389 -D "cn=Directory Manager" -w ${DIRMAN_PASS} <<EOF
+dn: cn=encryption,cn=config
+changetype: modify
+replace: nsSSL2
+nsSSL2: off
+-
+replace: nsSSL3
+nsSSL3: off
+-
+replace: nsTLS1
+nsTLS1: on
+-
+replace: nsSSLClientAuth
+nsSSLClientAuth: allowed
+
+dn: cn=config
+changetype: modify
+add: nsslapd-security
+nsslapd-security: on
+-
+replace: nsslapd-ssl-check-hostname
+nsslapd-ssl-check-hostname: off
+-
+replace: nsslapd-secureport
+nsslapd-secureport: 636
+
+dn: cn=RSA,cn=encryption,cn=config
+changetype: add
+objectclass: top
+objectclass: nsEncryptionModule
+cn: RSA
+nsSSLPersonalitySSL: Server-Cert
+nsSSLToken: internal (software)
+nsSSLActivation: on
+EOF
+

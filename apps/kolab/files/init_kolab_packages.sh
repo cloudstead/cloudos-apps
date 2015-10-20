@@ -1,5 +1,10 @@
 #!/bin/bash
 
+function die {
+  echo 1>&2 "${1}"
+  exit 1
+}
+
 if dpkg -l kolab > /dev/null 2>&1 ; then
   echo "$0: kolab already installed, returning"
   exit 0
@@ -26,9 +31,9 @@ EOF
 
 fi
 
-${BASE}/kolab_gpg.sh
+${BASE}/kolab_gpg.sh || die "Error running kolab_gpg.sh"
 
-gpg --export --armor devel@lists.kolab.org | apt-key add -
+gpg --export --armor devel@lists.kolab.org | apt-key add - || die "Error exporting Kolab GPG key"
 
 echo "deb http://obs.kolabsys.com/repositories/Kolab:/3.4/Ubuntu_14.04/ ./
 deb http://obs.kolabsys.com/repositories/Kolab:/3.4:/Updates/Ubuntu_14.04/ ./" \
