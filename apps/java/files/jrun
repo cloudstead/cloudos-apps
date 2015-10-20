@@ -15,10 +15,6 @@
 # of the app. For an app-base-dir of /home/web/acmecorp-cool-app the parent is
 # acmecorp and the role is "cool-app".
 #
-# When invoking the JVM, options passed are JVM_OPTS and COOL-APP_
-# and the value of the ${ROLE} . These are env vars defined in the shell that invokes this script, NOT any env vars
-# found in the files described below.
-#
 # Environment configuration may be defined in one of the predefined places:
 #     /etc/acmecorp-cool-app.env        # /etc/${PARENT}-${ROLE}.env
 #     ${HOME}/.acmecorp-cool-app.env    # ${HOME}/.${PARENT}-${ROLE}.env
@@ -102,7 +98,7 @@ CONFIG="${3}"
 #echo "using JAVA_CLASS=${JAVA_CLASS} and CONFIG=${CONFIG}"
 
 cd ${APP_BASE}
-APP_BASE=$(pwd)
+export APP_BASE=$(pwd)
 APP=$(basename ${APP_BASE})
 APP_PARENT=$(echo $APP | tr '-' ' ' | awk '{print $1}')
 APP_ROLE=$(echo $APP | tr '-' ' ' | awk '{print $2}')
