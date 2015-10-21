@@ -7,4 +7,5 @@
     "user": "username",
     "password": "password"
   }
+  // todo: add list of URL patterns that should be excluded from auth. needed to allow github callbacks into jenkins, for example
 }
