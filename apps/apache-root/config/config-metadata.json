@@ -3,7 +3,10 @@
   "categories": {
     "init": {
       "fields": {
-        "doc_root": { "required": true, "type": "filename" }
+        "doc_root": { "required": true, "type": "filename" },
+        "digest_auth.realm": { "required": false, "type": "field" },
+        "digest_auth.user": { "required": false, "type": "login" },
+        "digest_auth.password": { "required": false, "type": "password" }
       }
     }
   }

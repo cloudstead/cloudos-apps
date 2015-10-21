@@ -23,6 +23,14 @@
     "type": "apache",
     "doc_root": "@config[init][doc_root]",
     "mode": "vhost_root",
-    "ssl_cert_name": "@config[base][ssl_cert_name]"
-  }
+    "ssl_cert_name": "@config[base][ssl_cert_name]",
+    "apache": {
+      "mods": [ "auth_digest" ],
+      "dir": [ "@doc_root" ],
+      "location": [ "/" ]
+    }
+  },
+
+  "validation": { "expected_status": 401 }
+
 }

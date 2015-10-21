@@ -1,4 +1,10 @@
 {
   "id": "init",
-  "doc_root": "/var/www/html"
+  "doc_root": "/var/www/html",
+  // optional -- secure the entire server with http digest auth
+  "digest_auth": {
+    "realm": "private area",
+    "user": "username",
+    "password": "password"
+  }
 }
