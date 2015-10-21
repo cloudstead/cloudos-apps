@@ -57,5 +57,5 @@
     { "exec": "@files/setup_admin.sh '@config[init][security][admin][login]' '@config[init][security][admin][password]' '@config[init][security][admin][email]' '@config[init][security][admin][fullname]'" }
   ],
 
-  "validation": { "timeout": "300" }
+  "validation": { "timeout": "600" }
 }
