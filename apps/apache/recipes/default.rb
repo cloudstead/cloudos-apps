@@ -8,7 +8,7 @@
 #
 
 # every system needs these
-%w( apache2 ).each do |pkg|
+%w( apache2 apache2-utils ).each do |pkg|
   package pkg do
     action :install
   end

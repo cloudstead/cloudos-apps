@@ -1,4 +1,5 @@
 require 'securerandom'
+require 'htauth'
 
 class Chef::Recipe::Apache
 
@@ -366,6 +367,15 @@ fi
       mode '0644'
       variables (scope)
       action :create
+    end
+  end
+
+  def self.add_digest_user(digest_passwd_file, realm, user, password)
+    unless File.exist?(digest_passwd_file)
+      File.open(digest_passwd_file, 'w') {}
+    end
+    HTAuth::DigestFile.open(digest_passwd_file) do |df|
+      df.add_or_update(user, realm, password)
     end
   end
 
