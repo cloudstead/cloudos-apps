@@ -6,6 +6,7 @@
   },
   "categories": {
     "base": {
+      "public_ip": { "label": "Public IP", "info": "The public IP address of your cloudstead", "help": "If your system's public IP address is visible from the instance itself, you can leave this blank and your IP will be automatically detected. If your public IP address is not knowable from the instance (for example, if you are using an Amazon Elastic IP), then enter that IP address here." },
       "hostname": { "label": "Hostname", "info": "The name of your cloudstead. For example, if your cloudstead's fully qualified domain name is something.example.com, then the Parent Domain is \"example.com\" and the Hostname is \"something\"" },
       "parent_domain": { "label": "Parent Domain", "info": "The parent domain of your cloudstead. For example, if your cloudstead fully qualified domain name is something.example.com, then the Parent Domain is \"example.com\" and the Hostname is \"something\"" },
       "ssl_cert_name": { "label": "SSL Certificate Name", "info": "The name of the SSL certificate to install" }

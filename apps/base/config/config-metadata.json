@@ -3,6 +3,7 @@
   "categories": {
     "base": {
       "fields": {
+        "public_ip": { "group": "system", "required": false, "type": "ipv4" },
         "hostname": { "group": "system", "required": true, "type": "hostname_part" },
         "parent_domain": { "group": "system", "required": true, "type": "hostname" },
         "ssl_cert_name": { "group": "system", "required": true, "type": "filename" }
