@@ -2,7 +2,7 @@
 apache = Chef::Recipe::Apache
 re_prefix = 'regex:'
 cert_name = @config[:cert_name]
-ssl = !cert_name.nil?
+ssl = !!cert_name
 
 server_name = apache.get_server_name(@config[:server_name], @config[:mode], @hostname, @app_name)
 %>
