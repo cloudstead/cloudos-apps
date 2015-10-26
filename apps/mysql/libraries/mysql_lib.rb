@@ -1,6 +1,6 @@
 class Chef::Recipe::Mysql
 
-  MYSQL_ROOT = "mysql -u root"
+  MYSQL_ROOT = 'mysql --defaults-file=$(cd ~root && pwd)/.my.cnf -s -u root'
 
   def self.set_config (chef, group, key, value)
     mysql_cnf = "/etc/mysql/conf.d/#{group}__#{key}.cnf"
@@ -41,7 +41,7 @@ fi
     chef.bash "create mysql user #{dbuser} at #{Time.now}" do
       user 'root'
       code <<-EOF
-EXISTS=$(echo "select count(*) from mysql.user where User='#{dbuser}'" | mysql -s -u root | tr -d ' ')
+EXISTS=$(echo "select count(*) from mysql.user where User='#{dbuser}'" | #{MYSQL_ROOT} | tr -d ' ')
 if [ ${EXISTS} -gt 0 ] ; then
   echo "User already exists: #{dbuser}"
 else
@@ -57,16 +57,16 @@ fi
       code <<-EOF
 echo "DELETE USER '#{dbuser}'" | #{MYSQL_ROOT}
       EOF
-      not_if { %x(echo "select count(*) from mysql.user where User='#{dbuser}'" | mysql -s -u root).to_i == 0 }
+      not_if { %x(echo "select count(*) from mysql.user where User='#{dbuser}'" | #{MYSQL_ROOT}).to_i == 0 }
     end
   end
 
   def self.db_exists (dbname)
-    %x(echo "show databases" | mysql -s -u root).lines.grep(/#{dbname}/).size > 0
+    %x(echo "show databases" | #{MYSQL_ROOT}).lines.grep(/#{dbname}/).size > 0
   end
 
   def self.find_matching_databases (match)
-    %x(echo "show databases" | mysql -s -u root).lines.grep(/#{match}/).collect { |db| db.chop }
+    %x(echo "show databases" | #{MYSQL_ROOT}).lines.grep(/#{match}/).collect { |db| db.chop }
   end
 
   def self.create_db (chef, dbname, dbuser, force = false)
@@ -74,7 +74,7 @@ echo "DELETE USER '#{dbuser}'" | #{MYSQL_ROOT}
     chef.bash "create mysql database #{dbname} at #{Time.now}" do
       user 'root'
       code <<-EOF
-EXISTS=$(echo "show databases" | mysql -s -u root | grep #{dbname} | wc -l | tr -d ' ')
+EXISTS=$(echo "show databases" | #{MYSQL_ROOT} | grep #{dbname} | wc -l | tr -d ' ')
 if [ ${EXISTS} -gt 0 ] ; then
   if [ -z "#{force_clause}" ] ; then
     echo "Database already exists: #{dbname}"
@@ -104,7 +104,7 @@ fi
   end
 
   def self.count_tables(dbname, dbuser, dbpass)
-    %x(echo "show tables" | mysql -s -u root #{dbname}).lines.grep(/#{dbname}/).size
+    %x(echo "show tables" | #{MYSQL_ROOT} #{dbname}).lines.grep(/#{dbname}/).size
   end
 
   def self.has_tables(dbname, dbuser, dbpass)
@@ -147,7 +147,7 @@ cat #{script} | mysql -u #{dbuser} -p#{dbpass} -h 127.0.0.1 #{dbname}
       f.write(insert[:unless])
     end
 
-    mysql="mysql -s -u root #{dbname}"
+    mysql="#{MYSQL_ROOT} #{dbname}"
 
     chef.bash "insert into #{dbname} DB schema: #{insert[:sql]}" do
       user 'root'
