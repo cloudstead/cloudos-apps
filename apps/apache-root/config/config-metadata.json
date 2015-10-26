@@ -4,6 +4,7 @@
     "init": {
       "fields": {
         "doc_root": { "required": true, "type": "filename" },
+        "mixins_enabled": { "required": false, "type": "yesno" },
         "digest_auth.realm": { "required": false, "type": "field" },
         "digest_auth.user": { "required": false, "type": "login" },
         "digest_auth.password": { "required": false, "type": "password" }

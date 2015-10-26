@@ -7,6 +7,7 @@
   "categories": {
     "init": {
       "doc_root": { "label": "Document Root", "info": "Filesystem path to the web root directory" },
+      "enable_mixins": { "label": "Enable mixins", "info": "Should mixins be enabled for this server" },
       "digest_auth.realm": { "label": "Digest Auth Realm", "info": "Optional. Realm name to be displayed when requesting authentication" },
       "digest_auth.user": { "label": "Digest Auth User", "info": "Optional. Require HTTP Digest Auth with this user name" },
       "digest_auth.password": { "label": "Digest Auth Password", "info": "Optional. Require HTTP Digest Auth with this password" }
