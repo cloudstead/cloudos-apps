@@ -68,7 +68,7 @@ end
   Apache.enable_module(self, mod)
 end
 
-# Disable default site. We will route everything from port 80 to 443
+# Disable default http site. Port 80 will be routed to 443, or we'll use another default site
 Apache.disable_site(self, 'default')
 
 # Enable GeoIP if one or more databases is provided
@@ -103,4 +103,6 @@ EOF
 end
 
 base.public_port self, 'apache', 80
-base.public_port self, 'apache', 443
+if base.default_ssl_cert
+  base.public_port self, 'apache', 443
+end

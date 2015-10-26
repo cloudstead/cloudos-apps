@@ -1,3 +1,4 @@
+<% base = Chef::Recipe::Base %>
 # If you just change the port or add more ports here, you will likely also
 # have to change the VirtualHost statement in
 # /etc/apache2/sites-enabled/000-default
@@ -10,13 +11,15 @@
 
 ServerName <%=@hostname%>
 
-# Redirect all http traffic to https
 Listen <%=node['ipaddress']%>:80
+<% if base.default_ssl_cert %>
 <VirtualHost *:80>
+  # Redirect all http traffic to https
   RewriteEngine On
   RewriteCond %{HTTPS} off
   RewriteRule .* https://%{SERVER_NAME}%{REQUEST_URI} [NE,R,L]
 </VirtualHost>
+<% end %>
 
 <IfModule mod_ssl.c>
     Listen <%=node['ipaddress']%>:443
