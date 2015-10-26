@@ -8,8 +8,23 @@
 require 'securerandom'
 
 # ensure packages are up to date
-execute 'apt-get update' do
-  command 'apt-get update'
+bash 'apt-get update' do
+  user 'root'
+  code <<-EOF
+# Install docker key
+apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+
+# Add docker apt repository
+echo "deb https://apt.dockerproject.org/repo ubuntu-trusty main" > /etc/apt/sources.list.d/docker.list
+
+apt-get update
+
+# Install docker
+apt-get install docker-engine -y
+apt-get upgrade docker-engine -y
+service docker restart
+
+EOF
 end
 
 # if ntp is installed, uninstall it first. otherwise openntpd will not install correctly

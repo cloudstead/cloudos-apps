@@ -1,6 +1,18 @@
 require 'securerandom'
 require 'json'
 
+# add String.to_bool
+class String
+  def to_bool
+    return true   if self == true   || self =~ (/(true|t|yes|y|1)$/i)
+    return false  if self == false  || self.blank? || self =~ (/(false|f|no|n|0)$/i)
+    raise ArgumentError.new("invalid value for Boolean: \"#{self}\"")
+  end
+  def self.to_bool (s)
+    return s.nil? ? false : s.to_bool
+  end
+end
+
 class Chef::Recipe::Base
 
   @CLIENT_SECRET = '/etc/.cloudos'
@@ -173,6 +185,21 @@ EOF
     %x(id -u #{name}).strip
   end
 
+  def self.default_ssl_cert
+    begin
+      base_bag = chef.data_bag_item('base', 'base')
+    rescue => e
+      puts 'default_ssl_cert: No base/base.json databag found, returning false'
+      return nil
+    end
+    cert_name = base_bag['ssl_cert_name']
+    return nil if cert_name.to_s.empty?
+
+    ssl_pem_src = local_pem_path('base', cert_name)
+    ssl_key_src = "#{chef_user_home}/chef/certs/base/#{cert_name}.key"
+    (File.exist?(ssl_pem_src) && File.exist?(ssl_key_src)) ? cert_name : nil
+  end
+
   def self.install_ssl_cert(chef, app, name)
     # This is where deploy.sh puts the ssl certs provided in INIT_FILES directory
     ssl_pem_src = local_pem_path(app, name)
@@ -329,7 +356,7 @@ EOF
   end
 
   def self.public_port (chef, name, port, iface='world', protocol='tcp')
-
+    %x(apt-get install -u iptables) if %x(which iptables).strip.to_s.empty?
     case iface
       when 'world'
         interface = 'eth0'
@@ -360,6 +387,7 @@ EOF
   end
 
   def self.refresh_firewall (chef)
+    return if %x(which iptables).strip.to_s.empty?
     iptables_refresh='/etc/network/if-pre-up.d/iptables_load'
     chef.bash "reload iptables rules at #{Time.now} " do
       user 'root'
