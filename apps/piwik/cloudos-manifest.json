@@ -12,6 +12,8 @@
     "packaging_copyright": "Copyright 2015 Cloudstead, Inc."
   },
 
+  "config": [ { "name": "init", "items": [ "admin.login", "admin.password", "admin.email", "enable_mixins" ] } ],
+
   "packages": [ "php5-curl", "php5-geoip", "php5-dev", "libgeoip-dev", "pecl/geoip" ],
 
   "assets": { "taskbarIconAltText": "web analytics" },
@@ -52,6 +54,7 @@
       "mode": "vhost",
       "apache": {
         "mixins": [ "piwik_tag_template.conf" ],
+        "enable_mixins": "@config[init][enable_mixins]",
         "php_set": [
           { "name": "extension", "value": "geoip.so" },
           { "name": "geoip.custom_directory", "value": "/opt/cloudos/geoip" }
