@@ -7,10 +7,25 @@
 
 require 'securerandom'
 
+begin
+  base_bag = chef.data_bag_item('base', 'base')
+rescue => e
+  puts "No base/base.json databag found (#{e}), assuming defaults"
+  base_bag = { 'disable_docker' => false }
+end
+
 # ensure packages are up to date
-bash 'apt-get update' do
-  user 'root'
-  code <<-EOF
+if base_bag['disable_docker']
+  bash 'apt-get update' do
+    user 'root'
+    code <<-EOF
+apt-get update
+    EOF
+  end
+else
+  bash 'apt-get update' do
+    user 'root'
+    code <<-EOF
 # Install docker key
 apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 
@@ -25,6 +40,7 @@ apt-get upgrade docker-engine -y
 service docker restart
 
 EOF
+  end
 end
 
 # if ntp is installed, uninstall it first. otherwise openntpd will not install correctly
