@@ -28,7 +28,7 @@ echo "
     end
   end
 
-  def self.create_user (chef, dbuser, dbpass, allow_create_db = false)
+  def self.create_user (chef, dbuser, dbpass, allow_create_db = false, allow_create_role = false, superuser = false)
     chef.bash "create pgsql user #{dbuser} at #{Time.now}" do
       user 'postgres'
       code <<-EOF
@@ -36,7 +36,9 @@ EXISTS=$(#{PSQL_COMMAND} "select usename from pg_user" | grep #{dbuser} | wc -l 
 if [ ${EXISTS} -gt 0 ] ; then
   echo "User already exists: #{dbuser}"
 else
-  createuser #{allow_create_db ? '--create-db' : '--no-createdb'} --no-createrole --no-superuser #{dbuser}
+  createuser #{allow_create_db ? '--createdb' : '--no-createdb'} \
+             #{allow_create_role ? '--createrole' : '--no-createrole'} \
+             #{superuser ? '--superuser' : '--no-superuser'} #{dbuser}
 fi
       EOF
     end
