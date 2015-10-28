@@ -185,11 +185,11 @@ EOF
     %x(id -u #{name}).strip
   end
 
-  def self.default_ssl_cert
+  def self.default_ssl_cert (chef)
     begin
       base_bag = chef.data_bag_item('base', 'base')
     rescue => e
-      puts 'default_ssl_cert: No base/base.json databag found, returning false'
+      puts "default_ssl_cert: No base/base.json databag found (#{e}), returning false"
       return nil
     end
     cert_name = base_bag['ssl_cert_name']

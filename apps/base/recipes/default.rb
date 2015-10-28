@@ -121,3 +121,9 @@ template '/etc/network/if-pre-up.d/iptables_load' do
   mode '0700'
   action :create
 end
+
+# Install any certs provided
+base.local_certs('base').each do |cert_name|
+  base.install_ssl_cert self, 'base', cert_name
+  Chef::Recipe::Java.install_cert(self, cert_name, base.pem_path(cert_name)) if defined? Chef::Recipe::Java.install_cert
+end
