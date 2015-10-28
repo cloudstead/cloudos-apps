@@ -17,6 +17,9 @@ class Chef::Recipe::Java
       user 'root'
       cwd '/tmp'
       code <<-EOH
+if [ -z "$(which keytool)" ] ; then
+  apt-get install -y openjdk-7-jre-headless
+fi
 echo "changeit
 yes" | keytool -import -alias #{name.downcase} -keypass changeit -keystore #{cacerts} -file #{pem_path}
       EOH
