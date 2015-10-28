@@ -45,7 +45,7 @@
     "@home/hudson.tasks.Maven.xml": "_"
   },
 
-  "packages": [ "jenkins" ],
+  "packages": [ "jenkins", "maven" ],
 
   "web": { "type": "apache", "mode": "proxy_service", "local_mount": "@name" },
 
@@ -54,7 +54,8 @@
       "exec": "@files/install_plugins.sh @run_as @home",
       "env": { "PLUGINS": "@config[init][plugins]" }
     },
-    { "exec": "@files/setup_admin.sh '@config[init][security][admin][login]' '@config[init][security][admin][password]' '@config[init][security][admin][email]' '@config[init][security][admin][fullname]'" }
+    { "exec": "@files/setup_admin.sh '@config[init][security][admin][login]' '@config[init][security][admin][password]' '@config[init][security][admin][email]' '@config[init][security][admin][fullname]'" },
+    { "exec": "@files/jenkins_user.sh" }
   ],
 
   "validation": { "timeout": "600" }
