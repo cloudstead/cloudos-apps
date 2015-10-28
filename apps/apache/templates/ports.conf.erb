@@ -12,7 +12,7 @@
 ServerName <%=@hostname%>
 
 Listen <%=node['ipaddress']%>:80
-<% if base.default_ssl_cert %>
+<% if base.default_ssl_cert(@chef) %>
 <VirtualHost *:80>
   # Redirect all http traffic to https
   RewriteEngine On

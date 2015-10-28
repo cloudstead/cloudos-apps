@@ -24,6 +24,7 @@ end
 end
 
 # overwrite ports with our version that sets a few defaults
+chef = self
 %w( /etc/apache2/ports.conf ).each do |config|
   if File.exist? config
     template config do
@@ -38,6 +39,7 @@ end
     variables ({
         :hostname => %x(hostname).strip,
         :ip_address => node['ipaddress'],
+        :chef => chef
     })
   end
 end
@@ -103,6 +105,8 @@ EOF
 end
 
 base.public_port self, 'apache', 80
-if base.default_ssl_cert
+if base.default_ssl_cert(self)
   base.public_port self, 'apache', 443
+else
+  puts "No default cert found, disabling SSL server (#{base.default_ssl_cert(self)})"
 end
