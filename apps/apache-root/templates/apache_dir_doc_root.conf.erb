@@ -1,7 +1,7 @@
 <%
 apache = Chef::Recipe::Apache
-init_databag = @config[:app][:databag][:init]
-if defined? init_databag['digest_auth']['user']
+begin
+  init_databag = @config[:app][:databag][:init]
   digest = init_databag['digest_auth']
   digest_passwd_file = '/etc/apache2/.digest_pw'
   apache.add_digest_user digest_passwd_file, digest['realm'], digest['user'], digest['password']
@@ -15,4 +15,8 @@ AuthDigestProvider file
 AuthUserFile <%=digest_passwd_file%>
 Require valid-user
 
-<% end %>
+<%
+rescue => e
+  puts "Not enabling digest_auth: #{e}"
+end
+%>
