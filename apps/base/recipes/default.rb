@@ -7,21 +7,28 @@
 
 require 'securerandom'
 
-begin
-  base_bag = chef.data_bag_item('base', 'base')
-rescue => e
-  puts "No base/base.json databag found (#{e}), assuming defaults"
-  base_bag = { 'disable_docker' => false }
+base = Chef::Recipe::Base
+
+# if ntp is installed, uninstall it first. otherwise openntpd will not install correctly
+ntp_installed=%x(dpkg -l | awk '{print $2}' | egrep '^ntp$' | wc -l | tr -d ' ').strip
+unless ntp_installed.to_s.empty? || ntp_installed.to_i == 0
+  %x(if [ -f /etc/apparmor.d/usr.sbin.ntpd ] ; then apparmor_parser -R /etc/apparmor.d/usr.sbin.ntpd ; fi ; apt-get purge -y ntp)
 end
 
+essential_packages=%w( openntpd rsync safe-rm uuid )
+
 # ensure packages are up to date
-if base_bag['disable_docker']
+if base.is_docker
   bash 'apt-get update' do
     user 'root'
     code <<-EOF
 apt-get update
     EOF
   end
+
+  # do not install ntpd in docker containers
+  essential_packages.delete('openntpd')
+
 else
   bash 'apt-get update' do
     user 'root'
@@ -43,14 +50,8 @@ EOF
   end
 end
 
-# if ntp is installed, uninstall it first. otherwise openntpd will not install correctly
-ntp_installed=%x(dpkg -l | awk '{print $2}' | egrep '^ntp$' | wc -l | tr -d ' ').strip
-unless ntp_installed.to_s.empty? || ntp_installed.to_i == 0
-  %x(if [ -f /etc/apparmor.d/usr.sbin.ntpd ] ; then apparmor_parser -R /etc/apparmor.d/usr.sbin.ntpd ; fi ; apt-get purge -y ntp)
-end
-
 # every system needs these
-%w( openntpd safe-rm uuid ).each do |pkg|
+essential_packages.each do |pkg|
   package pkg do
     action :install
   end
@@ -63,7 +64,6 @@ end
   end
 end
 
-base = Chef::Recipe::Base
 [ '/root/.screenrc', "#{base.chef_user_home}/.screenrc" ].each do |screenrc|
   cookbook_file screenrc do
     source 'dot-screenrc'
@@ -113,29 +113,31 @@ fi
 EOF
 end
 
-rules='/etc/iptables.d'
-bash "touch #{rules}" do
-  user 'root'
-  code <<-EOF
-mkdir -p #{rules}
-  EOF
-  not_if { File.exist? rules }
-end
+unless base.is_docker
+  rules='/etc/iptables.d'
+  bash "touch #{rules}" do
+    user 'root'
+    code <<-EOF
+  mkdir -p #{rules}
+    EOF
+    not_if { File.exist? rules }
+  end
 
-%w( iptables_header iptables_footer ).each do |rule|
-  template "#{rules}/#{rule}" do
+  %w( iptables_header iptables_footer ).each do |rule|
+    template "#{rules}/#{rule}" do
+      owner 'root'
+      group 'root'
+      mode '0600'
+      action :create
+    end
+  end
+
+  template '/etc/network/if-pre-up.d/iptables_load' do
     owner 'root'
     group 'root'
-    mode '0600'
+    mode '0700'
     action :create
   end
-end
-
-template '/etc/network/if-pre-up.d/iptables_load' do
-  owner 'root'
-  group 'root'
-  mode '0700'
-  action :create
 end
 
 # Install any certs provided

@@ -260,7 +260,7 @@ EOF
   end
 
   def self.set_hostname(chef, fqdn)
-    return if fqdn == 'localhost'
+    return if fqdn == 'localhost' || is_docker
     chef.bash "set hostname to #{fqdn}" do
       user 'root'
       cwd '/tmp'
@@ -356,6 +356,7 @@ EOF
   end
 
   def self.public_port (chef, name, port, iface='world', protocol='tcp')
+    return if is_docker # No iptables support on docker
     %x(apt-get install -u iptables) if %x(which iptables).strip.to_s.empty?
     case iface
       when 'world'
@@ -387,6 +388,7 @@ EOF
   end
 
   def self.refresh_firewall (chef)
+    return if is_docker # No iptables support on docker
     return if %x(which iptables).strip.to_s.empty?
     iptables_refresh='/etc/network/if-pre-up.d/iptables_load'
     chef.bash "reload iptables rules at #{Time.now} " do
@@ -397,6 +399,10 @@ if [ -x #{iptables_refresh} ] ; then
 fi
       EOF
     end
+  end
+
+  def self.is_docker
+    File.exist? '/etc/is-docker'
   end
 
 end
