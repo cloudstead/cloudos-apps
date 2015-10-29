@@ -19,10 +19,7 @@ server_name = apache.get_server_name(@config[:server_name], @config[:mode], @hos
   SSLCertificateKeyFile /etc/ssl/private/<%=cert_name%>.key
   Header add Strict-Transport-Security: "max-age=15768000;includeSubdomains"
   <% else %>
-  # SSL disabled, no cert_name found in config:
-  #
-  # <%=@config.gsub("\n", "\n#")%>
-  #
+  # SSL disabled, no cert_name found in config
   <% end %>
 
   ServerSignature Off
