@@ -9,7 +9,12 @@ class String
     raise ArgumentError.new("invalid value for Boolean: \"#{self}\"")
   end
   def self.to_bool (s)
-    return s.nil? ? false : s.to_bool
+    begin
+      return s.nil? ? false : s.to_bool
+    rescue => e
+      puts "to_bool: cannot convert (#{s}), returning false"
+      false
+    end
   end
 end
 

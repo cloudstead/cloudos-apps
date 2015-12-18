@@ -229,26 +229,31 @@ class Chef::Recipe::LdapHelper
     hash
   end
 
-  def create_user (chef, username, password)
+  def create_user (chef, username, user_pass)
     chef.bash "create LDAP user #{username}" do
       code <<-EOH
-echo "dn: uid=#{username},ou=People,dc=cloudstead,dc=io
+echo "dn: #{user_username}=#{username},#{users}
 objectClass: top
 objectClass: inetorgperson
+objectClass: cloudosInetOrgPerson
 objectClass: kolabinetorgperson
 objectClass: mailrecipient
 objectClass: organizationalperson
 objectClass: person
-uid: #{username}
-userpassword: #{password}
-" | ldapadd -x -H ldap://127.0.0.1 -D "cn=Directory Manager" -w dirman
+#{user_username}: #{username}
+#{user_password}: #{user_pass}
+" | ldapadd -x -H #{server} -D "#{admin_dn}" -w #{password}
 
 EOH
     end
   end
 
   def delete_user (chef, username)
-    raise 'not yet implemented'
+    # todo: remove user from groups (where uniqueMember)
+    chef.bash "delete LDAP user #{username}" do
+      code <<-EOH
+ldapdelete -x -H #{server} -D "#{admin_dn}" -w #{password} "#{user_username}=#{username},#{users}"
+      EOH
   end
 
 end

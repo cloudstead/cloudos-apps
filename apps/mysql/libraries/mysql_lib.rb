@@ -18,7 +18,11 @@ echo "[#{group}]
       user 'root'
       code <<-EOF
 HOME=$(cd ~#{user} && pwd)
-echo "UPDATE mysql.user SET Password=PASSWORD(\'#{password}\') WHERE User=\'#{user}\'; FLUSH PRIVILEGES;" | #{MYSQL_ROOT}
+if [[ "#{user}" == "root" && ! -f "${HOME}/.my.cnf" ]] ; then
+  echo "UPDATE mysql.user SET Password=PASSWORD(\'#{password}\') WHERE User=\'#{user}\'; FLUSH PRIVILEGES;" | mysql -s -u root
+else
+  echo "UPDATE mysql.user SET Password=PASSWORD(\'#{password}\') WHERE User=\'#{user}\'; FLUSH PRIVILEGES;" | #{MYSQL_ROOT}
+fi
 if [ -d ${HOME} ] ; then
   CNF="${HOME}/.my.cnf"
   if [ -f ${CNF} ] ; then

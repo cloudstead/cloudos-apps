@@ -13,7 +13,7 @@ if [ ! -f ${MARKER_FILE} ] ; then
   ${BASE}/setup_kolab_expect.sh $@ 2>&1 > ${LOG} && touch ${MARKER_FILE} || die "Error running setup-kolab"
   rm -f ${LOG} || die "Error removing setup-kolab log file"
   # for some reason wallace is often not running at this point, restart it now
-  sevice wallace restart
+  service wallace restart
 fi
 
 # clean up Apache configs
